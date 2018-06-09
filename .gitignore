@@ -1,0 +1,8 @@
+# Cargo defaults
+/target
+**/*.rs.bk
+Cargo.lock
+
+# IntelliJ IDEA
+*.iml
+.idea/*
