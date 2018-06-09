@@ -9,4 +9,8 @@ categories = ["api-bindings", "embedded", "hardware-support"]
 
 license = "MIT"
 
+[badges]
+travis-ci = { repository = "pixix4/ev3dev-lang-rust", branch = "master" }
+maintenance = { status = "experimental" }
+
 [dependencies]
