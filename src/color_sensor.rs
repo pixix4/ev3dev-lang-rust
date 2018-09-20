@@ -5,11 +5,22 @@ use driver::Driver;
 use driver::Attribute;
 use driver::AttributeResult;
 
+/// Reflected light - sets LED color to red
 pub const MODE_COL_REFLECT: &'static str = "COL-REFLECT";
+
+/// Ambient light - sets LED color to blue (dimly lit)
 pub const MODE_COL_AMBIENT: &'static str = "COL-AMBIENT";
+
+/// Color - sets LED color to white (all LEDs rapidly cycling)
 pub const MODE_COL_COLOR: &'static str = "COL-COLOR";
+
+/// Raw Reflected - sets LED color to red
 pub const MODE_REF_RAW: &'static str = "REF-RAW";
+
+/// Raw Color Components - sets LED color to white (all LEDs rapidly cycling)
 pub const MODE_RGB_RAW: &'static str = "RGB-RAW";
+
+/// Calibration ??? - sets LED color to red, flashing every 4 seconds, then goes continuous
 pub const MODE_COL_CAL: &'static str = "COL-CAL";
 
 pub struct ColorSensor {
@@ -25,6 +36,8 @@ impl Device for ColorSensor {
 }
 
 impl ColorSensor {
+
+    /// Try to get a `ColorSensor` on the given port. Returns `None` if port is not used or another device is connected.
     pub fn new(port: SensorPort) -> Option<ColorSensor> {
         if let Some(name) = Driver::find_name_by_port_and_driver("lego-sensor", &port, "lego-ev3-color") {
             return Some(ColorSensor {
@@ -34,6 +47,8 @@ impl ColorSensor {
 
         None
     }
+
+    /// Try to find a `ColorSensor`. Only returns a sensor if their is exactly one connected, `None` otherwise.
     pub fn find() -> Option<ColorSensor> {
         if let Some(name) = Driver::find_name_by_driver("lego-sensor", "lego-ev3-color") {
             return Some(ColorSensor {

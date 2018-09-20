@@ -1,13 +1,13 @@
 use core::Motor;
 use driver::AttributeResult;
 
-const RUN: &'static str = "run";
-const FLOAT: &'static str = "float";
+pub const RUN: &'static str = "run";
+pub const FLOAT: &'static str = "float";
 
-const POLARITY_NORMAL: &'static str = "normal";
-const POLARITY: &'static str = "reversed";
+pub const POLARITY_NORMAL: &'static str = "normal";
+pub const POLARITY: &'static str = "reversed";
 
-const STATE_RUNNING: &'static str = "running";
+pub const STATE_RUNNING: &'static str = "running";
 
 trait ServoMotor: Motor {
 

@@ -164,6 +164,8 @@ impl Driver {
         filename.push_str(class_name);
         let paths = fs::read_dir(filename).unwrap();
 
+        let mut found_name:Option<String> = None;
+
         for path in paths {
             let file_name = path.unwrap().file_name();
             let name = file_name.to_str().unwrap();
@@ -171,10 +173,13 @@ impl Driver {
             let driver = Attribute::new(class_name, name, "driver_name").unwrap();
 
             if driver.get_str().unwrap() == driver_name {
-                return Some(String::from(name));
+                match found_name {
+                    Some(_) => return None,
+                    None => found_name = Some(String::from(name)),
+                }
             }
         }
-        None
+        return found_name;
     }
 
     pub fn get_attribute(&mut self, attribute_name: &str) -> &Attribute {

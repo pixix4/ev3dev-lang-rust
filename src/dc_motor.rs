@@ -1,19 +1,19 @@
 use core::Motor;
 use driver::AttributeResult;
 
-const RUN_FOREVER: &'static str = "run-forever";
-const RUN_TIMED: &'static str = "run-timed";
-const RUN_DIRECT: &'static str = "run-direct";
-const STOP: &'static str = "stop";
+pub const RUN_FOREVER: &'static str = "run-forever";
+pub const RUN_TIMED: &'static str = "run-timed";
+pub const RUN_DIRECT: &'static str = "run-direct";
+pub const STOP: &'static str = "stop";
 
-const POLARITY_NORMAL: &'static str = "normal";
-const POLARITY: &'static str = "reversed";
+pub const POLARITY_NORMAL: &'static str = "normal";
+pub const POLARITY: &'static str = "reversed";
 
-const STATE_RUNNING: &'static str = "running";
-const STATE_RAMPING: &'static str = "ramping";
+pub const STATE_RUNNING: &'static str = "running";
+pub const STATE_RAMPING: &'static str = "ramping";
 
-const STOP_ACTION_COAST: &'static str = "coast";
-const STOP_ACTION_BRAKE: &'static str = "brake";
+pub const STOP_ACTION_COAST: &'static str = "coast";
+pub const STOP_ACTION_BRAKE: &'static str = "brake";
 
 trait DcMotor: Motor {
 

@@ -5,37 +5,50 @@ use driver::Driver;
 use driver::Attribute;
 use driver::AttributeResult;
 
+/// Angle
 pub const MODE_GYRO_ANG: &'static str = "GYRO-ANG";
+
+/// Rotational Speed
 pub const MODE_GYRO_RATE: &'static str = "GYRO-RATE";
+
+/// Raw sensor value ???
 pub const MODE_GYRO_FAS: &'static str = "GYRO-FAS";
+
+/// Angle and Rotational Speed
 pub const MODE_GYRO_G_AND_A: &'static str = "GYRO-G&A";
+
+/// Calibration ???
 pub const MODE_GYRO_CAL: &'static str = "GYRO-CAL";
 
-pub struct ColorSensor {
+pub struct GyroSensor {
     driver: Driver
 }
 
-impl Sensor for ColorSensor {}
+impl Sensor for GyroSensor {}
 
-impl Device for ColorSensor {
+impl Device for GyroSensor {
     fn get_attribute(&mut self, name: &str) -> &Attribute {
         self.driver.get_attribute(name)
     }
 }
 
-impl ColorSensor {
-    pub fn new(port: SensorPort) -> Option<ColorSensor> {
+impl GyroSensor {
+    
+    /// Try to get a `GyroSensor` on the given port. Returns `None` if port is not used or another device is connected.
+    pub fn new(port: SensorPort) -> Option<GyroSensor> {
         if let Some(name) = Driver::find_name_by_port_and_driver("lego-sensor", &port, "lego-ev3-gyro") {
-            return Some(ColorSensor {
+            return Some(GyroSensor {
                 driver: Driver::new(String::from("lego-sensor"), name)
             });
         }
 
         None
     }
-    pub fn find() -> Option<ColorSensor> {
+
+    /// Try to find a `GyroSensor`. Only returns a sensor if their is exactly one connected, `None` otherwise.
+    pub fn find() -> Option<GyroSensor> {
         if let Some(name) = Driver::find_name_by_driver("lego-sensor", "lego-ev3-gyro") {
-            return Some(ColorSensor {
+            return Some(GyroSensor {
                 driver: Driver::new(String::from("lego-sensor"), name)
             });
         }
@@ -43,33 +56,23 @@ impl ColorSensor {
         None
     }
 
-    fn set_mode_col_ang(&mut self) -> AttributeResult<()> {
+    pub fn set_mode_col_ang(&mut self) -> AttributeResult<()> {
         self.set_mode(String::from(MODE_GYRO_ANG))
     }
 
-    fn set_mode_col_rate(&mut self) -> AttributeResult<()> {
+    pub fn set_mode_col_rate(&mut self) -> AttributeResult<()> {
         self.set_mode(String::from(MODE_GYRO_RATE))
     }
 
-    fn set_mode_col_fas(&mut self) -> AttributeResult<()> {
+    pub fn set_mode_col_fas(&mut self) -> AttributeResult<()> {
         self.set_mode(String::from(MODE_GYRO_FAS))
     }
 
-    fn set_mode_gyro_g_and_a(&mut self) -> AttributeResult<()> {
+    pub fn set_mode_gyro_g_and_a(&mut self) -> AttributeResult<()> {
         self.set_mode(String::from(MODE_GYRO_G_AND_A))
     }
 
-    fn set_mode_gyro_cal(&mut self) -> AttributeResult<()> {
+    pub fn set_mode_gyro_cal(&mut self) -> AttributeResult<()> {
         self.set_mode(String::from(MODE_GYRO_CAL))
-    }
-
-    fn get_red(&mut self) -> AttributeResult<isize> {
-        self.get_value0()
-    }
-    fn get_green(&mut self) -> AttributeResult<isize> {
-        self.get_value1()
-    }
-    fn get_blue(&mut self) -> AttributeResult<isize> {
-        self.get_value2()
     }
 }
