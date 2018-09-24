@@ -70,7 +70,6 @@ pub const STOP_ACTION_HOLD: &'static str = "hold";
 /// and directional feedback such as the EV3 and NXT motors.
 /// This feedback allows for precise control of the motors.
 pub trait TachoMotor: Motor {
-
     /// Returns the number of tacho counts in one rotation of the motor.
     /// Tacho counts are used by the position and speed attributes,
     /// so you can use this value to convert from rotations or degrees to tacho counts.
@@ -320,24 +319,83 @@ pub trait TachoMotor: Motor {
     fn run_direct(&mut self) -> AttributeResult<()> {
         self.set_command(String::from(RUN_DIRECT))
     }
+    fn run_forever(&mut self) -> AttributeResult<()> {
+        self.set_command(String::from(RUN_FOREVER))
+    }
 
-    /*
+    fn run_to_abs_pos(&mut self, position_sp: Option<isize>) -> AttributeResult<()> {
+        if let Some(p) = position_sp {
+            self.set_position_sp(p)?;
+        }
+        self.set_command(String::from(RUN_TO_ABS_POS))
+    }
+
+    fn run_to_rel_pos(&mut self, position_sp: Option<isize>) -> AttributeResult<()> {
+        if let Some(p) = position_sp {
+            self.set_position_sp(p)?;
+        }
+        self.set_command(String::from(RUN_TO_REL_POS))
+    }
+
+    fn run_timed(&mut self, time_sp: Option<isize>) -> AttributeResult<()> {
+        if let Some(p) = time_sp {
+            self.set_time_sp(p)?;
+        }
+        self.set_command(String::from(RUN_TIMED))
+    }
+    fn stop(&mut self) -> AttributeResult<()> {
+        self.set_command(String::from(STOP))
+    }
+    fn reset(&mut self) -> AttributeResult<()> {
+        self.set_command(String::from(RESET))
+    }
+
+
     fn is_running(&mut self) -> AttributeResult<bool> {
-        Ok(self.get_state().iter().find(|&&state| state == STATE_RUNNING).is_some())
+        let states = self.get_state()?;
+        for state in states {
+            if state == STATE_RUNNING {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
     fn is_ramping(&mut self) -> AttributeResult<bool> {
-        Ok(self.get_state().iter().find(|&&state| state == STATE_RAMPING).is_some())
+        let states = self.get_state()?;
+        for state in states {
+            if state == STATE_RAMPING {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
     fn is_holding(&mut self) -> AttributeResult<bool> {
-        Ok(self.get_state().iter().find(|&&state| state == STATE_HOLDING).is_some())
+        let states = self.get_state()?;
+        for state in states {
+            if state == STATE_HOLDING {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
     fn is_overloaded(&mut self) -> AttributeResult<bool> {
-        Ok(self.get_state().iter().find(|&&state| state == STATE_OVERLOADED).is_some())
+        let states = self.get_state()?;
+        for state in states {
+            if state == STATE_OVERLOADED {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
     fn is_stalled(&mut self) -> AttributeResult<bool> {
-        Ok(self.get_state().iter().find(|&&state| state == STATE_STALLED).is_some())
+        let states = self.get_state()?;
+        for state in states {
+            if state == STATE_STALLED {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
-    */
 }
 
 pub struct LargeMotor {
@@ -355,7 +413,6 @@ impl Device for LargeMotor {
 }
 
 impl LargeMotor {
-
     /// Try to get a `LargeMotor` on the given port. Returns `None` if port is not used or another device is connected.
     pub fn new(port: MotorPort) -> Option<LargeMotor> {
         if let Some(name) = Driver::find_name_by_port_and_driver("tacho-motor", &port, "lego-ev3-l-motor") {
@@ -394,7 +451,6 @@ impl Device for MediumMotor {
 }
 
 impl MediumMotor {
-
     /// Try to get a `MediumMotor` on the given port. Returns `None` if port is not used or another device is connected.
     pub fn new(port: MotorPort) -> Option<MediumMotor> {
         if let Some(name) = Driver::find_name_by_port_and_driver("tacho-motor", &port, "lego-ev3-m-motor") {
