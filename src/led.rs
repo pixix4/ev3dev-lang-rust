@@ -1,5 +1,6 @@
 use driver::Attribute;
 use driver::AttributeResult;
+use std::fs;
 
 pub const COLOR_OFF: (u8, u8) = (0, 0);
 pub const COLOR_RED: (u8, u8) = (255, 0);
@@ -17,10 +18,38 @@ pub struct Led {
 
 impl Led {
     pub fn new() -> Option<Led> {
-        let left_red = Attribute::new("leds", "ev3:left:red:ev3dev", "brightness")?;
-        let left_green = Attribute::new("leds", "ev3:left:green:ev3dev", "brightness")?;
-        let right_red = Attribute::new("leds", "ev3:right:red:ev3dev", "brightness")?;
-        let right_green = Attribute::new("leds", "ev3:right:green:ev3dev", "brightness")?;
+        let mut left_red_name = String::new();
+        let mut left_green_name = String::new();
+        let mut right_red_name = String::new();
+        let mut right_green_name = String::new();
+
+        let paths = fs::read_dir("/sys/class/leds").unwrap();
+
+        for path in paths {
+            let file_name = path.unwrap().file_name();
+            let name = String::from(file_name.to_str().unwrap());
+
+            if name.contains(":brick-status") || name.contains(":ev3dev") {
+                if name.contains("led0:") || name.contains("left:") {
+                    if name.contains("red:") {
+                        left_red_name = name;
+                    } else if name.contains("green:") {
+                        left_green_name = name
+                    }
+                } else if name.contains("led1:") || name.contains("right:") {
+                    if name.contains("red:") {
+                        right_red_name = name
+                    } else if name.contains("green:") {
+                        right_green_name = name
+                    }
+                }
+            }
+        }
+
+        let left_red = Attribute::new("leds", left_red_name.as_str(), "brightness")?;
+        let left_green = Attribute::new("leds", left_green_name.as_str(), "brightness")?;
+        let right_red = Attribute::new("leds", right_red_name.as_str(), "brightness")?;
+        let right_green = Attribute::new("leds", right_green_name.as_str(), "brightness")?;
 
         return Some(Led { left_red, left_green, right_red, right_green });
     }

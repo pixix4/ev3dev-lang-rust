@@ -128,7 +128,7 @@ impl Driver {
 
             let address = Attribute::new(class_name, name, "address").unwrap();
 
-            if address.get_str().unwrap() == port_address {
+            if address.get_str().unwrap().contains(port_address.as_str())  {
                 let driver = Attribute::new(class_name, name, "driver_name").unwrap();
 
                 if driver.get_str().unwrap() == driver_name {
@@ -152,7 +152,7 @@ impl Driver {
 
             let address = Attribute::new(class_name, name, "address").unwrap();
 
-            if address.get_str().unwrap() == port_address {
+            if address.get_str().unwrap().contains(port_address.as_str()) {
                 return Some(String::from(name));
             }
         }

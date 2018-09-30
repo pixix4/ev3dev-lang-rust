@@ -1,6 +1,7 @@
 use driver::Driver;
 use driver::Attribute;
 use driver::AttributeResult;
+use std::fs;
 
 pub struct PowerSupply {
     driver: Driver
@@ -8,9 +9,19 @@ pub struct PowerSupply {
 
 impl PowerSupply {
     pub fn new() -> Option<PowerSupply> {
-        return Some(PowerSupply {
-            driver: Driver::new(String::from("power_supply"), String::from("legoev3-battery"))
-        });
+        let paths = fs::read_dir("/sys/class/power_supply").unwrap();
+
+        for path in paths {
+            let file_name = path.unwrap().file_name();
+            let name = String::from(file_name.to_str().unwrap());
+
+            if name.contains("ev3-battery") {
+                return Some(PowerSupply {
+                    driver: Driver::new(String::from("power_supply"), name)
+                });
+            }
+        }
+        None
     }
 
 
