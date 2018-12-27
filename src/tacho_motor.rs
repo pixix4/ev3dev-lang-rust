@@ -434,6 +434,14 @@ impl LargeMotor {
 
         None
     }
+
+    /// Extract list of connected 'LargeMotor'
+    pub fn list() -> Vec<LargeMotor> {
+        Driver::find_names_by_driver("tacho_motor", "lego-ev3-l-motor")
+            .iter()
+            .map(|name| LargeMotor{ driver: Driver::new(String::from("tacho-motor"), name.to_string())})
+            .collect()
+    }
 }
 
 pub struct MediumMotor {
@@ -463,13 +471,21 @@ impl MediumMotor {
     }
 
     /// Try to find a `MediumMotor`. Only returns a motor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Option<LargeMotor> {
-        if let Some(name) = Driver::find_name_by_driver("tacho-motor", "lego-ev3-l-motor") {
-            return Some(LargeMotor {
+    pub fn find() -> Option<MediumMotor> {
+        if let Some(name) = Driver::find_name_by_driver("tacho-motor", "lego-ev3-m-motor") {
+            return Some(MediumMotor {
                 driver: Driver::new(String::from("tacho-motor"), name)
             });
         }
 
         None
+    }
+
+    /// Extract list of connected 'MediumMotor'
+    pub fn list() -> Vec<MediumMotor> {
+        Driver::find_names_by_driver("tacho_motor", "lego-ev3-m-motor")
+            .iter()
+            .map(|name| MediumMotor{ driver: Driver::new(String::from("tacho-motor"), name.to_string())})
+            .collect()
     }
 }

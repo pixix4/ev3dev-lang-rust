@@ -182,6 +182,25 @@ impl Driver {
         return found_name;
     }
 
+    pub fn find_names_by_driver(class_name: &str, driver_name: &str) -> Vec<String> {
+        let mut filename = String::from(ROOT_PATH);
+        filename.push_str(class_name);
+        let paths = fs::read_dir(filename).unwrap();
+
+        let mut found_names = Vec::new();
+        for path in paths {
+            let file_name = path.unwrap().file_name();
+            let name = file_name.to_str().unwrap();
+
+            let driver = Attribute::new(class_name, name, "driver_name").unwrap();
+
+            if driver.get_str().unwrap() == driver_name {
+                found_names.push(String::from(name));
+            }
+        }
+        return found_names;
+    }
+
     pub fn get_attribute(&mut self, attribute_name: &str) -> &Attribute {
         if !self.attributes.contains_key(attribute_name) {
             if let Some(v) = Attribute::new(self.class_name.as_ref(), self.name.as_ref(), attribute_name) {
