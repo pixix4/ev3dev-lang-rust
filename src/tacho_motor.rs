@@ -437,7 +437,7 @@ impl LargeMotor {
 
     /// Extract list of connected 'LargeMotor'
     pub fn list() -> Vec<LargeMotor> {
-        Driver::find_names_by_driver("tacho_motor", "lego-ev3-l-motor")
+        Driver::find_names_by_driver("tacho-motor", "lego-ev3-l-motor")
             .iter()
             .map(|name| LargeMotor{ driver: Driver::new(String::from("tacho-motor"), name.to_string())})
             .collect()
@@ -483,7 +483,7 @@ impl MediumMotor {
 
     /// Extract list of connected 'MediumMotor'
     pub fn list() -> Vec<MediumMotor> {
-        Driver::find_names_by_driver("tacho_motor", "lego-ev3-m-motor")
+        Driver::find_names_by_driver("tacho-motor", "lego-ev3-m-motor")
             .iter()
             .map(|name| MediumMotor{ driver: Driver::new(String::from("tacho-motor"), name.to_string())})
             .collect()
