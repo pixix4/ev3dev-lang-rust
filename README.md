@@ -4,7 +4,7 @@
 
 ## Notice
 
-Currently this project is not compatible with the BrickPi platform. 
+Currently this project is not compatible with the BrickPi platform.
 
 ## Usage
 
@@ -45,19 +45,19 @@ fn main() -> Result<()> {
 1. Create Dockerfile
     ```dockerfile
     FROM ubuntu:18.04
-    
+
     RUN apt update
-    
+
     # Install curl for rust installation
     # Install g++ as buildscript compiler
     # Install g++-arm-linux-gnueabi as cross compiler
     RUN apt --yes install curl g++ g++-arm-linux-gnueabi
-    
+
     # Instull rust for host platform
     RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-    
+
     ENV PATH "$PATH:/root/.cargo/bin"
-    
+
     # Add stdlib for target platform
     RUN rustup target add armv5te-unknown-linux-gnueabi
     ```
@@ -77,5 +77,5 @@ fn main() -> Result<()> {
     cargo build --release --target armv5te-unknown-linux-gnueabi
     ```
     The `--release` flag is optional. However, it can speedup the execution time by a factor of 30.
-    
+
 The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/libev3dev_lang_rust.rlib`
