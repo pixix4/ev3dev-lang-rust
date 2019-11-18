@@ -1,6 +1,6 @@
-use driver::Attribute;
-use driver::AttributeResult;
 use std::fs;
+
+use crate::{Attribute, Ev3Result, utils::OrErr};
 
 pub const COLOR_OFF: (u8, u8) = (0, 0);
 pub const COLOR_RED: (u8, u8) = (255, 0);
@@ -18,17 +18,17 @@ pub struct Led {
 }
 
 impl Led {
-    pub fn new() -> Option<Led> {
+    pub fn new() -> Ev3Result<Led> {
         let mut left_red_name = String::new();
         let mut left_green_name = String::new();
         let mut right_red_name = String::new();
         let mut right_green_name = String::new();
 
-        let paths = fs::read_dir("/sys/class/leds").unwrap();
+        let paths = fs::read_dir("/sys/class/leds")?;
 
         for path in paths {
-            let file_name = path.unwrap().file_name();
-            let name = file_name.to_str().unwrap().to_owned();
+            let file_name = path?.file_name();
+            let name = file_name.to_str().or_err()?.to_owned();
 
             if name.contains(":brick-status") || name.contains(":ev3dev") {
                 if name.contains("led0:") || name.contains("left:") {
@@ -52,7 +52,7 @@ impl Led {
         let right_red = Attribute::new("leds", right_red_name.as_str(), "brightness")?;
         let right_green = Attribute::new("leds", right_green_name.as_str(), "brightness")?;
 
-        Some(Led {
+        Ok(Led {
             left_red,
             left_green,
             right_red,
@@ -60,58 +60,58 @@ impl Led {
         })
     }
 
-    pub fn get_left_red(&self) -> AttributeResult<u8> {
+    pub fn get_left_red(&self) -> Ev3Result<u8> {
         self.left_red.get()
     }
-    pub fn set_left_red(&self, brightness: u8) -> AttributeResult<()> {
+    pub fn set_left_red(&self, brightness: u8) -> Ev3Result<()> {
         self.left_red.set(brightness)
     }
 
-    pub fn get_left_green(&self) -> AttributeResult<u8> {
+    pub fn get_left_green(&self) -> Ev3Result<u8> {
         self.left_green.get()
     }
-    pub fn set_left_green(&self, brightness: u8) -> AttributeResult<()> {
+    pub fn set_left_green(&self, brightness: u8) -> Ev3Result<()> {
         self.left_green.set(brightness)
     }
 
-    pub fn get_right_red(&self) -> AttributeResult<u8> {
+    pub fn get_right_red(&self) -> Ev3Result<u8> {
         self.right_red.get()
     }
-    pub fn set_right_red(&self, brightness: u8) -> AttributeResult<()> {
+    pub fn set_right_red(&self, brightness: u8) -> Ev3Result<()> {
         self.right_red.set(brightness)
     }
 
-    pub fn get_right_green(&self) -> AttributeResult<u8> {
+    pub fn get_right_green(&self) -> Ev3Result<u8> {
         self.right_green.get()
     }
-    pub fn set_right_green(&self, brightness: u8) -> AttributeResult<()> {
+    pub fn set_right_green(&self, brightness: u8) -> Ev3Result<()> {
         self.right_green.set(brightness)
     }
 
-    pub fn get_left_color(&self) -> AttributeResult<(u8, u8)> {
+    pub fn get_left_color(&self) -> Ev3Result<(u8, u8)> {
         let red = self.get_left_red()?;
         let green = self.get_left_green()?;
 
         Ok((red, green))
     }
-    pub fn set_left_color(&self, color: (u8, u8)) -> AttributeResult<()> {
+    pub fn set_left_color(&self, color: (u8, u8)) -> Ev3Result<()> {
         self.set_left_red(color.0)?;
         self.set_left_green(color.1)
     }
 
-    pub fn get_right_color(&self) -> AttributeResult<(u8, u8)> {
+    pub fn get_right_color(&self) -> Ev3Result<(u8, u8)> {
         let red = self.get_right_red()?;
         let green = self.get_right_green()?;
 
         Ok((red, green))
     }
-    pub fn set_right_color(&self, color: (u8, u8)) -> AttributeResult<()> {
+    pub fn set_right_color(&self, color: (u8, u8)) -> Ev3Result<()> {
         self.set_right_red(color.0)?;
         self.set_right_green(color.1)
     }
 
     /// Returns None if left and right colors are different.
-    pub fn get_color(&self) -> AttributeResult<Option<(u8, u8)>> {
+    pub fn get_color(&self) -> Ev3Result<Option<(u8, u8)>> {
         let left = self.get_left_color()?;
         let right = self.get_right_color()?;
 
@@ -121,7 +121,7 @@ impl Led {
             Ok(None)
         }
     }
-    pub fn set_color(&self, color: (u8, u8)) -> AttributeResult<()> {
+    pub fn set_color(&self, color: (u8, u8)) -> Ev3Result<()> {
         self.set_left_color(color)?;
         self.set_right_color(color)
     }

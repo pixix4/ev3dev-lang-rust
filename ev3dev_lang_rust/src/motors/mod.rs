@@ -6,7 +6,7 @@ pub use self::dc_motor::DcMotor;
 pub use self::servo_motor::ServoMotor;
 pub use self::tacho_motor::{LargeMotor, MediumMotor, TachoMotor};
 
-use crate::core::{Device, Port};
+use crate::{Device, Port};
 
 pub trait Motor: Device {}
 

@@ -1,8 +1,5 @@
 use crate::sensors::{Sensor, SensorPort};
-use core::Device;
-use driver::Attribute;
-use driver::AttributeResult;
-use driver::Driver;
+use crate::{Attribute, Device, Driver, Ev3Result};
 
 /// Continuous measurement - sets LEDs on, steady. Units in centimeters. Distance (0-2550)
 pub const MODE_US_DIST_CM: &str = "US-DIST-CM";
@@ -34,58 +31,52 @@ impl Sensor for UltrasonicSensor {}
 
 impl UltrasonicSensor {
     /// Try to get a `UltrasonicSensor` on the given port. Returns `None` if port is not used or another device is connected.
-    pub fn new(port: SensorPort) -> Option<UltrasonicSensor> {
-        if let Some(name) =
-            Driver::find_name_by_port_and_driver("lego-sensor", &port, "lego-ev3-us")
-        {
-            return Some(UltrasonicSensor {
-                driver: Driver::new("lego-sensor", &name),
-            });
-        }
+    pub fn new(port: SensorPort) -> Ev3Result<UltrasonicSensor> {
+        let name = Driver::find_name_by_port_and_driver("lego-sensor", &port, "lego-ev3-us")?;
 
-        None
+        Ok(UltrasonicSensor {
+            driver: Driver::new("lego-sensor", &name),
+        })
     }
 
     /// Try to find a `UltrasonicSensor`. Only returns a sensor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Option<UltrasonicSensor> {
-        if let Some(name) = Driver::find_name_by_driver("lego-sensor", "lego-ev3-us") {
-            return Some(UltrasonicSensor {
-                driver: Driver::new("lego-sensor", &name),
-            });
-        }
+    pub fn find() -> Ev3Result<UltrasonicSensor> {
+        let name = Driver::find_name_by_driver("lego-sensor", "lego-ev3-us")?;
 
-        None
+        Ok(UltrasonicSensor {
+            driver: Driver::new("lego-sensor", &name),
+        })
     }
 
-    pub fn set_mode_us_dist_cm(&self) -> AttributeResult<()> {
+    pub fn set_mode_us_dist_cm(&self) -> Ev3Result<()> {
         self.set_mode(MODE_US_DIST_CM)
     }
 
-    pub fn set_mode_us_dist_in(&self) -> AttributeResult<()> {
+    pub fn set_mode_us_dist_in(&self) -> Ev3Result<()> {
         self.set_mode(MODE_US_DIST_IN)
     }
 
-    pub fn set_mode_us_listen(&self) -> AttributeResult<()> {
+    pub fn set_mode_us_listen(&self) -> Ev3Result<()> {
         self.set_mode(MODE_US_LISTEN)
     }
 
-    pub fn set_mode_us_si_cm(&self) -> AttributeResult<()> {
+    pub fn set_mode_us_si_cm(&self) -> Ev3Result<()> {
         self.set_mode(MODE_US_SI_CM)
     }
 
-    pub fn set_mode_us_si_in(&self) -> AttributeResult<()> {
+    pub fn set_mode_us_si_in(&self) -> Ev3Result<()> {
         self.set_mode(MODE_US_SI_IN)
     }
 
-    pub fn set_mode_us_dc_cm(&self) -> AttributeResult<()> {
+    pub fn set_mode_us_dc_cm(&self) -> Ev3Result<()> {
         self.set_mode(MODE_US_DC_CM)
     }
 
-    pub fn set_mode_us_dc_in(&self) -> AttributeResult<()> {
+    pub fn set_mode_us_dc_in(&self) -> Ev3Result<()> {
         self.set_mode(MODE_US_DC_IN)
     }
 
-    pub fn get_distance(&self) -> AttributeResult<i32> {
+    pub fn get_distance(&self) -> Ev3Result<i32> {
         self.get_value0()
     }
 }

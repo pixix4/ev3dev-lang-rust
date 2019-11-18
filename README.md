@@ -11,15 +11,14 @@ Currently this project is not compatible with the BrickPi platform.
 ```rust
 extern crate ev3dev_lang_rust;
 
-use std::io::Result;
-use ev3dev_lang_rust::tacho_motor::{LargeMotor, TachoMotor};
-use ev3dev_lang_rust::core::MotorPort;
-use ev3dev_lang_rust::color_sensor::ColorSensor;
+use ev3dev_lang_rust::Ev3Result;
+use ev3dev_lang_rust::motors::{LargeMotor, TachoMotor, MotorPort};
+use ev3dev_lang_rust::sensors::ColorSensor;
 
 fn main() -> Result<()> {
 
     // Get large motor on port outA.
-    let mut large_motor = LargeMotor::new(MotorPort::OutA).unwrap();
+    let large_motor = LargeMotor::new(MotorPort::OutA)?;
 
     // Set command "run-direct".
     large_motor.run_direct()?;
@@ -28,7 +27,7 @@ fn main() -> Result<()> {
     large_motor.set_duty_cycle_sp(50)?;
 
     // Find color sensor. Always returns the first recognised one.
-    let mut color_sensor = ColorSensor::find().unwrap();
+    let color_sensor = ColorSensor::find()?;
 
     // Switch to rgb mode.
     color_sensor.set_mode_rgb_raw()?;

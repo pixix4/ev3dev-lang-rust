@@ -1,8 +1,5 @@
 use crate::motors::{Motor, MotorPort};
-use core::Device;
-use driver::Attribute;
-use driver::AttributeResult;
-use driver::Driver;
+use crate::{Attribute, Device, Driver, Ev3Result};
 
 /// Causes the motor to run until another command is sent.
 pub const RUN_FOREVER: &str = "run-forever";
@@ -73,7 +70,7 @@ pub trait TachoMotor: Motor {
     /// Tacho counts are used by the position and speed attributes,
     /// so you can use this value to convert from rotations or degrees to tacho counts.
     /// (rotation motors only)
-    fn get_count_per_rot(&self) -> AttributeResult<i32> {
+    fn get_count_per_rot(&self) -> Ev3Result<i32> {
         self.get_attribute("count_per_rot").get()
     }
 
@@ -81,7 +78,7 @@ pub trait TachoMotor: Motor {
     /// Tacho counts are used by the position and speed attributes,
     /// so you can use this value to convert from distance to tacho counts.
     /// (linear motors only)
-    fn get_count_per_m(&self) -> AttributeResult<i32> {
+    fn get_count_per_m(&self) -> Ev3Result<i32> {
         self.get_attribute("count_per_m").get()
     }
 
@@ -89,34 +86,34 @@ pub trait TachoMotor: Motor {
     /// When combined with the count_per_m atribute,
     /// you can use this value to calculate the maximum travel distance of the motor.
     /// (linear motors only)
-    fn get_full_travel_count(&self) -> AttributeResult<i32> {
+    fn get_full_travel_count(&self) -> Ev3Result<i32> {
         self.get_attribute("full_travel_count").get()
     }
 
     /// Returns the current duty cycle of the motor. Units are percent. Values are -100 to 100.
-    fn get_duty_cycle(&self) -> AttributeResult<i32> {
+    fn get_duty_cycle(&self) -> Ev3Result<i32> {
         self.get_attribute("duty_cycle").get()
     }
 
     /// Returns the current duty cycle setpoint of the motor. Units are in percent.
     /// Valid values are -100 to 100. A negative value causes the motor to rotate in reverse.
-    fn get_duty_cycle_sp(&self) -> AttributeResult<i32> {
+    fn get_duty_cycle_sp(&self) -> Ev3Result<i32> {
         self.get_attribute("duty_cycle_sp").get()
     }
 
     /// Sets the duty cycle setpoint of the motor. Units are in percent.
     /// Valid values are -100 to 100. A negative value causes the motor to rotate in reverse.
-    fn set_duty_cycle_sp(&self, duty_cycle: i32) -> AttributeResult<()> {
+    fn set_duty_cycle_sp(&self, duty_cycle: i32) -> Ev3Result<()> {
         self.get_attribute("duty_cycle_sp").set(duty_cycle)
     }
 
     /// Returns the current polarity of the motor.
-    fn get_polarity(&self) -> AttributeResult<String> {
+    fn get_polarity(&self) -> Ev3Result<String> {
         self.get_attribute("polarity").get()
     }
 
     /// Sets the polarity of the motor.
-    fn set_polarity(&self, polarity: &str) -> AttributeResult<()> {
+    fn set_polarity(&self, polarity: &str) -> Ev3Result<()> {
         self.get_attribute("polarity").set_str_slice(polarity)
     }
 
@@ -124,7 +121,7 @@ pub trait TachoMotor: Motor {
     /// When the motor rotates clockwise, the position will increase.
     /// Likewise, rotating counter-clockwise causes the position to decrease.
     /// The range is -2,147,483,648 and +2,147,483,647 tachometer counts (32-bit signed integer)
-    fn get_position(&self) -> AttributeResult<i32> {
+    fn get_position(&self) -> Ev3Result<i32> {
         self.get_attribute("position").get()
     }
 
@@ -132,37 +129,37 @@ pub trait TachoMotor: Motor {
     /// When the motor rotates clockwise, the position will increase.
     /// Likewise, rotating counter-clockwise causes the position to decrease.
     /// The range is -2,147,483,648 and +2,147,483,647 tachometer counts (32-bit signed integer)
-    fn set_position(&self, position: i32) -> AttributeResult<()> {
+    fn set_position(&self, position: i32) -> Ev3Result<()> {
         self.get_attribute("position").set(position)
     }
 
     /// Returns the proportional pub constant for the position PID.
-    fn get_hold_pid_kp(&self) -> AttributeResult<f32> {
+    fn get_hold_pid_kp(&self) -> Ev3Result<f32> {
         self.get_attribute("hold_pid_kp").get()
     }
 
     /// Sets the proportional pub constant for the position PID.
-    fn set_hold_pid_kp(&self, kp: f32) -> AttributeResult<()> {
+    fn set_hold_pid_kp(&self, kp: f32) -> Ev3Result<()> {
         self.get_attribute("hold_pid_kp").set(kp)
     }
 
     /// Returns the integral pub constant for the position PID.
-    fn get_hold_pid_ki(&self) -> AttributeResult<f32> {
+    fn get_hold_pid_ki(&self) -> Ev3Result<f32> {
         self.get_attribute("hold_pid_ki").get()
     }
 
     /// Sets the integral pub constant for the position PID.
-    fn set_hold_pid_ki(&self, ki: f32) -> AttributeResult<()> {
+    fn set_hold_pid_ki(&self, ki: f32) -> Ev3Result<()> {
         self.get_attribute("hold_pid_ki").set(ki)
     }
 
     /// Returns the derivative pub constant for the position PID.
-    fn get_hold_pid_kd(&self) -> AttributeResult<f32> {
+    fn get_hold_pid_kd(&self) -> Ev3Result<f32> {
         self.get_attribute("hold_pid_kd").get()
     }
 
     /// Sets the derivative pub constant for the position PID.
-    fn set_hold_pid_kd(&self, kd: f32) -> AttributeResult<()> {
+    fn set_hold_pid_kd(&self, kd: f32) -> Ev3Result<()> {
         self.get_attribute("hold_pid_kd").set(kd)
     }
 
@@ -170,14 +167,14 @@ pub trait TachoMotor: Motor {
     /// attribute. This value is the speed of the motor at 9V with no load.
     /// Note: The actual maximum obtainable speed will be less than this
     /// and will depend on battery voltage and mechanical load on the motor.
-    fn get_max_speed(&self) -> AttributeResult<i32> {
+    fn get_max_speed(&self) -> Ev3Result<i32> {
         self.get_attribute("max_speed").get()
     }
 
     /// Returns the current target position for the `run-to-abs-pos` and `run-to-rel-pos` commands. Units are in tacho counts.
     /// You can use the value returned by `counts_per_rot` to convert tacho counts to/from rotations or degrees.
     /// The range is -2,147,483,648 and +2,147,483,647 tachometer counts (32-bit signed integer).
-    fn get_position_sp(&self) -> AttributeResult<i32> {
+    fn get_position_sp(&self) -> Ev3Result<i32> {
         self.get_attribute("position_sp").get()
     }
 
@@ -185,14 +182,14 @@ pub trait TachoMotor: Motor {
     /// Units are in tacho counts.
     /// You can use the value returned by `counts_per_rot` to convert tacho counts to/from rotations or degrees.
     /// The range is -2,147,483,648 and +2,147,483,647 tachometer counts (32-bit signed integer).
-    fn set_position_sp(&self, position_sp: i32) -> AttributeResult<()> {
+    fn set_position_sp(&self, position_sp: i32) -> Ev3Result<()> {
         self.get_attribute("position_sp").set(position_sp)
     }
 
     /// Returns the current motor speed in tacho counts per second.
     /// Note, this is not necessarily degrees (although it is for LEGO motors).
     /// Use the `count_per_rot` attribute to convert this value to RPM or deg/sec.
-    fn get_speed(&self) -> AttributeResult<i32> {
+    fn get_speed(&self) -> Ev3Result<i32> {
         self.get_attribute("speed").get()
     }
 
@@ -201,7 +198,7 @@ pub trait TachoMotor: Motor {
     /// with the exception of run-to-*-pos commands where the sign is ignored.
     /// Use the `count_per_rot` attribute to convert RPM or deg/sec to tacho counts per second.
     /// Use the `count_per_m` attribute to convert m/s to tacho counts per second.
-    fn get_speed_sp(&self) -> AttributeResult<i32> {
+    fn get_speed_sp(&self) -> Ev3Result<i32> {
         self.get_attribute("speed_sp").get()
     }
 
@@ -210,7 +207,7 @@ pub trait TachoMotor: Motor {
     /// with the exception of run-to-*-pos commands where the sign is ignored.
     /// Use the `count_per_rot` attribute to convert RPM or deg/sec to tacho counts per second.
     /// Use the `count_per_m` attribute to convert m/s to tacho counts per second.
-    fn set_speed_sp(&self, speed_sp: i32) -> AttributeResult<()> {
+    fn set_speed_sp(&self, speed_sp: i32) -> Ev3Result<()> {
         self.get_attribute("speed_sp").set(speed_sp)
     }
 
@@ -219,7 +216,7 @@ pub trait TachoMotor: Motor {
     /// the motor speed will increase from 0 to 100% of `max_speed` over the span of this setpoint.
     /// The actual ramp time is the ratio of the difference between the speed_sp
     /// and the current speed and max_speed multiplied by ramp_up_sp. Values must not be negative.
-    fn get_ramp_up_sp(&self) -> AttributeResult<i32> {
+    fn get_ramp_up_sp(&self) -> Ev3Result<i32> {
         self.get_attribute("ramp_up_sp").get()
     }
 
@@ -228,7 +225,7 @@ pub trait TachoMotor: Motor {
     /// the motor speed will increase from 0 to 100% of `max_speed` over the span of this setpoint.
     /// The actual ramp time is the ratio of the difference between the speed_sp
     /// and the current speed and max_speed multiplied by ramp_up_sp. Values must not be negative.
-    fn set_ramp_up_sp(&self, ramp_up_sp: i32) -> AttributeResult<()> {
+    fn set_ramp_up_sp(&self, ramp_up_sp: i32) -> Ev3Result<()> {
         self.get_attribute("ramp_up_sp").set(ramp_up_sp)
     }
 
@@ -237,7 +234,7 @@ pub trait TachoMotor: Motor {
     /// the motor speed will decrease from 100% down to 0 of `max_speed` over the span of this setpoint.
     /// The actual ramp time is the ratio of the difference between the speed_sp
     /// and the current speed and 0 multiplied by ramp_down_sp. Values must not be negative.
-    fn get_ramp_down_sp(&self) -> AttributeResult<i32> {
+    fn get_ramp_down_sp(&self) -> Ev3Result<i32> {
         self.get_attribute("ramp_down_sp").get()
     }
 
@@ -246,124 +243,124 @@ pub trait TachoMotor: Motor {
     /// the motor speed will decrease from 100% down to 0 of `max_speed` over the span of this setpoint.
     /// The actual ramp time is the ratio of the difference between the speed_sp
     /// and the current speed and 0 multiplied by ramp_down_sp. Values must not be negative.
-    fn set_ramp_down_sp(&self, ramp_down_sp: i32) -> AttributeResult<()> {
+    fn set_ramp_down_sp(&self, ramp_down_sp: i32) -> Ev3Result<()> {
         self.get_attribute("ramp_down_sp").set(ramp_down_sp)
     }
 
     /// Returns the proportional pub constant for the speed regulation PID.
-    fn get_speed_pid_kp(&self) -> AttributeResult<f32> {
+    fn get_speed_pid_kp(&self) -> Ev3Result<f32> {
         self.get_attribute("speed_pid_kp").get()
     }
 
     /// Sets the proportional pub constant for the speed regulation PID.
-    fn set_speed_pid_kp(&self, kp: f32) -> AttributeResult<()> {
+    fn set_speed_pid_kp(&self, kp: f32) -> Ev3Result<()> {
         self.get_attribute("speed_pid_kp").set(kp)
     }
 
     /// Returns the integral pub constant for the speed regulation PID.
-    fn get_speed_pid_ki(&self) -> AttributeResult<f32> {
+    fn get_speed_pid_ki(&self) -> Ev3Result<f32> {
         self.get_attribute("speed_pid_ki").get()
     }
 
     /// Sets the integral pub constant for the speed regulation PID.
-    fn set_speed_pid_ki(&self, ki: f32) -> AttributeResult<()> {
+    fn set_speed_pid_ki(&self, ki: f32) -> Ev3Result<()> {
         self.get_attribute("speed_pid_ki").set(ki)
     }
 
     /// Returns the derivative pub constant for the speed regulation PID.
-    fn get_speed_pid_kd(&self) -> AttributeResult<f32> {
+    fn get_speed_pid_kd(&self) -> Ev3Result<f32> {
         self.get_attribute("speed_pid_kd").get()
     }
 
     /// Sets the derivative pub constant for the speed regulation PID.
-    fn set_speed_pid_kd(&self, kd: f32) -> AttributeResult<()> {
+    fn set_speed_pid_kd(&self, kd: f32) -> Ev3Result<()> {
         self.get_attribute("speed_pid_kd").set(kd)
     }
 
     /// Returns a list of state flags.
-    fn get_state(&self) -> AttributeResult<Vec<String>> {
+    fn get_state(&self) -> Ev3Result<Vec<String>> {
         self.get_attribute("state").get_vec()
     }
 
     /// Returns the current stop action.
     /// The value determines the motors behavior when command is set to stop.
-    fn get_stop_action(&self) -> AttributeResult<String> {
+    fn get_stop_action(&self) -> Ev3Result<String> {
         self.get_attribute("stop_action").get()
     }
 
     /// Sets the stop action.
     /// The value determines the motors behavior when command is set to stop.
-    fn set_stop_action(&self, stop_action: &str) -> AttributeResult<()> {
+    fn set_stop_action(&self, stop_action: &str) -> Ev3Result<()> {
         self.get_attribute("stop_action").set_str_slice(stop_action)
     }
 
     /// Returns a list of stop actions supported by the motor controller.
-    fn get_stop_actions(&self) -> AttributeResult<Vec<String>> {
+    fn get_stop_actions(&self) -> Ev3Result<Vec<String>> {
         self.get_attribute("stop_actions").get_vec()
     }
 
     /// Returns the current amount of time the motor will run when using the run-timed command.
     /// Units are in milliseconds. Values must not be negative.
-    fn get_time_sp(&self) -> AttributeResult<i32> {
+    fn get_time_sp(&self) -> Ev3Result<i32> {
         self.get_attribute("time_sp").get()
     }
 
     /// Sets the amount of time the motor will run when using the run-timed command.
     /// Units are in milliseconds. Values must not be negative.
-    fn set_time_sp(&self, time_sp: i32) -> AttributeResult<()> {
+    fn set_time_sp(&self, time_sp: i32) -> Ev3Result<()> {
         self.get_attribute("time_sp").set(time_sp)
     }
 
-    fn run_direct(&self) -> AttributeResult<()> {
+    fn run_direct(&self) -> Ev3Result<()> {
         self.set_command(RUN_DIRECT)
     }
-    fn run_forever(&self) -> AttributeResult<()> {
+    fn run_forever(&self) -> Ev3Result<()> {
         self.set_command(RUN_FOREVER)
     }
 
-    fn run_to_abs_pos(&self, position_sp: Option<i32>) -> AttributeResult<()> {
+    fn run_to_abs_pos(&self, position_sp: Option<i32>) -> Ev3Result<()> {
         if let Some(p) = position_sp {
             self.set_position_sp(p)?;
         }
         self.set_command(RUN_TO_ABS_POS)
     }
 
-    fn run_to_rel_pos(&self, position_sp: Option<i32>) -> AttributeResult<()> {
+    fn run_to_rel_pos(&self, position_sp: Option<i32>) -> Ev3Result<()> {
         if let Some(p) = position_sp {
             self.set_position_sp(p)?;
         }
         self.set_command(RUN_TO_REL_POS)
     }
 
-    fn run_timed(&self, time_sp: Option<i32>) -> AttributeResult<()> {
+    fn run_timed(&self, time_sp: Option<i32>) -> Ev3Result<()> {
         if let Some(p) = time_sp {
             self.set_time_sp(p)?;
         }
         self.set_command(RUN_TIMED)
     }
-    fn stop(&self) -> AttributeResult<()> {
+    fn stop(&self) -> Ev3Result<()> {
         self.set_command(STOP)
     }
-    fn reset(&self) -> AttributeResult<()> {
+    fn reset(&self) -> Ev3Result<()> {
         self.set_command(RESET)
     }
 
-    fn is_running(&self) -> AttributeResult<bool> {
+    fn is_running(&self) -> Ev3Result<bool> {
         Ok(self.get_state()?.iter().any(|state| state == STATE_RUNNING))
     }
-    fn is_ramping(&self) -> AttributeResult<bool> {
+    fn is_ramping(&self) -> Ev3Result<bool> {
         Ok(self.get_state()?.iter().any(|state| state == STATE_RAMPING))
     }
-    fn is_holding(&self) -> AttributeResult<bool> {
+    fn is_holding(&self) -> Ev3Result<bool> {
         Ok(self.get_state()?.iter().any(|state| state == STATE_HOLDING))
     }
-    fn is_overloaded(&self) -> AttributeResult<bool> {
+    fn is_overloaded(&self) -> Ev3Result<bool> {
         Ok(self
             .get_state()?
             .iter()
             .any(|state| state == STATE_OVERLOADED))
     }
-    fn is_stalled(&self) -> AttributeResult<bool> {
+    fn is_stalled(&self) -> Ev3Result<bool> {
         Ok(self.get_state()?.iter().any(|state| state == STATE_STALLED))
     }
 }
@@ -379,37 +376,33 @@ impl TachoMotor for LargeMotor {}
 
 impl LargeMotor {
     /// Try to get a `LargeMotor` on the given port. Returns `None` if port is not used or another device is connected.
-    pub fn new(port: MotorPort) -> Option<LargeMotor> {
-        if let Some(name) =
-            Driver::find_name_by_port_and_driver("tacho-motor", &port, "lego-ev3-l-motor")
-        {
-            return Some(LargeMotor {
-                driver: Driver::new("tacho-motor", &name),
-            });
-        }
+    pub fn new(port: MotorPort) -> Ev3Result<LargeMotor> {
+        let name = Driver::find_name_by_port_and_driver("tacho-motor", &port, "lego-ev3-l-motor")?;
 
-        None
+        Ok(LargeMotor {
+            driver: Driver::new("tacho-motor", &name),
+        })
     }
 
     /// Try to find a `LargeMotor`. Only returns a motor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Option<LargeMotor> {
-        if let Some(name) = Driver::find_name_by_driver("tacho-motor", "lego-ev3-l-motor") {
-            return Some(LargeMotor {
-                driver: Driver::new("tacho-motor", &name),
-            });
-        }
+    pub fn find() -> Ev3Result<LargeMotor> {
+        let name = Driver::find_name_by_driver("tacho-motor", "lego-ev3-l-motor")?;
 
-        None
+        Ok(LargeMotor {
+            driver: Driver::new("tacho-motor", &name),
+        })
     }
 
     /// Extract list of connected 'LargeMotor'
-    pub fn list() -> Vec<LargeMotor> {
-        Driver::find_names_by_driver("tacho-motor", "lego-ev3-l-motor")
-            .iter()
-            .map(|name| LargeMotor {
-                driver: Driver::new("tacho-motor", name),
-            })
-            .collect()
+    pub fn list() -> Ev3Result<Vec<LargeMotor>> {
+        Ok(
+            Driver::find_names_by_driver("tacho-motor", "lego-ev3-l-motor")?
+                .iter()
+                .map(|name| LargeMotor {
+                    driver: Driver::new("tacho-motor", name),
+                })
+                .collect(),
+        )
     }
 }
 
@@ -424,36 +417,32 @@ impl TachoMotor for MediumMotor {}
 
 impl MediumMotor {
     /// Try to get a `MediumMotor` on the given port. Returns `None` if port is not used or another device is connected.
-    pub fn new(port: MotorPort) -> Option<MediumMotor> {
-        if let Some(name) =
-            Driver::find_name_by_port_and_driver("tacho-motor", &port, "lego-ev3-m-motor")
-        {
-            return Some(MediumMotor {
-                driver: Driver::new("tacho-motor", &name),
-            });
-        }
+    pub fn new(port: MotorPort) -> Ev3Result<MediumMotor> {
+        let name = Driver::find_name_by_port_and_driver("tacho-motor", &port, "lego-ev3-m-motor")?;
 
-        None
+        Ok(MediumMotor {
+            driver: Driver::new("tacho-motor", &name),
+        })
     }
 
     /// Try to find a `MediumMotor`. Only returns a motor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Option<MediumMotor> {
-        if let Some(name) = Driver::find_name_by_driver("tacho-motor", "lego-ev3-m-motor") {
-            return Some(MediumMotor {
-                driver: Driver::new("tacho-motor", &name),
-            });
-        }
+    pub fn find() -> Ev3Result<MediumMotor> {
+        let name = Driver::find_name_by_driver("tacho-motor", "lego-ev3-m-motor")?;
 
-        None
+        Ok(MediumMotor {
+            driver: Driver::new("tacho-motor", &name),
+        })
     }
 
     /// Extract list of connected 'MediumMotor'
-    pub fn list() -> Vec<MediumMotor> {
-        Driver::find_names_by_driver("tacho-motor", "lego-ev3-m-motor")
-            .iter()
-            .map(|name| MediumMotor {
-                driver: Driver::new("tacho-motor", &name.to_owned()),
-            })
-            .collect()
+    pub fn list() -> Ev3Result<Vec<MediumMotor>> {
+        Ok(
+            Driver::find_names_by_driver("tacho-motor", "lego-ev3-m-motor")?
+                .iter()
+                .map(|name| MediumMotor {
+                    driver: Driver::new("tacho-motor", name),
+                })
+                .collect(),
+        )
     }
 }

@@ -1,129 +1,12 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::error::Error;
-use std::fmt;
-use std::fmt::Debug;
-use std::fs::{self, File, OpenOptions};
-use std::io::{Error as IoError, Read, Seek, SeekFrom, Write};
-use std::os::unix::fs::PermissionsExt;
-use std::rc::Rc;
+use std::fmt::{self, Debug};
+use std::fs;
 use std::string::String;
 
-use core::Port;
+use crate::{utils::OrErr, Attribute, Ev3Error, Ev3Result, Port};
 
-pub type AttributeResult<T> = Result<T, Ev3Error>;
-
-#[derive(Debug)]
-pub enum Ev3Error {
-    IoError { msg: String },
-    ParseError { msg: String },
-}
-impl From<IoError> for Ev3Error {
-    fn from(err: IoError) -> Ev3Error {
-        Ev3Error::IoError {
-            msg: err.description().to_owned(),
-        }
-    }
-}
-
-const ROOT_PATH: &str = "/sys/class/";
-
-#[derive(Clone)]
-pub struct Attribute {
-    file: Rc<RefCell<File>>,
-}
-
-impl Attribute {
-    pub fn new(class_name: &str, name: &str, attribute_name: &str) -> Option<Attribute> {
-        let file = Attribute::open_file(class_name, name, attribute_name);
-        if let Some(file) = file {
-            Some(Attribute {
-                file: Rc::new(RefCell::new(file)),
-            })
-        } else {
-            None
-        }
-    }
-
-    fn open_file(class_name: &str, name: &str, attribute_name: &str) -> Option<File> {
-        let mut filename = ROOT_PATH.to_owned();
-        filename.push_str(class_name);
-        filename.push_str("/");
-        filename.push_str(name);
-        filename.push_str("/");
-        filename.push_str(attribute_name);
-
-        // println!("Open file: {}", &filename);
-
-        let stat = fs::metadata(&filename);
-
-        if let Ok(stat) = stat {
-            let mode = stat.permissions().mode();
-
-            let readable = mode & 256 == 256;
-            let writeable = mode & 128 == 128;
-
-            let file = OpenOptions::new()
-                .read(readable)
-                .write(writeable)
-                .open(&filename);
-
-            file.ok()
-        } else {
-            None
-        }
-    }
-
-    fn get_str(&self) -> AttributeResult<String> {
-        let mut value = String::new();
-        let mut file = self.file.borrow_mut();
-        file.seek(SeekFrom::Start(0))?;
-        file.read_to_string(&mut value)?;
-        Ok(value.trim_end().to_owned())
-    }
-
-    fn set_str(&self, value: &str) -> AttributeResult<()> {
-        let mut file = self.file.borrow_mut();
-        file.seek(SeekFrom::Start(0))?;
-        file.write_all(value.as_bytes())?;
-        Ok(())
-    }
-
-    pub fn get<T>(&self) -> AttributeResult<T>
-    where
-        T: std::str::FromStr,
-        <T as std::str::FromStr>::Err: Error,
-    {
-        let value = self.get_str()?;
-        match value.parse::<T>() {
-            Ok(value) => Ok(value),
-            Err(e) => Err(Ev3Error::ParseError {
-                msg: e.description().to_owned(),
-            }),
-        }
-    }
-
-    pub fn set<T>(&self, value: T) -> AttributeResult<()>
-    where
-        T: std::string::ToString,
-    {
-        self.set_str(&value.to_string())
-    }
-
-    #[inline]
-    pub fn set_str_slice(&self, value: &str) -> AttributeResult<()> {
-        self.set_str(value)
-    }
-
-    pub fn get_vec(&self) -> AttributeResult<Vec<String>> {
-        let value = self.get_str()?;
-        let vec = value
-            .split_whitespace()
-            .map(|word| word.to_owned())
-            .collect();
-        Ok(vec)
-    }
-}
+pub const ROOT_PATH: &str = "/sys/class/";
 
 pub struct Driver {
     class_name: String,
@@ -144,114 +27,113 @@ impl Driver {
         class_name: &str,
         port: &dyn Port,
         driver_name: &str,
-    ) -> Option<String> {
+    ) -> Ev3Result<String> {
         let port_address = port.address();
 
         let mut filename = ROOT_PATH.to_owned();
         filename.push_str(class_name);
-        let paths = fs::read_dir(filename).unwrap();
+        let paths = fs::read_dir(filename)?;
 
         for path in paths {
-            let file_name = path.unwrap().file_name();
-            let name = file_name.to_str().unwrap();
+            let file_name = path?.file_name();
+            let name = file_name.to_str().or_err()?;
 
-            let address = Attribute::new(class_name, name, "address").unwrap();
+            let address = Attribute::new(class_name, name, "address")?;
 
-            if address
-                .get::<String>()
-                .unwrap()
-                .contains(port_address.as_str())
-            {
-                let driver = Attribute::new(class_name, name, "driver_name").unwrap();
+            if address.get::<String>()?.contains(port_address.as_str()) {
+                let driver = Attribute::new(class_name, name, "driver_name")?;
 
-                if driver.get::<String>().unwrap() == driver_name {
-                    return Some(name.to_owned());
+                if driver.get::<String>()? == driver_name {
+                    return Ok(name.to_owned());
                 }
             }
         }
-        None
+
+        Err(Ev3Error::NotFound)
     }
 
-    pub fn find_name_by_port(class_name: &str, port: &dyn Port) -> Option<String> {
+    pub fn find_name_by_port(class_name: &str, port: &dyn Port) -> Ev3Result<String> {
         let port_address = port.address();
 
         let mut filename = ROOT_PATH.to_owned();
         filename.push_str(class_name);
-        let paths = fs::read_dir(filename).unwrap();
+        let paths = fs::read_dir(filename)?;
 
         for path in paths {
-            let file_name = path.unwrap().file_name();
-            let name = file_name.to_str().unwrap();
+            let file_name = path?.file_name();
+            let name = file_name.to_str().or_err()?;
 
-            let address = Attribute::new(class_name, name, "address").unwrap();
+            let address = Attribute::new(class_name, name, "address")?;
 
-            if address
-                .get::<String>()
-                .unwrap()
-                .contains(port_address.as_str())
-            {
-                return Some(name.to_owned());
+            if address.get::<String>()?.contains(port_address.as_str()) {
+                return Ok(name.to_owned());
             }
         }
-        None
+
+        Err(Ev3Error::NotFound)
     }
 
-    pub fn find_name_by_driver(class_name: &str, driver_name: &str) -> Option<String> {
+    pub fn find_name_by_driver(class_name: &str, driver_name: &str) -> Ev3Result<String> {
         let mut filename = ROOT_PATH.to_owned();
         filename.push_str(class_name);
-        let paths = fs::read_dir(filename).unwrap();
+        let paths = fs::read_dir(filename)?;
 
         let mut found_name: Option<String> = None;
 
         for path in paths {
-            let file_name = path.unwrap().file_name();
-            let name = file_name.to_str().unwrap();
+            let file_name = path?.file_name();
+            let name = file_name.to_str().ok_or(Ev3Error::InternalError {
+                msg: "Cannot convert filename to str".to_owned(),
+            })?;
 
-            let driver = Attribute::new(class_name, name, "driver_name").unwrap();
+            let driver = Attribute::new(class_name, name, "driver_name")?;
 
-            if driver.get::<String>().unwrap() == driver_name {
+            if driver.get::<String>()? == driver_name {
                 match found_name {
-                    Some(_) => return None,
+                    Some(_) => return Err(Ev3Error::MultipleMatches),
                     None => found_name = Some(name.to_owned()),
                 }
             }
         }
 
-        found_name
+        found_name.ok_or(Ev3Error::NotFound)
     }
 
-    pub fn find_names_by_driver(class_name: &str, driver_name: &str) -> Vec<String> {
+    pub fn find_names_by_driver(class_name: &str, driver_name: &str) -> Ev3Result<Vec<String>> {
         let mut filename = ROOT_PATH.to_owned();
         filename.push_str(class_name);
-        let paths = fs::read_dir(filename).unwrap();
+        let paths = fs::read_dir(filename)?;
 
         let mut found_names = Vec::new();
         for path in paths {
-            let file_name = path.unwrap().file_name();
-            let name = file_name.to_str().unwrap();
+            let file_name = path?.file_name();
+            let name = file_name.to_str().or_err()?;
 
-            let driver = Attribute::new(class_name, name, "driver_name").unwrap();
+            let driver = Attribute::new(class_name, name, "driver_name")?;
 
-            if driver.get::<String>().unwrap() == driver_name {
+            if driver.get::<String>()? == driver_name {
                 found_names.push(name.to_owned());
             }
         }
 
-        found_names
+        Ok(found_names)
     }
 
     pub fn get_attribute(&self, attribute_name: &str) -> Attribute {
         let mut attributes = self.attributes.borrow_mut();
 
         if !attributes.contains_key(attribute_name) {
-            if let Some(v) =
+            if let Ok(v) =
                 Attribute::new(self.class_name.as_ref(), self.name.as_ref(), attribute_name)
             {
                 attributes.insert(attribute_name.to_owned(), v);
             };
         };
 
-        attributes.get(attribute_name).unwrap().clone()
+        attributes
+            .get(attribute_name)
+            .expect("Internal error in the attribute map")
+            .clone()
     }
 }
 

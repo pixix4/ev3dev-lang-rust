@@ -1,8 +1,5 @@
 use crate::sensors::{Sensor, SensorPort};
-use core::Device;
-use driver::Attribute;
-use driver::AttributeResult;
-use driver::Driver;
+use crate::{Attribute, Device, Driver, Ev3Result};
 
 /// Button state
 pub const MODE_TOUCH: &str = "TOUCH";
@@ -16,30 +13,24 @@ impl Sensor for TouchSensor {}
 
 impl TouchSensor {
     /// Try to get a `TouchSensor` on the given port. Returns `None` if port is not used or another device is connected.
-    pub fn new(port: SensorPort) -> Option<TouchSensor> {
-        if let Some(name) =
-            Driver::find_name_by_port_and_driver("lego-sensor", &port, "lego-ev3-touch")
-        {
-            return Some(TouchSensor {
-                driver: Driver::new("lego-sensor", &name),
-            });
-        }
+    pub fn new(port: SensorPort) -> Ev3Result<TouchSensor> {
+        let name = Driver::find_name_by_port_and_driver("lego-sensor", &port, "lego-ev3-touch")?;
 
-        None
+        Ok(TouchSensor {
+            driver: Driver::new("lego-sensor", &name),
+        })
     }
 
     /// Try to find a `TouchSensor`. Only returns a sensor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Option<TouchSensor> {
-        if let Some(name) = Driver::find_name_by_driver("lego-sensor", "lego-ev3-touch") {
-            return Some(TouchSensor {
-                driver: Driver::new("lego-sensor", &name),
-            });
-        }
+    pub fn find() -> Ev3Result<TouchSensor> {
+        let name = Driver::find_name_by_driver("lego-sensor", "lego-ev3-touch")?;
 
-        None
+        Ok(TouchSensor {
+            driver: Driver::new("lego-sensor", &name),
+        })
     }
 
-    pub fn get_pressed_state(&self) -> AttributeResult<bool> {
+    pub fn get_pressed_state(&self) -> Ev3Result<bool> {
         Ok(self.get_value0()? != 0)
     }
 }
