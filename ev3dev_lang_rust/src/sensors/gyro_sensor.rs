@@ -19,18 +19,12 @@ pub const MODE_GYRO_G_AND_A: &str = "GYRO-G&A";
 /// Calibration ???
 pub const MODE_GYRO_CAL: &str = "GYRO-CAL";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Device)]
 pub struct GyroSensor {
     driver: Driver,
 }
 
 impl Sensor for GyroSensor {}
-
-impl Device for GyroSensor {
-    fn get_attribute(&self, name: &str) -> Attribute {
-        self.driver.get_attribute(name)
-    }
-}
 
 impl GyroSensor {
     /// Try to get a `GyroSensor` on the given port. Returns `None` if port is not used or another device is connected.

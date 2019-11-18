@@ -25,18 +25,12 @@ pub const MODE_US_DC_CM: &str = "US-DC-CM";
 /// ??? - sets LEDs on, steady . Units in inches. Distance (0-1003)
 pub const MODE_US_DC_IN: &str = "US-DC-IN";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Device)]
 pub struct UltrasonicSensor {
     driver: Driver,
 }
 
 impl Sensor for UltrasonicSensor {}
-
-impl Device for UltrasonicSensor {
-    fn get_attribute(&self, name: &str) -> Attribute {
-        self.driver.get_attribute(name)
-    }
-}
 
 impl UltrasonicSensor {
     /// Try to get a `UltrasonicSensor` on the given port. Returns `None` if port is not used or another device is connected.

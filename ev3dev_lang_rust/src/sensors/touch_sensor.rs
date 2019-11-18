@@ -7,18 +7,12 @@ use driver::Driver;
 /// Button state
 pub const MODE_TOUCH: &str = "TOUCH";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Device)]
 pub struct TouchSensor {
     driver: Driver,
 }
 
 impl Sensor for TouchSensor {}
-
-impl Device for TouchSensor {
-    fn get_attribute(&self, name: &str) -> Attribute {
-        self.driver.get_attribute(name)
-    }
-}
 
 impl TouchSensor {
     /// Try to get a `TouchSensor` on the given port. Returns `None` if port is not used or another device is connected.

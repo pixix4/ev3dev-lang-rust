@@ -22,18 +22,12 @@ pub const MODE_RGB_RAW: &str = "RGB-RAW";
 /// Calibration ??? - sets LED color to red, flashing every 4 seconds, then goes continuous
 pub const MODE_COL_CAL: &str = "COL-CAL";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Device)]
 pub struct ColorSensor {
     driver: Driver,
 }
 
 impl Sensor for ColorSensor {}
-
-impl Device for ColorSensor {
-    fn get_attribute(&self, name: &str) -> Attribute {
-        self.driver.get_attribute(name)
-    }
-}
 
 impl ColorSensor {
     /// Try to get a `ColorSensor` on the given port. Returns `None` if port is not used or another device is connected.

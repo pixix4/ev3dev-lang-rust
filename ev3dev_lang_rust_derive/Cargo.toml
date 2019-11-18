@@ -1,0 +1,16 @@
+[package]
+name = "ev3dev-lang-rust-derive"
+version = "0.4.1"
+authors = ["Lars Westermann <lars-westermann@live.de>"]
+
+license = "MIT"
+
+repository = "https://github.com/pixix4/ev3dev-lang-rust"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = "1.0"

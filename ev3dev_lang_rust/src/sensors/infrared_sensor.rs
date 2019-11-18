@@ -22,18 +22,12 @@ pub const MODE_IR_S_ALT: &str = "IR-S-ALT";
 /// Calibration ???
 pub const MODE_IR_CAL: &str = "IR-CAL";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Device)]
 pub struct InfraredSensor {
     driver: Driver,
 }
 
 impl Sensor for InfraredSensor {}
-
-impl Device for InfraredSensor {
-    fn get_attribute(&self, name: &str) -> Attribute {
-        self.driver.get_attribute(name)
-    }
-}
 
 impl InfraredSensor {
     /// Try to get a `InfraredSensor` on the given port. Returns `None` if port is not used or another device is connected.

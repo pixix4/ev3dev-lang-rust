@@ -368,7 +368,7 @@ pub trait TachoMotor: Motor {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Device)]
 pub struct LargeMotor {
     driver: Driver,
 }
@@ -376,12 +376,6 @@ pub struct LargeMotor {
 impl Motor for LargeMotor {}
 
 impl TachoMotor for LargeMotor {}
-
-impl Device for LargeMotor {
-    fn get_attribute(&self, name: &str) -> Attribute {
-        self.driver.get_attribute(name)
-    }
-}
 
 impl LargeMotor {
     /// Try to get a `LargeMotor` on the given port. Returns `None` if port is not used or another device is connected.
@@ -419,7 +413,7 @@ impl LargeMotor {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Device)]
 pub struct MediumMotor {
     driver: Driver,
 }
@@ -427,12 +421,6 @@ pub struct MediumMotor {
 impl Motor for MediumMotor {}
 
 impl TachoMotor for MediumMotor {}
-
-impl Device for MediumMotor {
-    fn get_attribute(&self, name: &str) -> Attribute {
-        self.driver.get_attribute(name)
-    }
-}
 
 impl MediumMotor {
     /// Try to get a `MediumMotor` on the given port. Returns `None` if port is not used or another device is connected.

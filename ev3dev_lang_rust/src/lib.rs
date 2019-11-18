@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate ev3dev_lang_rust_derive;
+
 mod core;
 pub use core::*;
 mod driver;

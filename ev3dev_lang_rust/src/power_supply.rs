@@ -1,9 +1,9 @@
-use driver::Attribute;
-use driver::AttributeResult;
-use driver::Driver;
 use std::fs;
 
-#[derive(Debug, Clone)]
+use core::Device;
+use driver::{Attribute, AttributeResult, Driver};
+
+#[derive(Debug, Clone, Device)]
 pub struct PowerSupply {
     driver: Driver,
 }
@@ -23,10 +23,6 @@ impl PowerSupply {
             }
         }
         None
-    }
-
-    fn get_attribute(&self, name: &str) -> Attribute {
-        self.driver.get_attribute(name)
     }
 
     /// Returns the battery current in microamps
