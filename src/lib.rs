@@ -1,23 +1,13 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+mod core;
+pub use core::*;
+mod driver;
+pub use driver::*;
 
-pub mod driver;
-pub mod core;
-
-pub mod servo_motor;
-pub mod dc_motor;
-pub mod tacho_motor;
-
-pub mod color_sensor;
-pub mod gyro_sensor;
-pub mod touch_sensor;
-pub mod infrared_sensor;
-pub mod ultrasonic_sensor;
+pub mod motors;
+pub mod sensors;
 
 pub mod led;
-pub mod power_supply;
+pub use led::Led;
+
+mod power_supply;
+pub use power_supply::PowerSupply;
