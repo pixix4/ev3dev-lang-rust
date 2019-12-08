@@ -1,5 +1,5 @@
-use crate::sensors::{Sensor, SensorPort};
-use crate::{Attribute, Device, Driver, Ev3Result};
+use crate::sensors::Sensor;
+use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 
 /// Reflected light - sets LED color to red
 pub const MODE_COL_REFLECT: &str = "COL-REFLECT";
@@ -19,66 +19,62 @@ pub const MODE_RGB_RAW: &str = "RGB-RAW";
 /// Calibration ??? - sets LED color to red, flashing every 4 seconds, then goes continuous
 pub const MODE_COL_CAL: &str = "COL-CAL";
 
-#[derive(Debug, Clone, Device)]
+/// LEGO EV3 color sensor.
+#[derive(Debug, Clone, Device, Sensor, Findable)]
+#[class_name = "lego-sensor"]
+#[driver_name = "lego-ev3-color"]
+#[port = "crate::sensors::SensorPort"]
 pub struct ColorSensor {
     driver: Driver,
 }
 
-impl Sensor for ColorSensor {}
-
 impl ColorSensor {
-    /// Try to get a `ColorSensor` on the given port. Returns `None` if port is not used or another device is connected.
-    pub fn new(port: SensorPort) -> Ev3Result<ColorSensor> {
-        let name = Driver::find_name_by_port_and_driver("lego-sensor", &port, "lego-ev3-color")?;
-
-        Ok(ColorSensor {
-            driver: Driver::new("lego-sensor", &name),
-        })
-    }
-
-    /// Try to find a `ColorSensor`. Only returns a sensor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Ev3Result<ColorSensor> {
-        let name = Driver::find_name_by_driver("lego-sensor", "lego-ev3-color")?;
-
-        Ok(ColorSensor {
-            driver: Driver::new("lego-sensor", &name),
-        })
-    }
-
+    /// Reflected light - sets LED color to red
     pub fn set_mode_col_reflect(&self) -> Ev3Result<()> {
         self.set_mode(MODE_COL_REFLECT)
     }
 
+    /// Ambient light - sets LED color to blue (dimly lit)
     pub fn set_mode_col_ambient(&self) -> Ev3Result<()> {
         self.set_mode(MODE_COL_AMBIENT)
     }
 
+    /// Color - sets LED color to white (all LEDs rapidly cycling)
     pub fn set_mode_col_color(&self) -> Ev3Result<()> {
         self.set_mode(MODE_COL_COLOR)
     }
 
+    /// Raw Reflected - sets LED color to red
     pub fn set_mode_ref_raw(&self) -> Ev3Result<()> {
         self.set_mode(MODE_REF_RAW)
     }
 
+    /// Raw Color Components - sets LED color to white (all LEDs rapidly cycling)
     pub fn set_mode_rgb_raw(&self) -> Ev3Result<()> {
         self.set_mode(MODE_RGB_RAW)
     }
 
+    /// Calibration ??? - sets LED color to red, flashing every 4 seconds, then goes continuous
     pub fn set_mode_col_cal(&self) -> Ev3Result<()> {
         self.set_mode(MODE_COL_CAL)
     }
 
+    /// Red component of the detected color, in the range 0-1020.
     pub fn get_red(&self) -> Ev3Result<i32> {
         self.get_value0()
     }
+
+    /// Green component of the detected color, in the range 0-1020.
     pub fn get_green(&self) -> Ev3Result<i32> {
         self.get_value1()
     }
+
+    /// Blue component of the detected color, in the range 0-1020.
     pub fn get_blue(&self) -> Ev3Result<i32> {
         self.get_value2()
     }
 
+    /// Red, green and blue componets of the detected color, each in the range 0-1020
     pub fn get_rgb(&self) -> Ev3Result<(i32, i32, i32)> {
         let red = self.get_red()?;
         let green = self.get_green()?;

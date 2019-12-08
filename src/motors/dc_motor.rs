@@ -16,20 +16,6 @@ pub const STOP_ACTION_COAST: &str = "coast";
 pub const STOP_ACTION_BRAKE: &str = "brake";
 
 pub trait DcMotor: Motor {
-    fn get_address(&self) -> Ev3Result<String> {
-        self.get_attribute("address").get()
-    }
-    fn set_command(&self, command: &str) -> Ev3Result<()> {
-        self.get_attribute("command").set_str_slice(command)
-    }
-    fn get_commands(&self) -> Ev3Result<Vec<String>> {
-        self.get_attribute("commands").get_vec()
-    }
-
-    fn get_driver_name(&self) -> Ev3Result<String> {
-        self.get_attribute("driver_name").get()
-    }
-
     fn get_duty_cycle(&self) -> Ev3Result<i32> {
         self.get_attribute("duty_cycle").get()
     }

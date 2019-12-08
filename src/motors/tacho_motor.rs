@@ -1,5 +1,7 @@
-use crate::motors::{Motor, MotorPort};
-use crate::{Attribute, Device, Driver, Ev3Result};
+use crate::motors::Motor;
+use crate::{wait, Ev3Result};
+
+use std::time::Duration;
 
 /// Causes the motor to run until another command is sent.
 pub const RUN_FOREVER: &str = "run-forever";
@@ -311,13 +313,19 @@ pub trait TachoMotor: Motor {
         self.get_attribute("time_sp").set(time_sp)
     }
 
+    /// Runs the motor using the duty cycle specified by `duty_cycle_sp`.
+    /// Unlike other run commands, changing `duty_cycle_sp` while running will take effect immediately.
     fn run_direct(&self) -> Ev3Result<()> {
         self.set_command(RUN_DIRECT)
     }
+
+    /// Causes the motor to run until another command is sent.
     fn run_forever(&self) -> Ev3Result<()> {
         self.set_command(RUN_FOREVER)
     }
 
+    /// Runs the motor to an absolute position specified by `position_sp`
+    /// and then stops the motor using the command specified in `stop_action`.
     fn run_to_abs_pos(&self, position_sp: Option<i32>) -> Ev3Result<()> {
         if let Some(p) = position_sp {
             self.set_position_sp(p)?;
@@ -325,6 +333,9 @@ pub trait TachoMotor: Motor {
         self.set_command(RUN_TO_ABS_POS)
     }
 
+    /// Runs the motor to a position relative to the current position value.
+    /// The new position will be current `position` + `position_sp`.
+    /// When the new position is reached, the motor will stop using the command specified by `stop_action`.
     fn run_to_rel_pos(&self, position_sp: Option<i32>) -> Ev3Result<()> {
         if let Some(p) = position_sp {
             self.set_position_sp(p)?;
@@ -332,117 +343,94 @@ pub trait TachoMotor: Motor {
         self.set_command(RUN_TO_REL_POS)
     }
 
-    fn run_timed(&self, time_sp: Option<i32>) -> Ev3Result<()> {
-        if let Some(p) = time_sp {
+    /// Run the motor for the amount of time specified in `time_sp`
+    /// and then stops the motor using the command specified by `stop_action`.
+    fn run_timed(&self, time_sp: Option<Duration>) -> Ev3Result<()> {
+        if let Some(duration) = time_sp {
+            let p = duration.as_millis() as i32;
             self.set_time_sp(p)?;
         }
         self.set_command(RUN_TIMED)
     }
+
+    /// Stop any of the run commands before they are complete using the command specified by `stop_action`.
     fn stop(&self) -> Ev3Result<()> {
         self.set_command(STOP)
     }
+
+    /// Resets all of the motor parameter attributes to their default values.
+    /// This will also have the effect of stopping the motor.
     fn reset(&self) -> Ev3Result<()> {
         self.set_command(RESET)
     }
 
+    /// Power is being sent to the motor.
     fn is_running(&self) -> Ev3Result<bool> {
         Ok(self.get_state()?.iter().any(|state| state == STATE_RUNNING))
     }
+
+    /// The motor is ramping up or down and has not yet reached a pub constant output level.
     fn is_ramping(&self) -> Ev3Result<bool> {
         Ok(self.get_state()?.iter().any(|state| state == STATE_RAMPING))
     }
+
+    /// The motor is not turning, but rather attempting to hold a fixed position.
     fn is_holding(&self) -> Ev3Result<bool> {
         Ok(self.get_state()?.iter().any(|state| state == STATE_HOLDING))
     }
+
+    /// The motor is turning as fast as possible, but cannot reach its `speed_sp`.
     fn is_overloaded(&self) -> Ev3Result<bool> {
         Ok(self
             .get_state()?
             .iter()
             .any(|state| state == STATE_OVERLOADED))
     }
+
+    /// The motor is trying to run but is not turning at all.
     fn is_stalled(&self) -> Ev3Result<bool> {
         Ok(self.get_state()?.iter().any(|state| state == STATE_STALLED))
     }
-}
 
-#[derive(Debug, Clone, Device)]
-pub struct LargeMotor {
-    driver: Driver,
-}
-
-impl Motor for LargeMotor {}
-
-impl TachoMotor for LargeMotor {}
-
-impl LargeMotor {
-    /// Try to get a `LargeMotor` on the given port. Returns `None` if port is not used or another device is connected.
-    pub fn new(port: MotorPort) -> Ev3Result<LargeMotor> {
-        let name = Driver::find_name_by_port_and_driver("tacho-motor", &port, "lego-ev3-l-motor")?;
-
-        Ok(LargeMotor {
-            driver: Driver::new("tacho-motor", &name),
-        })
+    /// Wait until condition `cond` returns true or the `timeout` is reached.
+    /// The condition is checked when to the `state` attribute has changed.
+    /// If the `timeout` is `None` it will wait an infinite time.
+    fn wait<F>(&self, cond: F, timeout: Option<Duration>) -> bool
+    where
+        F: Fn() -> bool,
+    {
+        let fd = self.get_attribute("state").get_raw_fd();
+        wait::wait(fd, cond, timeout)
     }
 
-    /// Try to find a `LargeMotor`. Only returns a motor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Ev3Result<LargeMotor> {
-        let name = Driver::find_name_by_driver("tacho-motor", "lego-ev3-l-motor")?;
-
-        Ok(LargeMotor {
-            driver: Driver::new("tacho-motor", &name),
-        })
-    }
-
-    /// Extract list of connected 'LargeMotor'
-    pub fn list() -> Ev3Result<Vec<LargeMotor>> {
-        Ok(
-            Driver::find_names_by_driver("tacho-motor", "lego-ev3-l-motor")?
+    /// Wait while the `state` is in the vector `self.get_state()` or the `timeout` is reached.
+    /// If the `timeout` is `None` it will wait an infinite time.
+    fn wait_while(&self, state: &str, timeout: Option<Duration>) -> bool {
+        let cond = || {
+            self.get_state()
+                .unwrap_or_else(|_| vec![])
                 .iter()
-                .map(|name| LargeMotor {
-                    driver: Driver::new("tacho-motor", name),
-                })
-                .collect(),
-        )
-    }
-}
-
-#[derive(Debug, Clone, Device)]
-pub struct MediumMotor {
-    driver: Driver,
-}
-
-impl Motor for MediumMotor {}
-
-impl TachoMotor for MediumMotor {}
-
-impl MediumMotor {
-    /// Try to get a `MediumMotor` on the given port. Returns `None` if port is not used or another device is connected.
-    pub fn new(port: MotorPort) -> Ev3Result<MediumMotor> {
-        let name = Driver::find_name_by_port_and_driver("tacho-motor", &port, "lego-ev3-m-motor")?;
-
-        Ok(MediumMotor {
-            driver: Driver::new("tacho-motor", &name),
-        })
+                .all(|s| s != state)
+        };
+        self.wait(cond, timeout)
     }
 
-    /// Try to find a `MediumMotor`. Only returns a motor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Ev3Result<MediumMotor> {
-        let name = Driver::find_name_by_driver("tacho-motor", "lego-ev3-m-motor")?;
-
-        Ok(MediumMotor {
-            driver: Driver::new("tacho-motor", &name),
-        })
-    }
-
-    /// Extract list of connected 'MediumMotor'
-    pub fn list() -> Ev3Result<Vec<MediumMotor>> {
-        Ok(
-            Driver::find_names_by_driver("tacho-motor", "lego-ev3-m-motor")?
+    /// Wait until the `state` is in the vector `self.get_state()` or the `timeout` is reached.
+    /// If the `timeout` is `None` it will wait an infinite time.
+    fn wait_until(&self, state: &str, timeout: Option<Duration>) -> bool {
+        let cond = || {
+            self.get_state()
+                .unwrap_or_else(|_| vec![])
                 .iter()
-                .map(|name| MediumMotor {
-                    driver: Driver::new("tacho-motor", name),
-                })
-                .collect(),
-        )
+                .any(|s| s == state)
+        };
+        self.wait(cond, timeout)
+    }
+
+    /// Wait until the motor is not moving or the timeout is reached.
+    /// This is euqal to `wait_until(STATE_RUNNING, timeout)`
+    /// If the `timeout` is `None` it will wait an infinite time.
+    fn wait_until_not_moving(&self, timeout: Option<Duration>) -> bool {
+        self.wait_while(STATE_RUNNING, timeout)
     }
 }

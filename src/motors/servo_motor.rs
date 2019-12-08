@@ -10,17 +10,6 @@ pub const POLARITY: &str = "reversed";
 pub const STATE_RUNNING: &str = "running";
 
 pub trait ServoMotor: Motor {
-    fn get_address(&self) -> Ev3Result<String> {
-        self.get_attribute("address").get()
-    }
-    fn set_command(&self, command: &str) -> Ev3Result<()> {
-        self.get_attribute("command").set_str_slice(command)
-    }
-
-    fn get_driver_name(&self) -> Ev3Result<String> {
-        self.get_attribute("driver_name").get()
-    }
-
     fn get_polarity(&self) -> Ev3Result<String> {
         self.get_attribute("polarity").get()
     }

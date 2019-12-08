@@ -3,6 +3,7 @@ use std::error::Error;
 use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::os::unix::fs::PermissionsExt;
+use std::os::unix::io::{AsRawFd, RawFd};
 use std::rc::Rc;
 use std::string::String;
 
@@ -93,5 +94,9 @@ impl Attribute {
             .map(|word| word.to_owned())
             .collect();
         Ok(vec)
+    }
+
+    pub fn get_raw_fd(&self) -> RawFd {
+        self.file.borrow().as_raw_fd()
     }
 }

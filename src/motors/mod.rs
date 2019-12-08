@@ -1,10 +1,15 @@
 pub mod dc_motor;
+mod large_motor;
+mod medium_motor;
 pub mod servo_motor;
 pub mod tacho_motor;
 
 pub use self::dc_motor::DcMotor;
 pub use self::servo_motor::ServoMotor;
-pub use self::tacho_motor::{LargeMotor, MediumMotor, TachoMotor};
+pub use self::tacho_motor::TachoMotor;
+
+pub use self::large_motor::LargeMotor;
+pub use self::medium_motor::MediumMotor;
 
 use crate::{Device, Port};
 

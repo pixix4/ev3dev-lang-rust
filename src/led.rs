@@ -1,13 +1,14 @@
 use std::fs;
 
-use crate::{Attribute, Ev3Result, utils::OrErr};
+use crate::{utils::OrErr, Attribute, Ev3Result};
 
-pub const COLOR_OFF: (u8, u8) = (0, 0);
-pub const COLOR_RED: (u8, u8) = (255, 0);
-pub const COLOR_GREEN: (u8, u8) = (0, 255);
-pub const COLOR_AMBER: (u8, u8) = (255, 255);
-pub const COLOR_ORANGE: (u8, u8) = (255, 128);
-pub const COLOR_YELLOW: (u8, u8) = (25, 255);
+pub type Color = (u8, u8);
+pub const COLOR_OFF: Color = (0, 0);
+pub const COLOR_RED: Color = (255, 0);
+pub const COLOR_GREEN: Color = (0, 255);
+pub const COLOR_AMBER: Color = (255, 255);
+pub const COLOR_ORANGE: Color = (255, 128);
+pub const COLOR_YELLOW: Color = (25, 255);
 
 #[derive(Clone)]
 pub struct Led {
@@ -60,58 +61,58 @@ impl Led {
         })
     }
 
-    pub fn get_left_red(&self) -> Ev3Result<u8> {
+    fn get_left_red(&self) -> Ev3Result<u8> {
         self.left_red.get()
     }
-    pub fn set_left_red(&self, brightness: u8) -> Ev3Result<()> {
+    fn set_left_red(&self, brightness: u8) -> Ev3Result<()> {
         self.left_red.set(brightness)
     }
 
-    pub fn get_left_green(&self) -> Ev3Result<u8> {
+    fn get_left_green(&self) -> Ev3Result<u8> {
         self.left_green.get()
     }
-    pub fn set_left_green(&self, brightness: u8) -> Ev3Result<()> {
+    fn set_left_green(&self, brightness: u8) -> Ev3Result<()> {
         self.left_green.set(brightness)
     }
 
-    pub fn get_right_red(&self) -> Ev3Result<u8> {
+    fn get_right_red(&self) -> Ev3Result<u8> {
         self.right_red.get()
     }
-    pub fn set_right_red(&self, brightness: u8) -> Ev3Result<()> {
+    fn set_right_red(&self, brightness: u8) -> Ev3Result<()> {
         self.right_red.set(brightness)
     }
 
-    pub fn get_right_green(&self) -> Ev3Result<u8> {
+    fn get_right_green(&self) -> Ev3Result<u8> {
         self.right_green.get()
     }
-    pub fn set_right_green(&self, brightness: u8) -> Ev3Result<()> {
+    fn set_right_green(&self, brightness: u8) -> Ev3Result<()> {
         self.right_green.set(brightness)
     }
 
-    pub fn get_left_color(&self) -> Ev3Result<(u8, u8)> {
+    pub fn get_left_color(&self) -> Ev3Result<Color> {
         let red = self.get_left_red()?;
         let green = self.get_left_green()?;
 
         Ok((red, green))
     }
-    pub fn set_left_color(&self, color: (u8, u8)) -> Ev3Result<()> {
+    pub fn set_left_color(&self, color: Color) -> Ev3Result<()> {
         self.set_left_red(color.0)?;
         self.set_left_green(color.1)
     }
 
-    pub fn get_right_color(&self) -> Ev3Result<(u8, u8)> {
+    pub fn get_right_color(&self) -> Ev3Result<Color> {
         let red = self.get_right_red()?;
         let green = self.get_right_green()?;
 
         Ok((red, green))
     }
-    pub fn set_right_color(&self, color: (u8, u8)) -> Ev3Result<()> {
+    pub fn set_right_color(&self, color: Color) -> Ev3Result<()> {
         self.set_right_red(color.0)?;
         self.set_right_green(color.1)
     }
 
     /// Returns None if left and right colors are different.
-    pub fn get_color(&self) -> Ev3Result<Option<(u8, u8)>> {
+    pub fn get_color(&self) -> Ev3Result<Option<Color>> {
         let left = self.get_left_color()?;
         let right = self.get_right_color()?;
 
@@ -121,7 +122,7 @@ impl Led {
             Ok(None)
         }
     }
-    pub fn set_color(&self, color: (u8, u8)) -> Ev3Result<()> {
+    pub fn set_color(&self, color: Color) -> Ev3Result<()> {
         self.set_left_color(color)?;
         self.set_right_color(color)
     }

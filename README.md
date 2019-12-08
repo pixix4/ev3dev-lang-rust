@@ -11,14 +11,15 @@ Currently this project is not compatible with the BrickPi platform.
 ```rust
 extern crate ev3dev_lang_rust;
 
+use ev3dev_lang_rust::prelude::*;
 use ev3dev_lang_rust::Ev3Result;
-use ev3dev_lang_rust::motors::{LargeMotor, TachoMotor, MotorPort};
+use ev3dev_lang_rust::motors::{LargeMotor, MotorPort};
 use ev3dev_lang_rust::sensors::ColorSensor;
 
-fn main() -> Result<()> {
+fn main() -> Ev3Result<()> {
 
     // Get large motor on port outA.
-    let large_motor = LargeMotor::new(MotorPort::OutA)?;
+    let large_motor = LargeMotor::get(MotorPort::OutA)?;
 
     // Set command "run-direct".
     large_motor.run_direct()?;
@@ -43,22 +44,29 @@ fn main() -> Result<()> {
 
 1. Create Dockerfile
     ```dockerfile
-    FROM ubuntu:18.04
+    FROM debian:stretch
 
+    RUN dpkg --add-architecture armel
     RUN apt update
+
+    # Fix debian package alias
+    RUN sed -i "s#deb http://security.debian.org/debian-security stretch/updates main#deb http://deb.debian.org/debian-security stretch/updates main#g" /etc/apt/sources.list
 
     # Install curl for rust installation
     # Install g++ as buildscript compiler
     # Install g++-arm-linux-gnueabi as cross compiler
-    RUN apt --yes install curl g++ g++-arm-linux-gnueabi
+    RUN apt --yes install curl g++ g++-arm-linux-gnueabi crossbuild-essential-armel
 
     # Instull rust for host platform
-    RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+    RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
     ENV PATH "$PATH:/root/.cargo/bin"
 
     # Add stdlib for target platform
     RUN rustup target add armv5te-unknown-linux-gnueabi
+
+    # docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust-cross
+    # cargo build --release --target armv5te-unknown-linux-gnueabi
     ```
 
 2. Build docker image

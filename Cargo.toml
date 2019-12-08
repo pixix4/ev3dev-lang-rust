@@ -1,5 +1,26 @@
+[package]
+name = "ev3dev-lang-rust"
+version = "0.5.0"
+authors = ["Lars Westermann <lars-westermann@live.de>"]
+
+description = "Rust language bindings for ev3dev"
+keywords = ["ev3", "ev3dev", "lego", "mindstorms"]
+categories = ["api-bindings", "embedded", "hardware-support"]
+
+license = "MIT"
+
+repository = "https://github.com/pixix4/ev3dev-lang-rust"
+readme = "README.md"
+
+[badges]
+travis-ci = { repository = "pixix4/ev3dev-lang-rust", branch = "master" }
+maintenance = { status = "actively-developed" }
+
+[dependencies]
+ev3dev-lang-rust-derive = { path = "ev3dev_lang_rust_derive", version="0.5" }
+libc = "0.2"
+
 [workspace]
 members = [
-    "ev3dev_lang_rust",
     "ev3dev_lang_rust_derive",
 ]

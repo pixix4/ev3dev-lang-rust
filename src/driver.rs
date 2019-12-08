@@ -30,9 +30,7 @@ impl Driver {
     ) -> Ev3Result<String> {
         let port_address = port.address();
 
-        let mut filename = ROOT_PATH.to_owned();
-        filename.push_str(class_name);
-        let paths = fs::read_dir(filename)?;
+        let paths = fs::read_dir(format!("{}{}", ROOT_PATH, class_name))?;
 
         for path in paths {
             let file_name = path?.file_name();
@@ -40,7 +38,7 @@ impl Driver {
 
             let address = Attribute::new(class_name, name, "address")?;
 
-            if address.get::<String>()?.contains(port_address.as_str()) {
+            if address.get::<String>()?.contains(&port_address) {
                 let driver = Attribute::new(class_name, name, "driver_name")?;
 
                 if driver.get::<String>()? == driver_name {
@@ -55,9 +53,7 @@ impl Driver {
     pub fn find_name_by_port(class_name: &str, port: &dyn Port) -> Ev3Result<String> {
         let port_address = port.address();
 
-        let mut filename = ROOT_PATH.to_owned();
-        filename.push_str(class_name);
-        let paths = fs::read_dir(filename)?;
+        let paths = fs::read_dir(format!("{}{}", ROOT_PATH, class_name))?;
 
         for path in paths {
             let file_name = path?.file_name();
@@ -65,7 +61,7 @@ impl Driver {
 
             let address = Attribute::new(class_name, name, "address")?;
 
-            if address.get::<String>()?.contains(port_address.as_str()) {
+            if address.get::<String>()?.contains(&port_address) {
                 return Ok(name.to_owned());
             }
         }
@@ -74,35 +70,19 @@ impl Driver {
     }
 
     pub fn find_name_by_driver(class_name: &str, driver_name: &str) -> Ev3Result<String> {
-        let mut filename = ROOT_PATH.to_owned();
-        filename.push_str(class_name);
-        let paths = fs::read_dir(filename)?;
+        let mut names = Driver::find_names_by_driver(class_name, driver_name)?;
 
-        let mut found_name: Option<String> = None;
-
-        for path in paths {
-            let file_name = path?.file_name();
-            let name = file_name.to_str().ok_or(Ev3Error::InternalError {
-                msg: "Cannot convert filename to str".to_owned(),
-            })?;
-
-            let driver = Attribute::new(class_name, name, "driver_name")?;
-
-            if driver.get::<String>()? == driver_name {
-                match found_name {
-                    Some(_) => return Err(Ev3Error::MultipleMatches),
-                    None => found_name = Some(name.to_owned()),
-                }
-            }
+        match names.len() {
+            0 => Err(Ev3Error::NotFound),
+            1 => Ok(names
+                .pop()
+                .expect("Name vector contains exactly one element")),
+            _ => Err(Ev3Error::MultipleMatches),
         }
-
-        found_name.ok_or(Ev3Error::NotFound)
     }
 
     pub fn find_names_by_driver(class_name: &str, driver_name: &str) -> Ev3Result<Vec<String>> {
-        let mut filename = ROOT_PATH.to_owned();
-        filename.push_str(class_name);
-        let paths = fs::read_dir(filename)?;
+        let paths = fs::read_dir(format!("{}{}", ROOT_PATH, class_name))?;
 
         let mut found_names = Vec::new();
         for path in paths {

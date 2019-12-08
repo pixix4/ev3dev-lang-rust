@@ -1,5 +1,5 @@
-use crate::sensors::{Sensor, SensorPort};
-use crate::{Attribute, Device, Driver, Ev3Result};
+use crate::sensors::Sensor;
+use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 
 /// Proximity
 pub const MODE_IR_PROX: &str = "IR-PROX";
@@ -19,52 +19,42 @@ pub const MODE_IR_S_ALT: &str = "IR-S-ALT";
 /// Calibration ???
 pub const MODE_IR_CAL: &str = "IR-CAL";
 
-#[derive(Debug, Clone, Device)]
+/// LEGO EV3 infrared sensor.
+#[derive(Debug, Clone, Device, Findable, Sensor)]
+#[class_name = "lego-sensor"]
+#[driver_name = "lego-ev3-ir"]
+#[port = "crate::sensors::SensorPort"]
 pub struct InfraredSensor {
     driver: Driver,
 }
 
-impl Sensor for InfraredSensor {}
-
 impl InfraredSensor {
-    /// Try to get a `InfraredSensor` on the given port. Returns `None` if port is not used or another device is connected.
-    pub fn new(port: SensorPort) -> Ev3Result<InfraredSensor> {
-        let name = Driver::find_name_by_port_and_driver("lego-sensor", &port, "lego-ev3-ir")?;
-
-        Ok(InfraredSensor {
-            driver: Driver::new("lego-sensor", &name),
-        })
-    }
-
-    /// Try to find a `InfraredSensor`. Only returns a sensor if their is exactly one connected, `None` otherwise.
-    pub fn find() -> Ev3Result<InfraredSensor> {
-        let name = Driver::find_name_by_driver("lego-sensor", "lego-ev3-ir")?;
-
-        Ok(InfraredSensor {
-            driver: Driver::new("lego-sensor", &name),
-        })
-    }
-
+    /// Proximity
     pub fn set_mode_ir_prox(&self) -> Ev3Result<()> {
         self.set_mode(MODE_IR_PROX)
     }
 
+    /// IR Seeker
     pub fn set_mode_ir_seek(&self) -> Ev3Result<()> {
         self.set_mode(MODE_IR_SEEK)
     }
 
+    /// IR Remote Control
     pub fn set_mode_ir_remote(&self) -> Ev3Result<()> {
         self.set_mode(MODE_IR_REMOTE)
     }
 
+    /// IR Remote Control
     pub fn set_mode_ir_rem_a(&self) -> Ev3Result<()> {
         self.set_mode(MODE_IR_REM_A)
     }
 
+    /// Alternate IR Seeker ???
     pub fn set_mode_ir_s_alt(&self) -> Ev3Result<()> {
         self.set_mode(MODE_IR_S_ALT)
     }
 
+    /// Calibration ???
     pub fn set_mode_ir_cal(&self) -> Ev3Result<()> {
         self.set_mode(MODE_IR_CAL)
     }
