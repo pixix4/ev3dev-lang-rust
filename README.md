@@ -1,6 +1,7 @@
 # Rust language bindings for ev3dev
 
 [![Build Status](https://travis-ci.org/pixix4/ev3dev-lang-rust.svg?branch=master)](https://travis-ci.org/pixix4/ev3dev-lang-rust)
+[![Latest version](https://img.shields.io/crates/v/ev3dev-lang-rust.svg)](https://crates.io/crates/ev3dev-lang-rust)
 
 ## Notice
 

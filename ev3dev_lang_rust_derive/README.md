@@ -1,5 +1,8 @@
 # Derive macros for ev3dev_lang_rust
 
+[![Build Status](https://travis-ci.org/pixix4/ev3dev-lang-rust.svg?branch=master)](https://travis-ci.org/pixix4/ev3dev-lang-rust)
+[![Latest version](https://img.shields.io/crates/v/ev3dev-lang-rust-derive.svg)](https://crates.io/crates/ev3dev-lang-rust-derive)
+
 This crate provides some derive macros to simplify the codebase.
 
 The following traits can be automatically derived:
