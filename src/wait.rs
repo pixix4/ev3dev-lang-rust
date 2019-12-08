@@ -13,14 +13,21 @@ use std::time::{Duration, Instant};
 ///
 /// # Example
 /// ```
-/// let fd = File::open(...).unwrap().as_raw_fd();
-/// let cond = || {
-///     ...
-///     true
-/// };
-/// let timeout = Duration::from_millis(2000);
-///
-/// wait::wait(fd, cond, timeout);
+/// use std::fs::File;
+/// use std::os::unix::io::AsRawFd;
+/// use std::time::Duration;
+/// 
+/// use ev3dev_lang_rust::wait;
+/// 
+/// if let Ok(file) = File::open("...") {
+///     let cond = || {
+///         // ...
+///         true
+///     };
+///     let timeout = Duration::from_millis(2000);
+/// 
+///     wait::wait(file.as_raw_fd(), cond, Some(timeout));
+/// }
 /// ```
 pub fn wait<F>(fd: RawFd, cond: F, timeout: Option<Duration>) -> bool
 where
