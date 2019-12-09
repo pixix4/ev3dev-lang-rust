@@ -1,25 +1,33 @@
+//! LEGO EV3 ultrasonic sensor
+
 use crate::sensors::Sensor;
 use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 
-/// Continuous measurement - sets LEDs on, steady. Units in centimeters. Distance (0-2550)
+/// Continuous measurement - sets LEDs on, steady.
+/// Units in centimeters. Distance (0-2550)
 pub const MODE_US_DIST_CM: &str = "US-DIST-CM";
 
-/// Continuous measurement - sets LEDs on, steady. Units in inches. Distance (0-1003)
+/// Continuous measurement - sets LEDs on, steady.
+/// Units in inches. Distance (0-1003)
 pub const MODE_US_DIST_IN: &str = "US-DIST-IN";
 
 /// Listen - sets LEDs on, blinking. Presence (0-1)
 pub const MODE_US_LISTEN: &str = "US-LISTEN";
 
-/// Single measurement - LEDs on momentarily when mode is set, then off. Units in centimeters. Distance (0-2550)
+/// Single measurement - LEDs on momentarily when mode is set, then off.
+/// Units in centimeters. Distance (0-2550)
 pub const MODE_US_SI_CM: &str = "US-SI-CM";
 
-/// Single measurement - LEDs on momentarily when mode is set, then off. Units in inches. Distance (0-1003)
+/// Single measurement - LEDs on momentarily when mode is set, then off.
+/// Units in inches. Distance (0-1003)
 pub const MODE_US_SI_IN: &str = "US-SI-IN";
 
-/// ??? - sets LEDs on, steady . Units in centimeters. Distance (0-2550)
+/// ??? - sets LEDs on, steady.
+/// Units in centimeters. Distance (0-2550)
 pub const MODE_US_DC_CM: &str = "US-DC-CM";
 
-/// ??? - sets LEDs on, steady . Units in inches. Distance (0-1003)
+/// ??? - sets LEDs on, steady.
+/// Units in inches. Distance (0-1003)
 pub const MODE_US_DC_IN: &str = "US-DC-IN";
 
 /// LEGO EV3 ultrasonic sensor.

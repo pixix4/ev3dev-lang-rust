@@ -1,16 +1,32 @@
+//! The leds on top of the EV3 brick.
+
 use std::fs;
 
 use crate::{utils::OrErr, Attribute, Ev3Result};
 
+/// Color type.
 pub type Color = (u8, u8);
+
+/// Led off.
 pub const COLOR_OFF: Color = (0, 0);
+
+/// Led color red
 pub const COLOR_RED: Color = (255, 0);
+
+/// Led color green.
 pub const COLOR_GREEN: Color = (0, 255);
+
+/// Led color amber.
 pub const COLOR_AMBER: Color = (255, 255);
+
+/// Led color orange.
 pub const COLOR_ORANGE: Color = (255, 128);
+
+/// LED color yellow.
 pub const COLOR_YELLOW: Color = (25, 255);
 
-#[derive(Clone)]
+/// The leds on top of the EV3 brick.
+#[derive(Debug, Clone)]
 pub struct Led {
     left_red: Attribute,
     left_green: Attribute,
@@ -19,6 +35,7 @@ pub struct Led {
 }
 
 impl Led {
+    /// Create a new instance of the `Led` struct.
     pub fn new() -> Ev3Result<Led> {
         let mut left_red_name = String::new();
         let mut left_green_name = String::new();
@@ -61,57 +78,75 @@ impl Led {
         })
     }
 
+    /// Returns the current red value of the left led.
     fn get_left_red(&self) -> Ev3Result<u8> {
         self.left_red.get()
     }
+
+    /// Sets the red value of the left led.
     fn set_left_red(&self, brightness: u8) -> Ev3Result<()> {
         self.left_red.set(brightness)
     }
 
+    /// Returns the current green value of the left led.
     fn get_left_green(&self) -> Ev3Result<u8> {
         self.left_green.get()
     }
+
+    /// Sets the green value of the left led.
     fn set_left_green(&self, brightness: u8) -> Ev3Result<()> {
         self.left_green.set(brightness)
     }
 
+    /// Returns the current red value of the right led.
     fn get_right_red(&self) -> Ev3Result<u8> {
         self.right_red.get()
     }
+
+    /// Sets the red value of the right led.
     fn set_right_red(&self, brightness: u8) -> Ev3Result<()> {
         self.right_red.set(brightness)
     }
 
+    /// Returns the current green value of the right led.
     fn get_right_green(&self) -> Ev3Result<u8> {
         self.right_green.get()
     }
+
+    /// Sets the green value of the right led.
     fn set_right_green(&self, brightness: u8) -> Ev3Result<()> {
         self.right_green.set(brightness)
     }
 
+    /// Returns the current color value of the left led.
     pub fn get_left_color(&self) -> Ev3Result<Color> {
         let red = self.get_left_red()?;
         let green = self.get_left_green()?;
 
         Ok((red, green))
     }
+
+    /// Sets the color value of the left led.
     pub fn set_left_color(&self, color: Color) -> Ev3Result<()> {
         self.set_left_red(color.0)?;
         self.set_left_green(color.1)
     }
 
+    /// Returns the current color value of the right led.
     pub fn get_right_color(&self) -> Ev3Result<Color> {
         let red = self.get_right_red()?;
         let green = self.get_right_green()?;
 
         Ok((red, green))
     }
+
+    /// Sets the color value of the right led.
     pub fn set_right_color(&self, color: Color) -> Ev3Result<()> {
         self.set_right_red(color.0)?;
         self.set_right_green(color.1)
     }
 
-    /// Returns None if left and right colors are different.
+    /// Returns the color value of both leds or `None` if they are different.
     pub fn get_color(&self) -> Ev3Result<Option<Color>> {
         let left = self.get_left_color()?;
         let right = self.get_right_color()?;
@@ -122,6 +157,8 @@ impl Led {
             Ok(None)
         }
     }
+
+    /// Sets the color value of both leds.
     pub fn set_color(&self, color: Color) -> Ev3Result<()> {
         self.set_left_color(color)?;
         self.set_right_color(color)

@@ -1,6 +1,8 @@
 use crate::{Attribute, Ev3Result};
 
+/// The ev3dev device base trait
 pub trait Device {
+    /// Returns the attribute wrapper for an attribute name.
     fn get_attribute(&self, name: &str) -> Attribute;
 
     /// Returns the name of the port that the motor is connected to.

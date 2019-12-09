@@ -1,8 +1,25 @@
-use crate::{Ev3Result, Port};
+use crate::{Device, Ev3Result, Port};
 
+/// Helper trait to create a new `Device` instance.
+///
+/// Can be automatically derived. Therefore are 3 parameters required:
+/// * `class_name: &str`
+/// * `driver_name: &str`
+/// * `port: dyn ev3dev_lang_rust::Motor`
+///
+/// # Example:
+///
+/// #[derive(Debug, Clone, Device, Findable, Motor, TachoMotor)]
+/// #[class_name = "tacho-motor"]
+/// #[driver_name = "lego-ev3-l-motor"]
+/// #[port = "crate::motors::MotorPort"]
+/// pub struct LargeMotor {
+///     driver: Driver,
+/// }
 pub trait Findable<PortType>
 where
     Self: std::marker::Sized,
+    Self: Device,
     PortType: Port,
 {
     /// Extract list of connected 'Self'

@@ -1,3 +1,5 @@
+//! # Container module for sensor types
+
 pub mod color_sensor;
 pub use self::color_sensor::ColorSensor;
 
@@ -15,6 +17,7 @@ pub use self::ultrasonic_sensor::UltrasonicSensor;
 
 use crate::{Device, Ev3Result, Port};
 
+/// Container trait to indicate something is a sensor
 pub trait Sensor: Device {
     /// Reading the file will give the unscaled raw values in the `value<N>` attributes.
     /// Use `bin_data_format`, `num_values` and the individual sensor documentation to determine how to interpret the data.
@@ -89,27 +92,42 @@ pub trait Sensor: Device {
         self.get_attribute("units").get()
     }
 
+    /// Returns the current `value0` value if available.
     fn get_value0(&self) -> Ev3Result<i32> {
         self.get_attribute("value0").get()
     }
+
+    /// Returns the current `value1` value if available.
     fn get_value1(&self) -> Ev3Result<i32> {
         self.get_attribute("value1").get()
     }
+
+    /// Returns the current `value2` value if available.
     fn get_value2(&self) -> Ev3Result<i32> {
         self.get_attribute("value2").get()
     }
+
+    /// Returns the current `value3` value if available.
     fn get_value3(&self) -> Ev3Result<i32> {
         self.get_attribute("value3").get()
     }
+
+    /// Returns the current `value4` value if available.
     fn get_value4(&self) -> Ev3Result<i32> {
         self.get_attribute("value4").get()
     }
+
+    /// Returns the current `value5` value if available.
     fn get_value5(&self) -> Ev3Result<i32> {
         self.get_attribute("value5").get()
     }
+
+    /// Returns the current `value6` value if available.
     fn get_value6(&self) -> Ev3Result<i32> {
         self.get_attribute("value6").get()
     }
+
+    /// Returns the current `value7` value if available.
     fn get_value7(&self) -> Ev3Result<i32> {
         self.get_attribute("value7").get()
     }
@@ -120,11 +138,16 @@ pub trait Sensor: Device {
     }
 }
 
+/// EV3 ports `in1` to `in4`
 #[derive(Debug, Copy, Clone)]
 pub enum SensorPort {
+    /// EV3 `in1` port
     In1,
+    /// EV3 `in2` port
     In2,
+    /// EV3 `in3` port
     In3,
+    /// EV3 `in4` port
     In4,
 }
 

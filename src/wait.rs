@@ -1,3 +1,6 @@
+//! Utility functions for cpu efficent `wait` commands.
+//! Uses the `libc::epoll_wait` that only works on linux systems.
+
 use libc;
 use std::os::unix::io::RawFd;
 use std::time::{Duration, Instant};
@@ -16,16 +19,16 @@ use std::time::{Duration, Instant};
 /// use std::fs::File;
 /// use std::os::unix::io::AsRawFd;
 /// use std::time::Duration;
-/// 
+///
 /// use ev3dev_lang_rust::wait;
-/// 
+///
 /// if let Ok(file) = File::open("...") {
 ///     let cond = || {
 ///         // ...
 ///         true
 ///     };
 ///     let timeout = Duration::from_millis(2000);
-/// 
+///
 ///     wait::wait(file.as_raw_fd(), cond, Some(timeout));
 /// }
 /// ```

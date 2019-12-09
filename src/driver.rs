@@ -1,3 +1,6 @@
+//! Helper struct that manages attributes.
+//! It creates an `Attribute` instance if it does not exists or uses a cached one.
+
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt::{self, Debug};
@@ -6,8 +9,11 @@ use std::string::String;
 
 use crate::{utils::OrErr, Attribute, Ev3Error, Ev3Result, Port};
 
-pub const ROOT_PATH: &str = "/sys/class/";
+/// The root driver path `/sys/class/`.
+const ROOT_PATH: &str = "/sys/class/";
 
+/// Helper struct that manages attributes.
+/// It creates an `Attribute` instance if it does not exists or uses a cached one.
 pub struct Driver {
     class_name: String,
     name: String,
@@ -15,6 +21,8 @@ pub struct Driver {
 }
 
 impl Driver {
+    /// Returns a new `Driver`.
+    /// All attributes created by this driver will use the path `/sys/class/{class_name}/{name}`.
     pub fn new(class_name: &str, name: &str) -> Driver {
         Driver {
             class_name: class_name.to_owned(),
@@ -23,6 +31,9 @@ impl Driver {
         }
     }
 
+    /// Returns the name of the device with the given `class_name`, `driver_name` and at the given `port`.
+    ///
+    /// Returns `Ev3Error::NotFound` if no such device exists.
     pub fn find_name_by_port_and_driver(
         class_name: &str,
         port: &dyn Port,
@@ -50,6 +61,10 @@ impl Driver {
         Err(Ev3Error::NotFound)
     }
 
+    /// Returns the name of the device with the given `class_name` and at the given `port`.
+    ///
+    /// Returns `Ev3Error::NotFound` if no such device exists.
+    /// Returns `Ev3Error::MultipleMatches` if more then one matching device exists.
     pub fn find_name_by_port(class_name: &str, port: &dyn Port) -> Ev3Result<String> {
         let port_address = port.address();
 
@@ -69,6 +84,10 @@ impl Driver {
         Err(Ev3Error::NotFound)
     }
 
+    /// Returns the name of the device with the given `class_name`.
+    ///
+    /// Returns `Ev3Error::NotFound` if no such device exists.
+    /// Returns `Ev3Error::MultipleMatches` if more then one matching device exists.
     pub fn find_name_by_driver(class_name: &str, driver_name: &str) -> Ev3Result<String> {
         let mut names = Driver::find_names_by_driver(class_name, driver_name)?;
 
@@ -81,6 +100,7 @@ impl Driver {
         }
     }
 
+    /// Returns the names of the devices with the given `class_name`.
     pub fn find_names_by_driver(class_name: &str, driver_name: &str) -> Ev3Result<Vec<String>> {
         let paths = fs::read_dir(format!("{}{}", ROOT_PATH, class_name))?;
 
@@ -99,6 +119,8 @@ impl Driver {
         Ok(found_names)
     }
 
+    /// Return the `Attribute` wrapper for the given `attribute_name`.
+    /// Creates a new one if it does not exist.
     pub fn get_attribute(&self, attribute_name: &str) -> Attribute {
         let mut attributes = self.attributes.borrow_mut();
 

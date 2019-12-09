@@ -1,3 +1,5 @@
+//! # Container module for motor types
+
 pub mod dc_motor;
 mod large_motor;
 mod medium_motor;
@@ -13,12 +15,19 @@ pub use self::medium_motor::MediumMotor;
 
 use crate::{Device, Port};
 
+/// Container trait to indicate something is a motor
 pub trait Motor: Device {}
 
+/// EV3 ports `outA` to `outD`
+#[derive(Debug, Copy, Clone)]
 pub enum MotorPort {
+    /// EV3 `outA` port
     OutA,
+    /// EV3 `outB` port
     OutB,
+    /// EV3 `outC` port
     OutC,
+    /// EV3 `outD` port
     OutD,
 }
 

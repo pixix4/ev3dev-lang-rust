@@ -1,3 +1,5 @@
+//! Touch Sensor
+
 use crate::sensors::Sensor;
 use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 

@@ -1,3 +1,4 @@
+/// A wrapper to a attribute file in the `/sys/class/` directory.
 use std::cell::RefCell;
 use std::error::Error;
 use std::fs::{self, File, OpenOptions};
@@ -9,29 +10,20 @@ use std::string::String;
 
 use crate::{Ev3Error, Ev3Result};
 
-pub const ROOT_PATH: &str = "/sys/class/";
+/// The root driver path `/sys/class/`.
+const ROOT_PATH: &str = "/sys/class/";
 
-#[derive(Clone)]
+/// A wrapper to a attribute file in the `/sys/class/` directory.
+#[derive(Debug, Clone)]
 pub struct Attribute {
     file: Rc<RefCell<File>>,
 }
 
 impl Attribute {
+    /// Create a new `Attribute` instance that wrappes
+    /// the file `/sys/class/{class_name}/{name}{attribute_name}`.
     pub fn new(class_name: &str, name: &str, attribute_name: &str) -> Ev3Result<Attribute> {
-        let file = Attribute::open_file(class_name, name, attribute_name)?;
-
-        Ok(Attribute {
-            file: Rc::new(RefCell::new(file)),
-        })
-    }
-
-    fn open_file(class_name: &str, name: &str, attribute_name: &str) -> Ev3Result<File> {
-        let mut filename = ROOT_PATH.to_owned();
-        filename.push_str(class_name);
-        filename.push_str("/");
-        filename.push_str(name);
-        filename.push_str("/");
-        filename.push_str(attribute_name);
+        let filename = format!("{}{}/{}/{}", ROOT_PATH, class_name, name, attribute_name);
 
         let stat = fs::metadata(&filename)?;
 
@@ -40,12 +32,17 @@ impl Attribute {
         let readable = mode & 256 == 256;
         let writeable = mode & 128 == 128;
 
-        Ok(OpenOptions::new()
+        let file = OpenOptions::new()
             .read(readable)
             .write(writeable)
-            .open(&filename)?)
+            .open(&filename)?;
+
+        Ok(Attribute {
+            file: Rc::new(RefCell::new(file)),
+        })
     }
 
+    /// Returns the current value of the wrapped file.
     fn get_str(&self) -> Ev3Result<String> {
         let mut value = String::new();
         let mut file = self.file.borrow_mut();
@@ -54,6 +51,8 @@ impl Attribute {
         Ok(value.trim_end().to_owned())
     }
 
+    /// Sets the value of the wrapped file.
+    /// Returns a `Ev3Result::InternalError` if the file is not writable.
     fn set_str(&self, value: &str) -> Ev3Result<()> {
         let mut file = self.file.borrow_mut();
         file.seek(SeekFrom::Start(0))?;
@@ -61,6 +60,9 @@ impl Attribute {
         Ok(())
     }
 
+    /// Returns the current value of the wrapped file.
+    /// The value is parsed to the type `T`.
+    /// Returns a `Ev3Result::InternalError` if the current value is not parsable to type `T`.
     pub fn get<T>(&self) -> Ev3Result<T>
     where
         T: std::str::FromStr,
@@ -75,6 +77,9 @@ impl Attribute {
         }
     }
 
+    /// Sets the value of the wrapped file.
+    /// The value is parsed from the type `T`.
+    /// Returns a `Ev3Result::InternalError` if the file is not writable.
     pub fn set<T>(&self, value: T) -> Ev3Result<()>
     where
         T: std::string::ToString,
@@ -83,10 +88,15 @@ impl Attribute {
     }
 
     #[inline]
+    /// Sets the value of the wrapped file.
+    /// This function skips the string parsing of the `self.set<T>()` function.
+    /// Returns a `Ev3Result::InternalError` if the file is not writable.
     pub fn set_str_slice(&self, value: &str) -> Ev3Result<()> {
         self.set_str(value)
     }
 
+    /// Returns a string vector representation of the wrapped file.
+    /// The file value is splitet at whitespaces.
     pub fn get_vec(&self) -> Ev3Result<Vec<String>> {
         let value = self.get_str()?;
         let vec = value
@@ -96,6 +106,7 @@ impl Attribute {
         Ok(vec)
     }
 
+    /// Returns a C pointer to the wrapped file.
     pub fn get_raw_fd(&self) -> RawFd {
         self.file.borrow().as_raw_fd()
     }

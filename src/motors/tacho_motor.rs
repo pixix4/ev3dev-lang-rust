@@ -1,40 +1,44 @@
+//! The TachoMotor trait provides a uniform interface for using motors with positional
+//! and directional feedback such as the EV3 and NXT motors.
+//! This feedback allows for precise control of the motors.
+
 use crate::motors::Motor;
 use crate::{wait, Ev3Result};
 
 use std::time::Duration;
 
 /// Causes the motor to run until another command is sent.
-pub const RUN_FOREVER: &str = "run-forever";
+pub const COMMAND_RUN_FOREVER: &str = "run-forever";
 
 /// Runs the motor to an absolute position specified by `position_sp`
 /// and then stops the motor using the command specified in `stop_action`.
-pub const RUN_TO_ABS_POS: &str = "run-to-abs-pos";
+pub const COMMAND_RUN_TO_ABS_POS: &str = "run-to-abs-pos";
 
 /// Runs the motor to a position relative to the current position value.
 /// The new position will be current `position` + `position_sp`.
 /// When the new position is reached, the motor will stop using the command specified by `stop_action`.
-pub const RUN_TO_REL_POS: &str = "run-to-rel-pos";
+pub const COMMAND_RUN_TO_REL_POS: &str = "run-to-rel-pos";
 
 /// Run the motor for the amount of time specified in `time_sp`
 /// and then stops the motor using the command specified by `stop_action`.
-pub const RUN_TIMED: &str = "run-timed";
+pub const COMMAND_RUN_TIMED: &str = "run-timed";
 
 /// Runs the motor using the duty cycle specified by `duty_cycle_sp`.
 /// Unlike other run commands, changing `duty_cycle_sp` while running will take effect immediately.
-pub const RUN_DIRECT: &str = "run-direct";
+pub const COMMAND_RUN_DIRECT: &str = "run-direct";
 
 /// Stop any of the run commands before they are complete using the command specified by `stop_action`.
-pub const STOP: &str = "stop";
+pub const COMMAND_STOP: &str = "stop";
 
 /// Resets all of the motor parameter attributes to their default values.
 /// This will also have the effect of stopping the motor.
-pub const RESET: &str = "reset";
+pub const COMMAND_RESET: &str = "reset";
 
 /// A positive duty cycle will cause the motor to rotate clockwise.
 pub const POLARITY_NORMAL: &str = "normal";
 
 /// A positive duty cycle will cause the motor to rotate counter-clockwise.
-pub const POLARITY: &str = "reversed";
+pub const POLARITY_INVERSED: &str = "inversed";
 
 /// Power is being sent to the motor.
 pub const STATE_RUNNING: &str = "running";
@@ -64,7 +68,7 @@ pub const STOP_ACTION_BRAKE: &str = "brake";
 /// If an external force tries to turn the motor, the motor will “push back” to maintain its position.
 pub const STOP_ACTION_HOLD: &str = "hold";
 
-/// The `tacho-motor` class provides a uniform interface for using motors with positional
+/// The TachoMotor trait provides a uniform interface for using motors with positional
 /// and directional feedback such as the EV3 and NXT motors.
 /// This feedback allows for precise control of the motors.
 pub trait TachoMotor: Motor {
@@ -316,12 +320,12 @@ pub trait TachoMotor: Motor {
     /// Runs the motor using the duty cycle specified by `duty_cycle_sp`.
     /// Unlike other run commands, changing `duty_cycle_sp` while running will take effect immediately.
     fn run_direct(&self) -> Ev3Result<()> {
-        self.set_command(RUN_DIRECT)
+        self.set_command(COMMAND_RUN_DIRECT)
     }
 
     /// Causes the motor to run until another command is sent.
     fn run_forever(&self) -> Ev3Result<()> {
-        self.set_command(RUN_FOREVER)
+        self.set_command(COMMAND_RUN_FOREVER)
     }
 
     /// Runs the motor to an absolute position specified by `position_sp`
@@ -330,7 +334,7 @@ pub trait TachoMotor: Motor {
         if let Some(p) = position_sp {
             self.set_position_sp(p)?;
         }
-        self.set_command(RUN_TO_ABS_POS)
+        self.set_command(COMMAND_RUN_TO_ABS_POS)
     }
 
     /// Runs the motor to a position relative to the current position value.
@@ -340,7 +344,7 @@ pub trait TachoMotor: Motor {
         if let Some(p) = position_sp {
             self.set_position_sp(p)?;
         }
-        self.set_command(RUN_TO_REL_POS)
+        self.set_command(COMMAND_RUN_TO_REL_POS)
     }
 
     /// Run the motor for the amount of time specified in `time_sp`
@@ -350,18 +354,18 @@ pub trait TachoMotor: Motor {
             let p = duration.as_millis() as i32;
             self.set_time_sp(p)?;
         }
-        self.set_command(RUN_TIMED)
+        self.set_command(COMMAND_RUN_TIMED)
     }
 
     /// Stop any of the run commands before they are complete using the command specified by `stop_action`.
     fn stop(&self) -> Ev3Result<()> {
-        self.set_command(STOP)
+        self.set_command(COMMAND_STOP)
     }
 
     /// Resets all of the motor parameter attributes to their default values.
     /// This will also have the effect of stopping the motor.
     fn reset(&self) -> Ev3Result<()> {
-        self.set_command(RESET)
+        self.set_command(COMMAND_RESET)
     }
 
     /// Power is being sent to the motor.
