@@ -2,7 +2,7 @@
 
 //! # Rust language bindings for ev3dev
 //!
-//! ```
+//! ```no_run
 //! extern crate ev3dev_lang_rust;
 //!
 //! use ev3dev_lang_rust::prelude::*;
@@ -65,7 +65,7 @@ pub mod prelude {
     //! The purpose of this module is to alleviate imports of many common ev3dev traits.
     //!
     //! ```
-    //! use ev3dev::prelude::*;
+    //! use ev3dev_lang_rust::prelude::*;
     //! ```
     pub use motors::{DcMotor, Motor, ServoMotor, TachoMotor};
     pub use sensors::Sensor;
