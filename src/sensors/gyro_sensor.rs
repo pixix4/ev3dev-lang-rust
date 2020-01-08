@@ -1,6 +1,6 @@
 //! LEGO EV3 gyro sensor.
 
-use crate::sensors::Sensor;
+use super::Sensor;
 use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 
 /// Angle

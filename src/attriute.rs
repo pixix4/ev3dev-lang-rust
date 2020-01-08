@@ -1,4 +1,4 @@
-/// A wrapper to a attribute file in the `/sys/class/` directory.
+//! A wrapper to a attribute file in the `/sys/class/` directory.
 use std::cell::RefCell;
 use std::error::Error;
 use std::fs::{self, File, OpenOptions};

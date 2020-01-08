@@ -1,6 +1,6 @@
 //! LEGO EV3 ultrasonic sensor
 
-use crate::sensors::Sensor;
+use super::Sensor;
 use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 
 /// Continuous measurement - sets LEDs on, steady.

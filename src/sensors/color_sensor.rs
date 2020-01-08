@@ -1,6 +1,6 @@
 //! LEGO EV3 color sensor.
 
-use crate::sensors::Sensor;
+use super::Sensor;
 use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 
 /// Reflected light - sets LED color to red

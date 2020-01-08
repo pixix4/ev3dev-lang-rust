@@ -1,6 +1,6 @@
 //! LEGO EV3 infrared sensor.
 
-use crate::sensors::Sensor;
+use super::Sensor;
 use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 
 /// Proximity

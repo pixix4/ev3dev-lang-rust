@@ -2,7 +2,7 @@
 //! regular DC motors with no fancy controls or feedback.
 //! This includes LEGO MINDSTORMS RCX motors and LEGO Power Functions motors.
 
-use crate::motors::Motor;
+use super::Motor;
 use crate::Ev3Result;
 
 use std::time::Duration;

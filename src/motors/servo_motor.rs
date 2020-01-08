@@ -1,6 +1,6 @@
 //! The ServoMotor trait provides a uniform interface for using hobby type servo motors.
 
-use crate::motors::Motor;
+use super::Motor;
 use crate::Ev3Result;
 
 /// Remove power from the motor.

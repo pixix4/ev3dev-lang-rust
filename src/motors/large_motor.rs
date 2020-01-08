@@ -1,4 +1,4 @@
-use crate::motors::{Motor, TachoMotor};
+use super::{Motor, TachoMotor};
 use crate::{Attribute, Device, Driver, Ev3Result, Findable};
 
 /// EV3/NXT large servo motor
