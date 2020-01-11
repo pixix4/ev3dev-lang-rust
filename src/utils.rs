@@ -19,7 +19,23 @@ pub enum Ev3Error {
     MultipleMatches,
 }
 impl From<std::io::Error> for Ev3Error {
-    fn from(err: std::io::Error) -> Ev3Error {
+    fn from(err: std::io::Error) -> Self {
+        Ev3Error::InternalError {
+            msg: err.description().to_owned(),
+        }
+    }
+}
+
+impl From<std::string::FromUtf8Error> for Ev3Error {
+    fn from(err: std::string::FromUtf8Error) -> Self {
+        Ev3Error::InternalError {
+            msg: err.description().to_owned(),
+        }
+    }
+}
+
+impl From<std::num::ParseIntError> for Ev3Error {
+    fn from(err: std::num::ParseIntError) -> Self {
         Ev3Error::InternalError {
             msg: err.description().to_owned(),
         }

@@ -73,28 +73,28 @@ pub const STOP_ACTION_HOLD: &str = "hold";
 /// This feedback allows for precise control of the motors.
 pub trait TachoMotor: Motor {
     /// Returns the number of tacho counts in one rotation of the motor.
-    /// 
+    ///
     /// Tacho counts are used by the position and speed attributes,
     /// so you can use this value to convert from rotations or degrees to tacho counts.
     /// (rotation motors only)
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// // Get position and count_per_rot as f32.
     /// let position = motor.get_position()? as f32;
     /// let count_per_rot = motor.get_count_per_rot()? as f32;
-    /// 
+    ///
     /// // Calculate the rotation count.
     /// let rotations = position / count_per_rot;
-    /// 
+    ///
     /// println!("The motor did {:.2} rotations", rotations);
     /// # Ok(())
     /// # }
@@ -104,7 +104,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the number of tacho counts in one meter of travel of the motor.
-    /// 
+    ///
     /// Tacho counts are used by the position and speed attributes,
     /// so you can use this value to convert from distance to tacho counts.
     /// (linear motors only)
@@ -113,7 +113,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the number of tacho counts in the full travel of the motor.
-    /// 
+    ///
     /// When combined with the count_per_m atribute,
     /// you can use this value to calculate the maximum travel distance of the motor.
     /// (linear motors only)
@@ -121,29 +121,29 @@ pub trait TachoMotor: Motor {
         self.get_attribute("full_travel_count").get()
     }
 
-    /// Returns the current duty cycle of the motor. Units are percent. 
-    /// 
+    /// Returns the current duty cycle of the motor. Units are percent.
+    ///
     /// Values are -100 to 100.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
     /// use std::thread;
     /// use std::time::Duration;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// // Set the motor command `run-direct` to start rotation.
     /// motor.run_direct()?;
-    /// 
+    ///
     /// // Rotate motor forward and wait 5 seconds.
     /// motor.set_duty_cycle_sp(50)?;
     /// thread::sleep(Duration::from_secs(5));
-    /// 
+    ///
     /// assert_eq!(motor.get_duty_cycle()?, 50);
     /// # Ok(())
     /// # }
@@ -151,27 +151,27 @@ pub trait TachoMotor: Motor {
         self.get_attribute("duty_cycle").get()
     }
 
-    /// Returns the current duty cycle setpoint of the motor. 
-    /// 
+    /// Returns the current duty cycle setpoint of the motor.
+    ///
     /// Units are in percent.
     /// Valid values are -100 to 100. A negative value causes the motor to rotate in reverse.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
     /// use std::thread;
     /// use std::time::Duration;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// // Rotate motor forward and wait 5 seconds.
     /// motor.set_duty_cycle_sp(50)?;
     /// thread::sleep(Duration::from_secs(5));
-    /// 
+    ///
     /// assert_eq!(motor.get_duty_cycle()?, 50);
     /// # Ok(())
     /// # }
@@ -179,30 +179,30 @@ pub trait TachoMotor: Motor {
         self.get_attribute("duty_cycle_sp").get()
     }
 
-    /// Sets the duty cycle setpoint of the motor. 
-    /// 
+    /// Sets the duty cycle setpoint of the motor.
+    ///
     /// Units are in percent.
     /// Valid values are -100 to 100. A negative value causes the motor to rotate in reverse.
     ///    
     /// # Examples
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
     /// use std::thread;
     /// use std::time::Duration;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// // Set the motor command `run-direct` to start rotation.
     /// motor.run_direct()?;
-    /// 
+    ///
     /// // Rotate motor forward and wait 5 seconds.
     /// motor.set_duty_cycle_sp(50)?;
     /// thread::sleep(Duration::from_secs(5));
-    /// 
+    ///
     /// // Rotate motor backward and wait 5 seconds.
     /// motor.set_duty_cycle_sp(-50)?;
     /// thread::sleep(Duration::from_secs(5));
@@ -223,28 +223,28 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the current position of the motor in pulses of the rotary encoder.
-    /// 
+    ///
     /// When the motor rotates clockwise, the position will increase.
     /// Likewise, rotating counter-clockwise causes the position to decrease.
     /// The range is -2,147,483,648 and +2,147,483,647 tachometer counts (32-bit signed integer)
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// // Get position and count_per_rot as f32.
     /// let position = motor.get_position()? as f32;
     /// let count_per_rot = motor.get_count_per_rot()? as f32;
-    /// 
+    ///
     /// // Calculate the rotation count.
     /// let rotations: f32 = position / count_per_rot;
-    /// 
+    ///
     /// println!("The motor did {:.2} rotations", rotations);
     /// # Ok(())
     /// # }
@@ -254,25 +254,25 @@ pub trait TachoMotor: Motor {
     }
 
     /// Sets the current position of the motor in pulses of the rotary encoder.
-    /// 
+    ///
     /// When the motor rotates clockwise, the position will increase.
     /// Likewise, rotating counter-clockwise causes the position to decrease.
     /// The range is -2,147,483,648 and +2,147,483,647 tachometer counts (32-bit signed integer)
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// motor.set_position(0)?;
     /// let position = motor.get_position()?;
-    /// 
-    /// // If the motor is not moving, the position value 
+    ///
+    /// // If the motor is not moving, the position value
     /// // should not change between set and get operation.
     /// assert_eq!(position, 0);
     /// # Ok(())
@@ -312,8 +312,8 @@ pub trait TachoMotor: Motor {
         self.get_attribute("hold_pid_kd").set(kd)
     }
 
-    /// Returns the maximum value that is accepted by the `speed_sp` attribute. 
-    /// 
+    /// Returns the maximum value that is accepted by the `speed_sp` attribute.
+    ///
     /// This value is the speed of the motor at 9V with no load.
     /// Note: The actual maximum obtainable speed will be less than this
     /// and will depend on battery voltage and mechanical load on the motor.
@@ -321,45 +321,45 @@ pub trait TachoMotor: Motor {
         self.get_attribute("max_speed").get()
     }
 
-    /// Returns the current target position for the `run-to-abs-pos` and `run-to-rel-pos` commands. 
-    /// 
+    /// Returns the current target position for the `run-to-abs-pos` and `run-to-rel-pos` commands.
+    ///
     /// Units are in tacho counts.
     /// You can use the value returned by `counts_per_rot` to convert tacho counts to/from rotations or degrees.
-    /// 
+    ///
     /// The range is -2,147,483,648 and +2,147,483,647 tachometer counts (32-bit signed integer).
     fn get_position_sp(&self) -> Ev3Result<i32> {
         self.get_attribute("position_sp").get()
     }
 
     /// Sets the target position for the `run-to-abs-pos` and `run-to-rel-pos` commands.
-    /// 
+    ///
     /// Units are in tacho counts.
     /// You can use the value returned by `counts_per_rot` to convert tacho counts to/from rotations or degrees.
-    /// 
+    ///
     /// The range is -2,147,483,648 and +2,147,483,647 tachometer counts (32-bit signed integer).
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
     /// use std::thread;
     /// use std::time::Duration;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// // Save the current position.
     /// let old_position = motor.get_position()?;
-    /// 
+    ///
     /// // Rotate by 100 ticks
     /// let position = motor.set_position_sp(100)?;
     /// motor.run_to_rel_pos(None)?;
-    /// 
+    ///
     /// // Wait till rotation is finished.
     /// motor.wait_until_not_moving(None);
-    /// 
+    ///
     /// // The new position should be 100 ticks larger.
     /// let new_position = motor.get_position()?;
     /// assert_eq!(old_position + 100, new_position);
@@ -371,7 +371,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the current motor speed in tacho counts per second.
-    /// 
+    ///
     /// Note, this is not necessarily degrees (although it is for LEGO motors).
     /// Use the `count_per_rot` attribute to convert this value to RPM or deg/sec.
     fn get_speed(&self) -> Ev3Result<i32> {
@@ -379,7 +379,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the target speed in tacho counts per second used for all run-* commands except run-direct.
-    /// 
+    ///
     /// A negative value causes the motor to rotate in reverse
     /// with the exception of run-to-*-pos commands where the sign is ignored.
     /// Use the `count_per_rot` attribute to convert RPM or deg/sec to tacho counts per second.
@@ -389,7 +389,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Sets the target speed in tacho counts per second used for all run-* commands except run-direct.
-    /// 
+    ///
     /// A negative value causes the motor to rotate in reverse
     /// with the exception of run-to-*-pos commands where the sign is ignored.
     /// Use the `count_per_rot` attribute to convert RPM or deg/sec to tacho counts per second.
@@ -399,7 +399,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the current ramp up setpoint.
-    /// 
+    ///
     /// Units are in milliseconds and must be positive. When set to a non-zero value,
     /// the motor speed will increase from 0 to 100% of `max_speed` over the span of this setpoint.
     /// The actual ramp time is the ratio of the difference between the speed_sp
@@ -409,7 +409,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Sets the ramp up setpoint.
-    /// 
+    ///
     /// Units are in milliseconds and must be positive. When set to a non-zero value,
     /// the motor speed will increase from 0 to 100% of `max_speed` over the span of this setpoint.
     /// The actual ramp time is the ratio of the difference between the speed_sp
@@ -419,7 +419,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the current ramp down setpoint.
-    /// 
+    ///
     /// Units are in milliseconds and must be positive. When set to a non-zero value,
     /// the motor speed will decrease from 100% down to 0 of `max_speed` over the span of this setpoint.
     /// The actual ramp time is the ratio of the difference between the speed_sp
@@ -429,7 +429,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Sets the ramp down setpoint.
-    /// 
+    ///
     /// Units are in milliseconds and must be positive. When set to a non-zero value,
     /// the motor speed will decrease from 100% down to 0 of `max_speed` over the span of this setpoint.
     /// The actual ramp time is the ratio of the difference between the speed_sp
@@ -474,14 +474,14 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the current stop action.
-    /// 
+    ///
     /// The value determines the motors behavior when command is set to stop.
     fn get_stop_action(&self) -> Ev3Result<String> {
         self.get_attribute("stop_action").get()
     }
 
     /// Sets the stop action.
-    /// 
+    ///
     /// The value determines the motors behavior when command is set to stop.
     fn set_stop_action(&self, stop_action: &str) -> Ev3Result<()> {
         self.get_attribute("stop_action").set_str_slice(stop_action)
@@ -493,21 +493,21 @@ pub trait TachoMotor: Motor {
     }
 
     /// Returns the current amount of time the motor will run when using the run-timed command.
-    /// 
+    ///
     /// Units are in milliseconds. Values must not be negative.
     fn get_time_sp(&self) -> Ev3Result<i32> {
         self.get_attribute("time_sp").get()
     }
 
     /// Sets the amount of time the motor will run when using the run-timed command.
-    /// 
+    ///
     /// Units are in milliseconds. Values must not be negative.
     fn set_time_sp(&self, time_sp: i32) -> Ev3Result<()> {
         self.get_attribute("time_sp").set(time_sp)
     }
 
     /// Runs the motor using the duty cycle specified by `duty_cycle_sp`.
-    /// 
+    ///
     /// Unlike other run commands, changing `duty_cycle_sp` while running will take effect immediately.
     fn run_direct(&self) -> Ev3Result<()> {
         self.set_command(COMMAND_RUN_DIRECT)
@@ -519,7 +519,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Runs the motor to an absolute position specified by `position_sp`
-    /// 
+    ///
     /// and then stops the motor using the command specified in `stop_action`.
     fn run_to_abs_pos(&self, position_sp: Option<i32>) -> Ev3Result<()> {
         if let Some(p) = position_sp {
@@ -529,7 +529,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Runs the motor to a position relative to the current position value.
-    /// 
+    ///
     /// The new position will be current `position` + `position_sp`.
     /// When the new position is reached, the motor will stop using the command specified by `stop_action`.
     fn run_to_rel_pos(&self, position_sp: Option<i32>) -> Ev3Result<()> {
@@ -540,7 +540,7 @@ pub trait TachoMotor: Motor {
     }
 
     /// Run the motor for the amount of time specified in `time_sp`
-    /// 
+    ///
     /// and then stops the motor using the command specified by `stop_action`.
     fn run_timed(&self, time_sp: Option<Duration>) -> Ev3Result<()> {
         if let Some(duration) = time_sp {
@@ -590,24 +590,24 @@ pub trait TachoMotor: Motor {
     }
 
     /// Wait until condition `cond` returns true or the `timeout` is reached.
-    /// 
+    ///
     /// The condition is checked when to the `state` attribute has changed.
     /// If the `timeout` is `None` it will wait an infinite time.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
     /// use ev3dev_lang_rust::motors::tacho_motor;
     /// use std::time::Duration;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// motor.run_timed(Some(Duration::from_secs(5)))?;
-    /// 
+    ///
     /// let cond = || {
     ///     motor.get_state()
     ///         .unwrap_or_else(|_| vec![])
@@ -615,7 +615,7 @@ pub trait TachoMotor: Motor {
     ///         .all(|s| s != tacho_motor::STATE_RUNNING)
     /// };
     /// motor.wait(cond, None);
-    /// 
+    ///
     /// println!("Motor has stopped!");
     /// # Ok(())
     /// # }
@@ -629,25 +629,25 @@ pub trait TachoMotor: Motor {
     }
 
     /// Wait while the `state` is in the vector `self.get_state()` or the `timeout` is reached.
-    /// 
+    ///
     /// If the `timeout` is `None` it will wait an infinite time.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
     /// use ev3dev_lang_rust::motors::tacho_motor;
     /// use std::time::Duration;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// motor.run_timed(Some(Duration::from_secs(5)))?;
-    /// 
+    ///
     /// motor.wait_while(tacho_motor::STATE_RUNNING, None);
-    /// 
+    ///
     /// println!("Motor has stopped!");
     /// # Ok(())
     /// # }
@@ -663,25 +663,25 @@ pub trait TachoMotor: Motor {
     }
 
     /// Wait until the `state` is in the vector `self.get_state()` or the `timeout` is reached.
-    /// 
+    ///
     /// If the `timeout` is `None` it will wait an infinite time.
     ///
     /// # Example
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
     /// use ev3dev_lang_rust::motors::tacho_motor;
     /// use std::time::Duration;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// motor.run_timed(Some(Duration::from_secs(5)))?;
-    /// 
+    ///
     /// motor.wait_until(tacho_motor::STATE_RUNNING, None);
-    /// 
+    ///
     /// println!("Motor has started!");
     /// # Ok(())
     /// # }
@@ -697,25 +697,25 @@ pub trait TachoMotor: Motor {
     }
 
     /// Wait until the motor is not moving or the timeout is reached.
-    /// 
+    ///
     /// This is euqal to `wait_while(STATE_RUNNING, timeout)`.
     /// If the `timeout` is `None` it will wait an infinite time.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```no_run
     /// use ev3dev_lang_rust::prelude::*;
     /// use ev3dev_lang_rust::motors::LargeMotor;
     /// use std::time::Duration;
-    /// 
+    ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
     /// // Init a tacho motor.
     /// let motor = LargeMotor::find()?;
-    /// 
+    ///
     /// motor.run_timed(Some(Duration::from_secs(5)))?;
-    /// 
+    ///
     /// motor.wait_until_not_moving(None);
-    /// 
+    ///
     /// println!("Motor has stopped!");
     /// # Ok(())
     /// # }

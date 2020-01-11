@@ -58,6 +58,8 @@ pub mod sensors;
 pub mod led;
 pub use led::Led;
 
+pub mod sound;
+
 mod power_supply;
 pub use power_supply::PowerSupply;
 
