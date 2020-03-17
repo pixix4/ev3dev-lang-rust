@@ -60,6 +60,9 @@ pub use led::Led;
 
 pub mod sound;
 
+mod buttons;
+pub use buttons::Ev3Button;
+
 mod power_supply;
 pub use power_supply::PowerSupply;
 
