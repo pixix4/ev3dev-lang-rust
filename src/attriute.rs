@@ -72,7 +72,7 @@ impl Attribute {
         match value.parse::<T>() {
             Ok(value) => Ok(value),
             Err(e) => Err(Ev3Error::InternalError {
-                msg: e.description().to_owned(),
+                msg: format!("{}", e),
             }),
         }
     }

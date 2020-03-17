@@ -72,7 +72,7 @@ fn main() -> Ev3Result<()> {
 
 2. Build docker image
     ```bash
-    docker build . -t pixix4/ev3dev-rust-cross
+    docker build . -t pixix4/ev3dev-rust-cross --no-cache
     ```
 
 3. Start docker image

@@ -1,7 +1,5 @@
 //! Utility things.
 
-use std::error::Error;
-
 /// Helper `Result` type for easy access.
 pub type Ev3Result<T> = Result<T, Ev3Error>;
 
@@ -21,7 +19,7 @@ pub enum Ev3Error {
 impl From<std::io::Error> for Ev3Error {
     fn from(err: std::io::Error) -> Self {
         Ev3Error::InternalError {
-            msg: err.description().to_owned(),
+            msg: format!("{}", err),
         }
     }
 }
@@ -29,7 +27,7 @@ impl From<std::io::Error> for Ev3Error {
 impl From<std::string::FromUtf8Error> for Ev3Error {
     fn from(err: std::string::FromUtf8Error) -> Self {
         Ev3Error::InternalError {
-            msg: err.description().to_owned(),
+            msg: format!("{}", err),
         }
     }
 }
@@ -37,7 +35,7 @@ impl From<std::string::FromUtf8Error> for Ev3Error {
 impl From<std::num::ParseIntError> for Ev3Error {
     fn from(err: std::num::ParseIntError) -> Self {
         Ev3Error::InternalError {
-            msg: err.description().to_owned(),
+            msg: format!("{}", err),
         }
     }
 }

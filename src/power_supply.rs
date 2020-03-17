@@ -36,12 +36,12 @@ impl PowerSupply {
         self.get_attribute("current_now").get()
     }
 
-    ///	Always returns System.
+    /// Always returns System.
     pub fn get_scope(&self) -> Ev3Result<String> {
         self.get_attribute("zscope").get()
     }
 
-    ///	Returns Unknown or Li-ion depending on if the rechargeable battery is present.
+    /// Returns Unknown or Li-ion depending on if the rechargeable battery is present.
     pub fn get_technology(&self) -> Ev3Result<String> {
         self.get_attribute("technology").get()
     }
@@ -51,7 +51,7 @@ impl PowerSupply {
         self.get_attribute("type").get()
     }
 
-    ///	Returns the nominal “full” battery voltage. The value returned depends on technology.
+    /// Returns the nominal “full” battery voltage. The value returned depends on technology.
     pub fn get_voltage_max_design(&self) -> Ev3Result<i32> {
         self.get_attribute("voltage_max_design").get()
     }

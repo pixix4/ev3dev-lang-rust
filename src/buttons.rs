@@ -1,35 +1,36 @@
 //! EV3 Buttons
-//! 
+//!
 //! ```no_run
 //! use ev3dev_lang_rust::Ev3Button;
-//! 
-//! 
+//! use std::thread;
+//! use std::time::Duration;
+//!
 //! # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
 //! let button = Ev3Button::new()?;
-//! 
+//!
 //! loop {
 //!     button.process();
-//! 
+//!
 //!     println!("Is 'up' pressed: {}", button.is_up());
 //!     println!("Pressed buttons: {:?}", button.get_pressed_buttons());
-//! 
-//!     std::thread::sleep_ms(100);
+//!
+//!     thread::sleep(Duration::from_millis(100));
 //! }
 //! # }
 //! ```
 
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::fs::File;
 use std::fmt;
+use std::fs::File;
 use std::os::unix::io::AsRawFd;
+use std::rc::Rc;
 
 use crate::Ev3Result;
 
 const KEY_BUF_LEN: usize = 96;
-const EVIOCGKEY: u32 = 2153792792;
+const EVIOCGKEY: u32 = 2_153_792_792;
 
 /// Helper struct for ButtonFileHandler.
 struct FileMapEntry {
@@ -40,8 +41,8 @@ struct FileMapEntry {
 impl fmt::Debug for FileMapEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("FileMapEntry")
-         .field("file", &self.file)
-         .finish()
+            .field("file", &self.file)
+            .finish()
     }
 }
 
@@ -51,7 +52,6 @@ struct ButtonMapEntry {
     pub file_name: String,
     pub key_code: u32,
 }
-
 
 /// This implementation depends on the availability of the EVIOCGKEY ioctl
 /// to be able to read the button state buffer. See Linux kernel source
@@ -69,7 +69,7 @@ impl ButtonFileHandler {
         ButtonFileHandler {
             file_map: HashMap::new(),
             button_map: HashMap::new(),
-            pressed_buttons: HashSet::new()
+            pressed_buttons: HashSet::new(),
         }
     }
 
@@ -79,16 +79,17 @@ impl ButtonFileHandler {
             let file = File::open(file_name)?;
             let buffer_cache = [0u8; KEY_BUF_LEN];
 
-            self.file_map.insert(file_name.to_owned(), FileMapEntry{
-                file,
-                buffer_cache,
-            });
+            self.file_map
+                .insert(file_name.to_owned(), FileMapEntry { file, buffer_cache });
         }
 
-        self.button_map.insert(name.to_owned(), ButtonMapEntry{
-            file_name: file_name.to_owned(),
-            key_code,
-        });
+        self.button_map.insert(
+            name.to_owned(),
+            ButtonMapEntry {
+                file_name: file_name.to_owned(),
+                key_code,
+            },
+        );
 
         Ok(())
     }
@@ -107,16 +108,27 @@ impl ButtonFileHandler {
     fn process(&mut self) {
         for entry in self.file_map.values_mut() {
             unsafe {
-                libc::ioctl(entry.file.as_raw_fd(), EVIOCGKEY.into(), &mut entry.buffer_cache);
+                libc::ioctl(
+                    entry.file.as_raw_fd(),
+                    EVIOCGKEY.into(),
+                    &mut entry.buffer_cache,
+                );
             }
         }
 
         self.pressed_buttons.clear();
 
-        for (btn_name, ButtonMapEntry {file_name, key_code}) in self.button_map.iter() {
+        for (
+            btn_name,
+            ButtonMapEntry {
+                file_name,
+                key_code,
+            },
+        ) in self.button_map.iter()
+        {
             let buffer = &self.file_map[file_name].buffer_cache;
 
-            if (buffer[(key_code / 8) as usize] & 1 << key_code % 8) != 0 {
+            if (buffer[(key_code / 8) as usize] & 1 << (key_code % 8)) != 0 {
                 self.pressed_buttons.insert(btn_name.to_owned());
             }
         }
@@ -124,34 +136,35 @@ impl ButtonFileHandler {
 }
 
 /// Ev3 brick button handler. Opens the corresponding `/dev/input` file handlers.
-/// 
+///
 /// This implementation depends on the availability of the EVIOCGKEY ioctl
 /// to be able to read the button state buffer. See Linux kernel source
 /// in /include/uapi/linux/input.h for details.
-/// 
+///
 /// ```no_run
 /// use ev3dev_lang_rust::Ev3Button;
-/// 
+/// use std::thread;
+/// use std::time::Duration;
+///
 /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
 /// let button = Ev3Button::new()?;
-/// 
+///
 /// loop {
 ///     button.process();
-/// 
+///
 ///     println!("Is 'up' pressed: {}", button.is_up());
 ///     println!("Pressed buttons: {:?}", button.get_pressed_buttons());
-/// 
-///     std::thread::sleep_ms(100);
+///
+///     thread::sleep(Duration::from_millis(100));
 /// }
 /// # }
 /// ```
 #[derive(Debug, Clone)]
 pub struct Ev3Button {
-    button_handler: Rc<RefCell<ButtonFileHandler>>
+    button_handler: Rc<RefCell<ButtonFileHandler>>,
 }
 
 impl Ev3Button {
-
     /// Ev3 brick button handler. Opens the corresponding `/dev/input` file handlers.
     pub fn new() -> Ev3Result<Self> {
         let mut handler = ButtonFileHandler::new();
@@ -161,10 +174,14 @@ impl Ev3Button {
         handler.add_button("left", "/dev/input/by-path/platform-gpio_keys-event", 105)?;
         handler.add_button("right", "/dev/input/by-path/platform-gpio_keys-event", 106)?;
         handler.add_button("enter", "/dev/input/by-path/platform-gpio_keys-event", 28)?;
-        handler.add_button("backspace", "/dev/input/by-path/platform-gpio_keys-event", 14)?;
+        handler.add_button(
+            "backspace",
+            "/dev/input/by-path/platform-gpio_keys-event",
+            14,
+        )?;
 
         Ok(Self {
-            button_handler: Rc::new(RefCell::new(handler))
+            button_handler: Rc::new(RefCell::new(handler)),
         })
     }
 
