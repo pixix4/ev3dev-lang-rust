@@ -55,7 +55,7 @@ pub mod wait;
 pub mod motors;
 pub mod sensors;
 
-pub mod led;
+mod led;
 pub use led::Led;
 
 pub mod sound;
