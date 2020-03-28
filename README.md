@@ -12,7 +12,6 @@ Currently this project is not compatible with the BrickPi platform.
 ```rust
 extern crate ev3dev_lang_rust;
 
-use ev3dev_lang_rust::prelude::*;
 use ev3dev_lang_rust::Ev3Result;
 use ev3dev_lang_rust::motors::{LargeMotor, MotorPort};
 use ev3dev_lang_rust::sensors::ColorSensor;

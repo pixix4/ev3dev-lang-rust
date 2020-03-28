@@ -5,7 +5,6 @@
 //! ```no_run
 //! extern crate ev3dev_lang_rust;
 //!
-//! use ev3dev_lang_rust::prelude::*;
 //! use ev3dev_lang_rust::Ev3Result;
 //! use ev3dev_lang_rust::motors::{LargeMotor, MotorPort};
 //! use ev3dev_lang_rust::sensors::ColorSensor;
@@ -38,14 +37,15 @@
 extern crate ev3dev_lang_rust_derive;
 extern crate libc;
 
+#[macro_use]
+mod findable;
+
 mod attriute;
 pub use attriute::Attribute;
 mod driver;
 pub use driver::Driver;
 mod device;
 pub use device::Device;
-mod findable;
-pub use findable::Findable;
 
 mod utils;
 pub use utils::{Ev3Error, Ev3Result, Port};
@@ -65,15 +65,3 @@ pub use buttons::Ev3Button;
 
 mod power_supply;
 pub use power_supply::PowerSupply;
-
-pub mod prelude {
-    //! The purpose of this module is to alleviate imports of many common ev3dev traits.
-    //!
-    //! ```
-    //! use ev3dev_lang_rust::prelude::*;
-    //! ```
-    pub use motors::{DcMotor, Motor, ServoMotor, TachoMotor};
-    pub use sensors::Sensor;
-    pub use Device;
-    pub use Findable;
-}
