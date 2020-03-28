@@ -42,7 +42,13 @@ fn main() -> Ev3Result<()> {
 
 ## Cross compile for ev3 brick
 
-1. Create Dockerfile
+1. Create target configuration `.cargo/config`
+    ```toml
+    [target.armv5te-unknown-linux-gnueabi]
+    linker = "/usr/bin/arm-linux-gnueabi-gcc"
+    ```
+
+2. Create Dockerfile
     ```dockerfile
     FROM debian:stretch
 
@@ -69,20 +75,20 @@ fn main() -> Ev3Result<()> {
     # cargo build --release --target armv5te-unknown-linux-gnueabi
     ```
 
-2. Build docker image
+3. Build docker image
     ```bash
     docker build . -t pixix4/ev3dev-rust-cross --no-cache
     ```
 
-3. Start docker image
+4. Start docker image
     ```bash
     docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust-cross
     ```
 
-4. Build binary for ev3dev
+5. Build binary for ev3dev
     ```bash
     cargo build --release --target armv5te-unknown-linux-gnueabi
     ```
     The `--release` flag is optional. However, it can speedup the execution time by a factor of 30.
 
-The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/libev3dev_lang_rust.rlib`
+The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`

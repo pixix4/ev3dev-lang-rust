@@ -23,4 +23,5 @@ libc = "0.2"
 [workspace]
 members = [
     "ev3dev_lang_rust_derive",
+    "examples/color-sensor"
 ]
