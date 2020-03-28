@@ -1,5 +1,5 @@
 # Cargo defaults
-/target
+target
 **/*.rs.bk
 Cargo.lock
 
