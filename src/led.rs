@@ -7,24 +7,6 @@ use crate::{utils::OrErr, Attribute, Ev3Result};
 /// Color type.
 pub type Color = (u8, u8);
 
-/// Led off.
-pub const COLOR_OFF: Color = (0, 0);
-
-/// Led color red
-pub const COLOR_RED: Color = (255, 0);
-
-/// Led color green.
-pub const COLOR_GREEN: Color = (0, 255);
-
-/// Led color amber.
-pub const COLOR_AMBER: Color = (255, 255);
-
-/// Led color orange.
-pub const COLOR_ORANGE: Color = (255, 128);
-
-/// LED color yellow.
-pub const COLOR_YELLOW: Color = (25, 255);
-
 /// The leds on top of the EV3 brick.
 #[derive(Debug, Clone)]
 pub struct Led {
@@ -35,6 +17,25 @@ pub struct Led {
 }
 
 impl Led {
+
+    /// Led off.
+    pub const COLOR_OFF: Color = (0, 0);
+
+    /// Led color red
+    pub const COLOR_RED: Color = (255, 0);
+
+    /// Led color green.
+    pub const COLOR_GREEN: Color = (0, 255);
+
+    /// Led color amber.
+    pub const COLOR_AMBER: Color = (255, 255);
+
+    /// Led color orange.
+    pub const COLOR_ORANGE: Color = (255, 128);
+
+    /// LED color yellow.
+    pub const COLOR_YELLOW: Color = (25, 255);
+
     /// Create a new instance of the `Led` struct.
     pub fn new() -> Ev3Result<Led> {
         let mut left_red_name = String::new();

@@ -1,22 +1,19 @@
 //! # Container module for motor types
 
-pub mod dc_motor;
+#[macro_use]
+mod dc_motor_macro;
+#[macro_use]
+mod servo_motor_macro;
+#[macro_use]
+mod tacho_motor_macro;
+
 mod large_motor;
-mod medium_motor;
-pub mod servo_motor;
-pub mod tacho_motor;
-
-pub use self::dc_motor::DcMotor;
-pub use self::servo_motor::ServoMotor;
-pub use self::tacho_motor::TachoMotor;
-
 pub use self::large_motor::LargeMotor;
+
+mod medium_motor;
 pub use self::medium_motor::MediumMotor;
 
-use crate::{Device, Port};
-
-/// Container trait to indicate something is a motor
-pub trait Motor: Device {}
+use crate::Port;
 
 /// EV3 ports `outA` to `outD`
 #[derive(Debug, Copy, Clone)]
