@@ -8,7 +8,6 @@
 #[macro_export]
 macro_rules! dc_motor {
     () => {
-
         /// Causes the motor to run until another command is sent.
         pub const COMMAND_RUN_FOREVER: &'static str = "run-forever";
 
@@ -164,12 +163,18 @@ macro_rules! dc_motor {
 
         /// Power is being sent to the motor.
         pub fn is_running(&self) -> Ev3Result<bool> {
-            Ok(self.get_state()?.iter().any(|state| state == Self::STATE_RUNNING))
+            Ok(self
+                .get_state()?
+                .iter()
+                .any(|state| state == Self::STATE_RUNNING))
         }
 
         /// The motor is ramping up or down and has not yet reached a pub constant output level.
         pub fn is_ramping(&self) -> Ev3Result<bool> {
-            Ok(self.get_state()?.iter().any(|state| state == Self::STATE_RAMPING))
+            Ok(self
+                .get_state()?
+                .iter()
+                .any(|state| state == Self::STATE_RAMPING))
         }
     };
 }

@@ -33,6 +33,12 @@
 //! }
 //! ```
 
+#[cfg(feature = "screen")]
+extern crate framebuffer;
+
+#[cfg(feature = "screen")]
+extern crate image;
+
 #[macro_use]
 extern crate ev3dev_lang_rust_derive;
 extern crate libc;
@@ -65,3 +71,8 @@ pub use buttons::Ev3Button;
 
 mod power_supply;
 pub use power_supply::PowerSupply;
+
+#[cfg(feature = "screen")]
+mod screen;
+#[cfg(feature = "screen")]
+pub use screen::Screen;

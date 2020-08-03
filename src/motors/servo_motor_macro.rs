@@ -4,7 +4,6 @@
 #[macro_export]
 macro_rules! servo_motor {
     () => {
-
         /// Remove power from the motor.
         pub const COMMAND_RUN: &'static str = "run";
 
@@ -145,7 +144,10 @@ macro_rules! servo_motor {
 
         /// Power is being sent to the motor.
         pub fn is_running(&self) -> Ev3Result<bool> {
-            Ok(self.get_state()?.iter().any(|state| state == Self::STATE_RUNNING))
+            Ok(self
+                .get_state()?
+                .iter()
+                .any(|state| state == Self::STATE_RUNNING))
         }
 
         /// Drive servo to the position set in the `position_sp` attribute.

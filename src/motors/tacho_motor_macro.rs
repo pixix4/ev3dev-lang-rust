@@ -8,7 +8,6 @@
 #[macro_export]
 macro_rules! tacho_motor {
     () => {
-
         /// Causes the motor to run until another command is sent.
         pub const COMMAND_RUN_FOREVER: &'static str = "run-forever";
 
@@ -554,17 +553,26 @@ macro_rules! tacho_motor {
 
         /// Power is being sent to the motor.
         pub fn is_running(&self) -> Ev3Result<bool> {
-            Ok(self.get_state()?.iter().any(|state| state == Self::STATE_RUNNING))
+            Ok(self
+                .get_state()?
+                .iter()
+                .any(|state| state == Self::STATE_RUNNING))
         }
 
         /// The motor is ramping up or down and has not yet reached a pub constant output level.
         pub fn is_ramping(&self) -> Ev3Result<bool> {
-            Ok(self.get_state()?.iter().any(|state| state == Self::STATE_RAMPING))
+            Ok(self
+                .get_state()?
+                .iter()
+                .any(|state| state == Self::STATE_RAMPING))
         }
 
         /// The motor is not turning, but rather attempting to hold a fixed position.
         pub fn is_holding(&self) -> Ev3Result<bool> {
-            Ok(self.get_state()?.iter().any(|state| state == Self::STATE_HOLDING))
+            Ok(self
+                .get_state()?
+                .iter()
+                .any(|state| state == Self::STATE_HOLDING))
         }
 
         /// The motor is turning as fast as possible, but cannot reach its `speed_sp`.
@@ -577,7 +585,10 @@ macro_rules! tacho_motor {
 
         /// The motor is trying to run but is not turning at all.
         pub fn is_stalled(&self) -> Ev3Result<bool> {
-            Ok(self.get_state()?.iter().any(|state| state == Self::STATE_STALLED))
+            Ok(self
+                .get_state()?
+                .iter()
+                .any(|state| state == Self::STATE_STALLED))
         }
 
         /// Wait until condition `cond` returns true or the `timeout` is reached.
@@ -707,6 +718,5 @@ macro_rules! tacho_motor {
         pub fn wait_until_not_moving(&self, timeout: Option<Duration>) -> bool {
             self.wait_while(Self::STATE_RUNNING, timeout)
         }
-
     };
 }

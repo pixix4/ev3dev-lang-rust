@@ -1,0 +1,9 @@
+[package]
+name = "screen"
+version = "0.1.0"
+authors = ["Lars Westermann <lars.westermann@tu-dresden.de>"]
+
+[dependencies]
+framebuffer = "0.2.0"
+image = "0.23.8"
+ev3dev-lang-rust = { path = "../..", features = ["screen"] }

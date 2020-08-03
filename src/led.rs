@@ -17,7 +17,6 @@ pub struct Led {
 }
 
 impl Led {
-
     /// Led off.
     pub const COLOR_OFF: Color = (0, 0);
 

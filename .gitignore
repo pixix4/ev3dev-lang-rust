@@ -6,3 +6,6 @@ Cargo.lock
 # IntelliJ IDEA
 *.iml
 .idea/*
+
+# VS Code
+.vscode/*

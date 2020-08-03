@@ -14,16 +14,16 @@ impl GyroSensor {
 
     /// Angle
     pub const MODE_GYRO_ANG: &'static str = "GYRO-ANG";
-    
+
     /// Rotational Speed
     pub const MODE_GYRO_RATE: &'static str = "GYRO-RATE";
-    
+
     /// Raw sensor value ???
     pub const MODE_GYRO_FAS: &'static str = "GYRO-FAS";
-    
+
     /// Angle and Rotational Speed
     pub const MODE_GYRO_G_AND_A: &'static str = "GYRO-G&A";
-    
+
     /// Calibration ???
     pub const MODE_GYRO_CAL: &'static str = "GYRO-CAL";
 
