@@ -7,12 +7,14 @@ use image::{Rgb, RgbImage};
 use crate::Ev3Result;
 
 /// Represents the device screen.
+/// Advanced drawing operations can be perfomed with the `imageproc` crate.
 #[cfg(feature = "screen")]
 #[derive(Debug)]
 pub struct Screen {
     /// Direct reference to the framebuffer
     pub buffer: Framebuffer,
     /// Convinience layer to access the framebuffer
+    /// For drawing operations the `imageproc` crate can be used.
     pub image: RgbImage,
 }
 
@@ -54,7 +56,23 @@ impl Screen {
     }
 
     fn update_1bpp(&mut self) {
-        panic!("1bpp screens are currently not supported!");
+        let mut buffer = vec![0u8; ((self.xres() * self.yres() + 7) / 8) as usize];
+
+        let mut byte: usize = 0;
+        let mut bit: u8 = 0x80;
+        for (_, _, pixel) in self.image.enumerate_pixels() {
+            let sum = pixel.0[0] as u32 + pixel.0[1] as u32 + pixel.0[2] as u32;
+
+            buffer[byte] |= if sum >= 0x30 { bit } else { 0x00 };
+
+            bit = bit >> 1;
+            if bit == 0 {
+                byte += 1;
+                bit = 0x80;
+            }
+        }
+
+        self.buffer.write_frame(&buffer);
     }
 
     /// Convert red, green, blue components to a 16-bit 565 RGB value. Components
@@ -67,11 +85,12 @@ impl Screen {
     fn update_16bpp(&mut self) {
         let mut buffer = vec![0u8; (2 * self.xres() * self.yres()) as usize];
 
-        for (index, (_, _, pixel)) in self.image.enumerate_pixels().enumerate() {
-            let i = index * 2;
+        let mut byte: usize = 0;
+        for (_, _, pixel) in self.image.enumerate_pixels() {
             let (p1, p2) = Screen::color565(pixel.0[0], pixel.0[1], pixel.0[2]);
-            buffer[i] = p1;
-            buffer[i + 1] = p2;
+            buffer[byte] = p1;
+            buffer[byte + 1] = p2;
+            byte += 2;
         }
 
         self.buffer.write_frame(&buffer);
@@ -80,9 +99,10 @@ impl Screen {
     fn update_32bpp(&mut self) {
         let mut buffer = vec![0u8; (4 * self.xres() * self.yres()) as usize];
 
-        for (index, (_, _, pixel)) in self.image.enumerate_pixels().enumerate() {
-            let i = index * 4;
-            buffer[(i + 1)..(i + 3)].copy_from_slice(&pixel.0[0..2]);
+        let mut byte: usize = 1;
+        for (_, _, pixel) in self.image.enumerate_pixels() {
+            buffer[byte..(byte + 2)].copy_from_slice(&pixel.0[0..2]);
+            byte += 4;
         }
 
         self.buffer.write_frame(&buffer);
