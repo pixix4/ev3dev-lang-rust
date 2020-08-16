@@ -14,6 +14,7 @@ const ROOT_PATH: &str = "/sys/class/";
 
 /// Helper struct that manages attributes.
 /// It creates an `Attribute` instance if it does not exists or uses a cached one.
+#[derive(Clone)]
 pub struct Driver {
     class_name: String,
     name: String,
@@ -136,16 +137,6 @@ impl Driver {
             .get(attribute_name)
             .expect("Internal error in the attribute map")
             .clone()
-    }
-}
-
-impl Clone for Driver {
-    fn clone(&self) -> Self {
-        Driver {
-            class_name: self.class_name.clone(),
-            name: self.name.clone(),
-            attributes: RefCell::new(HashMap::new()),
-        }
     }
 }
 

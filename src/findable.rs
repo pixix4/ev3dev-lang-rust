@@ -1,19 +1,23 @@
 /// Helper to create a new `Device` instance.
 ///
-/// Can be automatically derived. Therefore are 3 parameters required:
+/// Generates `get()`, `find()` and `list()` methods. Therefore are 3 parameters required:
 /// * `class_name: &str`
 /// * `driver_name: &str`
 /// * `port: dyn ev3dev_lang_rust::Motor`
 ///
 /// # Example:
 ///
-/// #[derive(Debug, Clone, Device, Findable, Motor, TachoMotor)]
-/// #[class_name = "tacho-motor"]
-/// #[driver_name = "lego-ev3-l-motor"]
-/// #[port = "crate::motors::MotorPort"]
+/// ```ignore
+/// #[derive(Debug, Clone, Device)]
 /// pub struct LargeMotor {
 ///     driver: Driver,
 /// }
+///
+/// impl LargeMotor {
+///     findable!("tacho-motor", "lego-ev3-l-motor", MotorPort);
+///     tacho_motor!();
+/// }
+/// ```
 #[macro_export]
 macro_rules! findable {
     ($class_name:expr, $driver_name:expr, $port: ty) => {
