@@ -77,6 +77,22 @@ macro_rules! sensor {
             self.get_attribute("units").get()
         }
 
+        /// Returns the current `value{index}` value if available.
+        pub fn get_value(&self, index: u8) -> Ev3Result<i32> {
+            use crate::Ev3Error;
+            match index {
+                0 => self.get_value0(),
+                1 => self.get_value1(),
+                2 => self.get_value2(),
+                3 => self.get_value3(),
+                4 => self.get_value4(),
+                5 => self.get_value5(),
+                6 => self.get_value6(),
+                7 => self.get_value7(),
+                _ => Ev3Result::Err(Ev3Error::NotFound),
+            }
+        }
+
         /// Returns the current `value0` value if available.
         pub fn get_value0(&self) -> Ev3Result<i32> {
             self.get_attribute("value0").get()

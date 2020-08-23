@@ -10,7 +10,9 @@ mod gyro_sensor;
 pub use self::gyro_sensor::GyroSensor;
 
 mod infrared_sensor;
+pub use self::infrared_sensor::BeaconSeeker;
 pub use self::infrared_sensor::InfraredSensor;
+pub use self::infrared_sensor::RemoteControl;
 
 mod touch_sensor;
 pub use self::touch_sensor::TouchSensor;
