@@ -59,30 +59,10 @@ impl Driver {
             }
         }
 
-        Err(Ev3Error::NotFound)
-    }
-
-    /// Returns the name of the device with the given `class_name` and at the given `port`.
-    ///
-    /// Returns `Ev3Error::NotFound` if no such device exists.
-    /// Returns `Ev3Error::MultipleMatches` if more then one matching device exists.
-    pub fn find_name_by_port(class_name: &str, port: &dyn Port) -> Ev3Result<String> {
-        let port_address = port.address();
-
-        let paths = fs::read_dir(format!("{}{}", ROOT_PATH, class_name))?;
-
-        for path in paths {
-            let file_name = path?.file_name();
-            let name = file_name.to_str().or_err()?;
-
-            let address = Attribute::new(class_name, name, "address")?;
-
-            if address.get::<String>()?.contains(&port_address) {
-                return Ok(name.to_owned());
-            }
-        }
-
-        Err(Ev3Error::NotFound)
+        Err(Ev3Error::NotConnected {
+            device: driver_name.to_owned(),
+            port: Some(port.address()),
+        })
     }
 
     /// Returns the name of the device with the given `class_name`.
@@ -93,11 +73,17 @@ impl Driver {
         let mut names = Driver::find_names_by_driver(class_name, driver_name)?;
 
         match names.len() {
-            0 => Err(Ev3Error::NotFound),
+            0 => Err(Ev3Error::NotConnected {
+                device: driver_name.to_owned(),
+                port: None,
+            }),
             1 => Ok(names
                 .pop()
-                .expect("Name vector contains exactly one element")),
-            _ => Err(Ev3Error::MultipleMatches),
+                .expect("Name vector should contains exactly one element")),
+            _ => Err(Ev3Error::MultipleMatches {
+                device: driver_name.to_owned(),
+                ports: names,
+            }),
         }
     }
 

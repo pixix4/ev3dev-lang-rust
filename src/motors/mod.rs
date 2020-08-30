@@ -28,6 +28,19 @@ pub enum MotorPort {
     OutD,
 }
 
+impl MotorPort {
+    /// Try to format a device name path to a  port name.
+    pub fn format_name(name: &str) -> String {
+        match name {
+            "motor0" => MotorPort::OutA.address(),
+            "motor1" => MotorPort::OutB.address(),
+            "motor2" => MotorPort::OutC.address(),
+            "motor3" => MotorPort::OutD.address(),
+            _ => name.to_owned(),
+        }
+    }
+}
+
 impl Port for MotorPort {
     fn address(&self) -> String {
         match self {

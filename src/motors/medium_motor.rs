@@ -1,5 +1,5 @@
 use super::MotorPort;
-use crate::{wait, Attribute, Device, Driver, Ev3Result};
+use crate::{wait, Attribute, Device, Driver, Ev3Error, Ev3Result};
 use std::time::Duration;
 
 /// EV3 medium servo motor
@@ -9,6 +9,12 @@ pub struct MediumMotor {
 }
 
 impl MediumMotor {
-    findable!("tacho-motor", "lego-ev3-m-motor", MotorPort);
+    findable!(
+        "tacho-motor",
+        "lego-ev3-m-motor",
+        MotorPort,
+        "MediumMotor",
+        "out"
+    );
     tacho_motor!();
 }

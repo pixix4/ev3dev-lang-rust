@@ -1,7 +1,7 @@
 //! LEGO EV3 infrared sensor.
 
 use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Result};
+use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::fmt;
@@ -14,7 +14,13 @@ pub struct InfraredSensor {
 }
 
 impl InfraredSensor {
-    findable!("lego-sensor", "lego-ev3-ir", SensorPort);
+    findable!(
+        "lego-sensor",
+        "lego-ev3-ir",
+        SensorPort,
+        "InfraredrSensor",
+        "in"
+    );
 
     /// Proximity
     pub const MODE_IR_PROX: &'static str = "IR-PROX";

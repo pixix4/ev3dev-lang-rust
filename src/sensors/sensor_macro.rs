@@ -89,7 +89,9 @@ macro_rules! sensor {
                 5 => self.get_value5(),
                 6 => self.get_value6(),
                 7 => self.get_value7(),
-                _ => Ev3Result::Err(Ev3Error::NotFound),
+                _ => Ev3Result::Err(Ev3Error::InternalError {
+                    msg: format!("Sensor value index {} is out of bounds [0, 7]", index),
+                }),
             }
         }
 

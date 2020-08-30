@@ -1,7 +1,7 @@
 //! LEGO EV3 ultrasonic sensor
 
 use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Result};
+use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// LEGO EV3 ultrasonic sensor.
 #[derive(Debug, Clone, Device)]
@@ -10,7 +10,13 @@ pub struct UltrasonicSensor {
 }
 
 impl UltrasonicSensor {
-    findable!("lego-sensor", "lego-ev3-us", SensorPort);
+    findable!(
+        "lego-sensor",
+        "lego-ev3-us",
+        SensorPort,
+        "UltrasonicSensor",
+        "in"
+    );
 
     /// Continuous measurement - sets LEDs on, steady.
     /// Units in centimeters. Distance (0-2550)

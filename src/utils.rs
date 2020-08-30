@@ -12,9 +12,19 @@ pub enum Ev3Error {
         msg: String,
     },
     /// No matching device found.
-    NotFound,
+    NotConnected {
+        /// Corresponding device
+        device: String,
+        /// Device was expected to be on this port (None if no port was specified)
+        port: Option<String>,
+    },
     /// More than one matching device found.
-    MultipleMatches,
+    MultipleMatches {
+        /// Corresponding device
+        device: String,
+        /// Devices of the requested type were found on this ports.
+        ports: Vec<String>,
+    },
 }
 impl From<std::io::Error> for Ev3Error {
     fn from(err: std::io::Error) -> Self {

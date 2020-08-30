@@ -35,6 +35,19 @@ pub enum SensorPort {
     In4,
 }
 
+impl SensorPort {
+    /// Try to format a device name path to a  port name.
+    pub fn format_name(name: &str) -> String {
+        match name {
+            "sensor0" => SensorPort::In1.address(),
+            "sensor1" => SensorPort::In2.address(),
+            "sensor2" => SensorPort::In3.address(),
+            "sensor3" => SensorPort::In4.address(),
+            _ => name.to_owned(),
+        }
+    }
+}
+
 impl Port for SensorPort {
     fn address(&self) -> String {
         match self {

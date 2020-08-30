@@ -1,7 +1,7 @@
 //! LEGO EV3 gyro sensor.
 
 use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Result};
+use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// LEGO EV3 gyro sensor.
 #[derive(Debug, Clone, Device)]
@@ -10,7 +10,13 @@ pub struct GyroSensor {
 }
 
 impl GyroSensor {
-    findable!("lego-sensor", "lego-ev3-gyro", SensorPort);
+    findable!(
+        "lego-sensor",
+        "lego-ev3-gyro",
+        SensorPort,
+        "GyroSensor",
+        "in"
+    );
 
     /// Angle
     pub const MODE_GYRO_ANG: &'static str = "GYRO-ANG";

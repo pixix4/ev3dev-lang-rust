@@ -28,7 +28,10 @@ impl PowerSupply {
             }
         }
 
-        Err(Ev3Error::NotFound)
+        Err(Ev3Error::NotConnected {
+            device: "power_supply".to_owned(),
+            port: None,
+        })
     }
 
     /// Returns the battery current in microamps

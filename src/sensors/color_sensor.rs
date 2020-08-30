@@ -1,7 +1,7 @@
 //! LEGO EV3 color sensor.
 
 use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Result};
+use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// LEGO EV3 color sensor.
 #[derive(Debug, Clone, Device)]
@@ -10,7 +10,13 @@ pub struct ColorSensor {
 }
 
 impl ColorSensor {
-    findable!("lego-sensor", "lego-ev3-color", SensorPort);
+    findable!(
+        "lego-sensor",
+        "lego-ev3-color",
+        SensorPort,
+        "ColorSensor",
+        "in"
+    );
 
     /// Reflected light - sets LED color to red
     pub const MODE_COL_REFLECT: &'static str = "COL-REFLECT";

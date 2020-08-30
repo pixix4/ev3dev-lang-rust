@@ -162,7 +162,9 @@ pub fn speak(text: &str) -> Ev3Result<Child> {
 
     Ok(Command::new("/usr/bin/aplay")
         .arg("-q")
-        .stdin(espeak.stdout.ok_or(Ev3Error::NotFound)?)
+        .stdin(espeak.stdout.ok_or(Ev3Error::InternalError {
+            msg: "`espeak` pipe to `aplay` could not be created!".to_owned(),
+        })?)
         .stdout(Stdio::null())
         .spawn()?)
 }
