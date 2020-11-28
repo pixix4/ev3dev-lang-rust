@@ -9,6 +9,13 @@ pub struct LargeMotor {
 }
 
 impl LargeMotor {
+
+    fn new(driver: Driver) -> Self {
+        Self {
+            driver,
+        }
+    }
+
     findable!(
         "tacho-motor",
         "lego-ev3-l-motor",

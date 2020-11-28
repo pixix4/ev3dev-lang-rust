@@ -9,6 +9,13 @@ pub struct MediumMotor {
 }
 
 impl MediumMotor {
+
+    fn new(driver: Driver) -> Self {
+        Self {
+            driver,
+        }
+    }
+
     findable!(
         "tacho-motor",
         "lego-ev3-m-motor",

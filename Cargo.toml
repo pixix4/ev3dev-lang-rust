@@ -1,6 +1,6 @@
 [package]
 name = "ev3dev-lang-rust"
-version = "0.9.4"
+version = "0.9.5"
 authors = ["Lars Westermann <lars-westermann@live.de>"]
 
 description = "Rust language bindings for ev3dev"

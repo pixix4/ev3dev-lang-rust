@@ -43,9 +43,7 @@ macro_rules! findable {
             let name = Driver::find_name_by_port_and_driver($class_name, &port, $driver_name)
                 .map_err(Self::map_error)?;
 
-            Ok(Self {
-                driver: Driver::new($class_name, &name),
-            })
+            Ok(Self::new(Driver::new($class_name, &name)))
         }
 
         /// Try to find a `Self`. Only returns a motor if their is exactly one connected, `Error::NotFound` otherwise.
@@ -53,18 +51,14 @@ macro_rules! findable {
             let name =
                 Driver::find_name_by_driver($class_name, $driver_name).map_err(Self::map_error)?;
 
-            Ok(Self {
-                driver: Driver::new($class_name, &name),
-            })
+            Ok(Self::new(Driver::new($class_name, &name)))
         }
 
         /// Extract list of connected 'Self'
         pub fn list() -> Ev3Result<Vec<Self>> {
             Ok(Driver::find_names_by_driver($class_name, $driver_name)?
                 .iter()
-                .map(|name| Self {
-                    driver: Driver::new($class_name, name),
-                })
+                .map(|name| Self::new(Driver::new($class_name, &name)))
                 .collect())
         }
     };

@@ -10,6 +10,13 @@ pub struct GyroSensor {
 }
 
 impl GyroSensor {
+
+    fn new(driver: Driver) -> Self {
+        Self {
+            driver,
+        }
+    }
+
     findable!(
         "lego-sensor",
         "lego-ev3-gyro",

@@ -1,5 +1,6 @@
 //! LEGO EV3 ultrasonic sensor
 
+use std::cell::Cell;
 use super::SensorPort;
 use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
@@ -7,9 +8,20 @@ use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 #[derive(Debug, Clone, Device)]
 pub struct UltrasonicSensor {
     driver: Driver,
+    cm_scale: Cell<Option<f32>>,
+    in_scale: Cell<Option<f32>>,
 }
 
 impl UltrasonicSensor {
+
+    fn new(driver: Driver) -> Self {
+        Self {
+            driver,
+            cm_scale: Cell::new(None),
+            in_scale: Cell::new(None),
+        }
+    }
+
     findable!(
         "lego-sensor",
         "lego-ev3-us",
@@ -82,8 +94,40 @@ impl UltrasonicSensor {
         self.set_mode(Self::MODE_US_DC_IN)
     }
 
-    /// Measurement of the distance detected by the sensor
+    /// Measurement of the distance detected by the sensor, unscaled.
     pub fn get_distance(&self) -> Ev3Result<i32> {
         self.get_value0()
+    }
+
+    /// Measurement of the distance detected by the sensor, in centimeters.
+    pub fn get_distance_centimeters(&self) -> Ev3Result<f32> {
+        let scale_field = self.cm_scale.get();
+        let scale = match scale_field {
+            Some(s) => s,
+            None => {
+                let decimals = self.get_decimals()?;
+                let s = 10f32.powi(-decimals);
+                self.cm_scale.set(Some(s));
+                s
+            }
+        };
+
+        Ok((self.get_value0()? as f32) * scale)
+    }
+
+    /// Measurement of the distance detected by the sensor, in centimeters.
+    pub fn get_distance_inches(&self) -> Ev3Result<f32> {
+        let scale_field = self.in_scale.get();
+        let scale = match scale_field {
+            Some(s) => s,
+            None => {
+                let decimals = self.get_decimals()?;
+                let s = 10f32.powi(-decimals);
+                self.in_scale.set(Some(s));
+                s
+            }
+        };
+
+        Ok((self.get_value0()? as f32) * scale)
     }
 }

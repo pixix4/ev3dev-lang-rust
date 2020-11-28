@@ -6,6 +6,9 @@ mod sensor_macro;
 mod color_sensor;
 pub use self::color_sensor::ColorSensor;
 
+mod light_sensor;
+pub use self::light_sensor::LightSensor;
+
 mod gyro_sensor;
 pub use self::gyro_sensor::GyroSensor;
 

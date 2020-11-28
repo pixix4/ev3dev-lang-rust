@@ -14,6 +14,13 @@ pub struct InfraredSensor {
 }
 
 impl InfraredSensor {
+
+    fn new(driver: Driver) -> Self {
+        Self {
+            driver,
+        }
+    }
+
     findable!(
         "lego-sensor",
         "lego-ev3-ir",
