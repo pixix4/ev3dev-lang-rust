@@ -10,11 +10,8 @@ pub struct GyroSensor {
 }
 
 impl GyroSensor {
-
     fn new(driver: Driver) -> Self {
-        Self {
-            driver,
-        }
+        Self { driver }
     }
 
     findable!(
@@ -65,5 +62,33 @@ impl GyroSensor {
     /// Calibration ???
     pub fn set_mode_gyro_cal(&self) -> Ev3Result<()> {
         self.set_mode(Self::MODE_GYRO_CAL)
+    }
+
+    /// Gets the angle, ranging from -32768 to 32767
+    /// Fails if it has been set in the wrong mode
+    pub fn get_angle(&self) -> Ev3Result<i32> {
+        if self.get_mode()? == GyroSensor::MODE_GYRO_G_AND_A
+            || self.get_mode()? == GyroSensor::MODE_GYRO_ANG
+        {
+            return self.get_value0();
+        }
+        Ev3Result::Err(Ev3Error::InternalError {
+            msg: format!("Cannot get angle while in {}", self.get_mode()?),
+        })
+    }
+
+    /// Gets the rotational speed value, ranging from -440 to 440
+    /// Fails is it has been set in the wrong mode:
+    /// for example, fails if we ask for rotational speed while in MODE_GYRO_ANG mode
+    pub fn get_rotational_speed(&self) -> Ev3Result<i32> {
+        if self.get_mode()? == GyroSensor::MODE_GYRO_RATE {
+            return self.get_value0();
+        } else if self.get_mode()? == GyroSensor::MODE_GYRO_G_AND_A {
+            return self.get_value1();
+        }
+
+        Ev3Result::Err(Ev3Error::InternalError {
+            msg: format!("Cannot get rotational speed while in {}", self.get_mode()?),
+        })
     }
 }
