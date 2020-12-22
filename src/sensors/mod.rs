@@ -6,6 +6,9 @@ mod sensor_macro;
 mod color_sensor;
 pub use self::color_sensor::ColorSensor;
 
+mod ir_seeker_sensor;
+pub use self::ir_seeker_sensor::IrSeekerSensor;
+
 mod light_sensor;
 pub use self::light_sensor::LightSensor;
 
