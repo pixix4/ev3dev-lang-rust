@@ -69,7 +69,7 @@ impl CompassSensor {
         self.set_command(Self::COMMAND_START_CALIBRATION)
     }
 
-    /// starts the calibration
+    /// stops the calibration
     pub fn stop_calibration(&self) -> Ev3Result<()> {
         self.set_command(Self::COMMAND_STOP_CALIBRATION)
     }
