@@ -9,6 +9,9 @@ pub use self::color_sensor::ColorSensor;
 mod ir_seeker_sensor;
 pub use self::ir_seeker_sensor::IrSeekerSensor;
 
+mod compass_sensor;
+pub use self::compass_sensor::CompassSensor;
+
 mod light_sensor;
 pub use self::light_sensor::LightSensor;
 
