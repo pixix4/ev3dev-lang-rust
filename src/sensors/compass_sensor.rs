@@ -1,9 +1,9 @@
-//! LEGO EV3 light sensor.
+//! HiTechnic EV3 / NXT Compass Sensor. (https://www.generationrobots.com/en/401186-hitechnic-compass-sensor-for-lego-mindstorms-nxt-and-ev3.html)
 
 use super::SensorPort;
 use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
-/// LEGO EV3 light sensor.
+/// HiTechnic EV3 / NXT Compass Sensor.
 #[derive(Debug, Clone, Device)]
 pub struct CompassSensor {
     driver: Driver,
@@ -62,7 +62,7 @@ impl CompassSensor {
     /// start the calibration by start_calibration()
     /// turn the robot 360 degrees
     /// end the calibration by stop_calibration()
-    /// attention: if calibration has not finished, the get_degreee method always returns -258
+    /// attention: if calibration has not finished, the get_rotation method always returns -258
 
     /// starts the calibration
     pub fn start_calibration(&self) -> Ev3Result<()> {

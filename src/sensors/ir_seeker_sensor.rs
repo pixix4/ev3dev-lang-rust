@@ -1,9 +1,9 @@
-//! LEGO EV3 light sensor.
+//! HiTechnic EV3 / NXT Infrared Sensor. (https://www.generationrobots.com/de/401172-nxt-irseeker-v2-infrarot-sensor-f%C3%BCr-nxt-und-ev3-mindstorms-.html)
 
 use super::SensorPort;
 use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
-/// LEGO EV3 light sensor.
+/// HiTechnic EV3 / NXT Infrared Sensor.
 #[derive(Debug, Clone, Device)]
 pub struct IrSeekerSensor {
     driver: Driver,
