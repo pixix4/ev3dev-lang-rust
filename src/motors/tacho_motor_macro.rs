@@ -331,7 +331,7 @@ macro_rules! tacho_motor {
         ///
         /// # Examples
         ///
-        /// ```no_run
+        /// ```ignore
         /// use ev3dev_lang_rust::motors::LargeMotor;
         /// use std::thread;
         /// use std::time::Duration;
