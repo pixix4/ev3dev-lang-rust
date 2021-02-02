@@ -92,3 +92,15 @@ fn main() -> Ev3Result<()> {
     The `--release` flag is optional. However, it can speedup the execution time by a factor of 30.
 
 The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`
+
+## Editor support
+
+If you have problems with code completion or inline documentation with rust analyzer it may help to enable to following settings: (example from vs code `settings.json`)
+```json
+{
+    ...
+    "rust-analyzer.cargo.loadOutDirsFromCheck": true,
+    "rust-analyzer.procMacro.enable": true,
+    ...
+}
+```
