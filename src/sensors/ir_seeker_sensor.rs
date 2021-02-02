@@ -10,11 +10,8 @@ pub struct IrSeekerSensor {
 }
 
 impl IrSeekerSensor {
-
     fn new(driver: Driver) -> Self {
-        Self {
-            driver,
-        }
+        Self { driver }
     }
 
     findable!(
@@ -73,5 +70,4 @@ impl IrSeekerSensor {
         let val5 = self.get_value5()?;
         Ok([val1, val2, val3, val4, val5])
     }
-
 }

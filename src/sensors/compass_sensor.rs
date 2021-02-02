@@ -11,21 +11,11 @@ pub struct CompassSensor {
 }
 
 impl CompassSensor {
-
     fn new(driver: Driver) -> Self {
-        Self {
-            driver,
-            origin : 0,
-        }
+        Self { driver, origin: 0 }
     }
 
-    findable!(
-        "lego-sensor",
-        "ht-nxt-compass",
-        SensorPort,
-        "Compass",
-        "in"
-    );
+    findable!("lego-sensor", "ht-nxt-compass", SensorPort, "Compass", "in");
 
     /// Command for starting the calibration
     pub const COMMAND_START_CALIBRATION: &'static str = "BEGIN-CAL";
@@ -43,7 +33,7 @@ impl CompassSensor {
     }
 
     /// sets the origin
-    pub fn set_zero(&mut self) -> Ev3Result<()>  {
+    pub fn set_zero(&mut self) -> Ev3Result<()> {
         self.origin = self.get_rotation()?;
         Ok(())
     }
@@ -53,7 +43,7 @@ impl CompassSensor {
         let pos = self.get_rotation()?;
         let mut rel_rot = pos - self.origin;
         if rel_rot < 0 {
-            rel_rot = rel_rot + 360;
+            rel_rot += 360;
         }
         Ok(rel_rot)
     }
@@ -73,5 +63,4 @@ impl CompassSensor {
     pub fn stop_calibration(&self) -> Ev3Result<()> {
         self.set_command(Self::COMMAND_STOP_CALIBRATION)
     }
-
 }

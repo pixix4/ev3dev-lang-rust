@@ -1,7 +1,7 @@
 use super::MotorPort;
-use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 #[cfg(target_os = "linux")]
 use crate::wait;
+use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 use std::time::Duration;
 
 /// EV3 medium servo motor
@@ -11,11 +11,8 @@ pub struct MediumMotor {
 }
 
 impl MediumMotor {
-
     fn new(driver: Driver) -> Self {
-        Self {
-            driver,
-        }
+        Self { driver }
     }
 
     findable!(

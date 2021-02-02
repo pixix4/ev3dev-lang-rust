@@ -14,11 +14,8 @@ pub struct InfraredSensor {
 }
 
 impl InfraredSensor {
-
     fn new(driver: Driver) -> Self {
-        Self {
-            driver,
-        }
+        Self { driver }
     }
 
     findable!(

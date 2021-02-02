@@ -1,8 +1,8 @@
 //! LEGO EV3 light sensor.
 
-use std::cell::Cell;
 use super::SensorPort;
 use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
+use std::cell::Cell;
 
 /// LEGO EV3 light sensor.
 #[derive(Debug, Clone, Device)]
@@ -13,7 +13,6 @@ pub struct LightSensor {
 }
 
 impl LightSensor {
-
     fn new(driver: Driver) -> Self {
         Self {
             driver,

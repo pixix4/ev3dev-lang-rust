@@ -10,11 +10,8 @@ pub struct TouchSensor {
 }
 
 impl TouchSensor {
-
     fn new(driver: Driver) -> Self {
-        Self {
-            driver,
-        }
+        Self { driver }
     }
 
     findable!(
