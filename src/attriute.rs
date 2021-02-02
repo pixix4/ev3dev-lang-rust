@@ -1,12 +1,11 @@
 //! A wrapper to a attribute file in the `/sys/class/` directory.
-use std::cell::RefCell;
 use std::error::Error;
 use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::os::unix::fs::PermissionsExt;
 use std::os::unix::io::{AsRawFd, RawFd};
-use std::rc::Rc;
 use std::string::String;
+use std::sync::{Arc, Mutex};
 
 use crate::{Ev3Error, Ev3Result};
 
@@ -16,7 +15,7 @@ const ROOT_PATH: &str = "/sys/class/";
 /// A wrapper to a attribute file in the `/sys/class/` directory.
 #[derive(Debug, Clone)]
 pub struct Attribute {
-    file: Rc<RefCell<File>>,
+    file: Arc<Mutex<File>>,
 }
 
 impl Attribute {
@@ -38,14 +37,14 @@ impl Attribute {
             .open(&filename)?;
 
         Ok(Attribute {
-            file: Rc::new(RefCell::new(file)),
+            file: Arc::new(Mutex::new(file)),
         })
     }
 
     /// Returns the current value of the wrapped file.
     fn get_str(&self) -> Ev3Result<String> {
         let mut value = String::new();
-        let mut file = self.file.borrow_mut();
+        let mut file = self.file.lock().unwrap();
         file.seek(SeekFrom::Start(0))?;
         file.read_to_string(&mut value)?;
         Ok(value.trim_end().to_owned())
@@ -54,7 +53,7 @@ impl Attribute {
     /// Sets the value of the wrapped file.
     /// Returns a `Ev3Result::InternalError` if the file is not writable.
     fn set_str(&self, value: &str) -> Ev3Result<()> {
-        let mut file = self.file.borrow_mut();
+        let mut file = self.file.lock().unwrap();
         file.seek(SeekFrom::Start(0))?;
         file.write_all(value.as_bytes())?;
         Ok(())
@@ -108,6 +107,6 @@ impl Attribute {
 
     /// Returns a C pointer to the wrapped file.
     pub fn get_raw_fd(&self) -> RawFd {
-        self.file.borrow().as_raw_fd()
+        self.file.lock().unwrap().as_raw_fd()
     }
 }
