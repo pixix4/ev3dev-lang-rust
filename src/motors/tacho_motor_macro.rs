@@ -620,6 +620,7 @@ macro_rules! tacho_motor {
         /// # Ok(())
         /// # }
         /// ```
+        #[cfg(target_os = "linux")]
         pub fn wait<F>(&self, cond: F, timeout: Option<Duration>) -> bool
         where
             F: Fn() -> bool,
@@ -650,6 +651,7 @@ macro_rules! tacho_motor {
         /// # Ok(())
         /// # }
         /// ```
+        #[cfg(target_os = "linux")]
         pub fn wait_while(&self, state: &str, timeout: Option<Duration>) -> bool {
             let cond = || {
                 self.get_state()
@@ -682,6 +684,7 @@ macro_rules! tacho_motor {
         /// # Ok(())
         /// # }
         /// ```
+        #[cfg(target_os = "linux")]
         pub fn wait_until(&self, state: &str, timeout: Option<Duration>) -> bool {
             let cond = || {
                 self.get_state()
@@ -715,6 +718,7 @@ macro_rules! tacho_motor {
         /// # Ok(())
         /// # }
         /// ```
+        #[cfg(target_os = "linux")]
         pub fn wait_until_not_moving(&self, timeout: Option<Duration>) -> bool {
             self.wait_while(Self::STATE_RUNNING, timeout)
         }

@@ -56,6 +56,7 @@ pub use device::Device;
 mod utils;
 pub use utils::{Ev3Error, Ev3Result, Port};
 
+#[cfg(target_os = "linux")]
 pub mod wait;
 
 pub mod motors;
