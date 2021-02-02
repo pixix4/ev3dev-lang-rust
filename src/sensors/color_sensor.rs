@@ -65,6 +65,11 @@ impl ColorSensor {
         is_mode_col_cal
     );
 
+    /// Get the color value for the modes `COL-REFLECT`, `COL-AMBIENT`, `COL-COLOR` and `REF-RAW`.
+    pub fn get_color(&self) -> Ev3Result<i32> {
+        self.get_value0()
+    }
+
     /// Red component of the detected color, in the range 0-1020.
     pub fn get_red(&self) -> Ev3Result<i32> {
         self.get_value0()

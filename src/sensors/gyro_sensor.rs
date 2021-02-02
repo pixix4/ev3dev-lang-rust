@@ -71,7 +71,6 @@ impl GyroSensor {
         is_mode_tilt_ang
     );
 
-    
     /// Gets the angle, ranging from -32768 to 32767
     /// Fails if it has been set in the wrong mode
     pub fn get_angle(&self) -> Ev3Result<i32> {

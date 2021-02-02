@@ -46,8 +46,8 @@ pub fn beep() -> Ev3Result<Child> {
 /// Call beep command with the provided arguments.
 ///
 /// See `beep man page`_ and google `linux beep music`_ for inspiration.
-/// * `beep man page`: https://linux.die.net/man/1/beep
-/// * `linux beep music`: https://www.google.com/search?q=linux+beep+music
+/// * `beep man page`: <https://linux.die.net/man/1/beep>
+/// * `linux beep music`: <https://www.google.com/search?q=linux+beep+music>
 ///
 /// # Example
 /// ```no_run

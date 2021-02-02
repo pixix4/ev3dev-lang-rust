@@ -1,4 +1,4 @@
-//! HiTechnic EV3 / NXT Compass Sensor. (https://www.generationrobots.com/en/401186-hitechnic-compass-sensor-for-lego-mindstorms-nxt-and-ev3.html)
+//! HiTechnic EV3 / NXT Compass Sensor. (<https://www.generationrobots.com/en/401186-hitechnic-compass-sensor-for-lego-mindstorms-nxt-and-ev3.html>)
 
 use super::{Sensor, SensorPort};
 use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};

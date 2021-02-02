@@ -1,4 +1,4 @@
-//! HiTechnic EV3 / NXT Infrared Sensor. (https://www.generationrobots.com/de/401172-nxt-irseeker-v2-infrarot-sensor-f%C3%BCr-nxt-und-ev3-mindstorms-.html)
+//! HiTechnic EV3 / NXT Infrared Sensor. (<https://www.generationrobots.com/de/401172-nxt-irseeker-v2-infrarot-sensor-f%C3%BCr-nxt-und-ev3-mindstorms-.html>)
 
 use super::{Sensor, SensorPort};
 use crate::{sensor_mode, Attribute, Device, Driver, Ev3Error, Ev3Result};

@@ -68,6 +68,11 @@ impl InfraredSensor {
         set_mode_ir_cal,
         is_mode_ir_cal
     );
+
+    /// Get the proximity distance, in the range 0-100 (pct).
+    pub fn get_distance(&self) -> Ev3Result<i32> {
+        self.get_value0()
+    }
 }
 
 struct RemoteControlHelper {
