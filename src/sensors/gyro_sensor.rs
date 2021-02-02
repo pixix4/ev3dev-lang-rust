@@ -1,10 +1,10 @@
 //! LEGO EV3 gyro sensor.
 
-use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
+use super::{Sensor, SensorPort};
+use crate::{sensor_mode, Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// LEGO EV3 gyro sensor.
-#[derive(Debug, Clone, Device)]
+#[derive(Debug, Clone, Device, Sensor)]
 pub struct GyroSensor {
     driver: Driver,
 }
@@ -21,65 +21,57 @@ impl GyroSensor {
         "GyroSensor",
         "in"
     );
+    sensor_mode!(
+        "GYRO-ANG",
+        MODE_GYRO_ANG,
+        "Angle",
+        set_mode_gyro_ang,
+        is_mode_gyro_ang
+    );
+    sensor_mode!(
+        "GYRO-RATE",
+        MODE_GYRO_RATE,
+        "Rotational Speed",
+        set_mode_gyro_rate,
+        is_mode_gyro_rate
+    );
+    sensor_mode!(
+        "GYRO-FAS",
+        MODE_GYRO_FAS,
+        "Raw sensor value ???",
+        set_mode_gyro_fas,
+        is_mode_gyro_fas
+    );
+    sensor_mode!(
+        "GYRO-G&A",
+        MODE_GYRO_G_AND_A,
+        "Angle and Rotational Speed",
+        set_mode_gyro_g_and_a,
+        is_mode_gyro_g_and_a
+    );
+    sensor_mode!(
+        "GYRO-CAL",
+        MODE_GYRO_CAL,
+        "Calibration ???",
+        set_mode_gyro_cal,
+        is_mode_gyro_cal
+    );
+    sensor_mode!(
+        "TILT-RATE",
+        MODE_TILT_RATE,
+        "Rotational Speed (2nd axis)",
+        set_mode_tilt_rate,
+        is_mode_tilt_rate
+    );
+    sensor_mode!(
+        "TILT-ANG",
+        MODE_TILT_ANG,
+        "Angle (2nd axis)",
+        set_mode_tilt_ang,
+        is_mode_tilt_ang
+    );
 
-    /// Angle
-    pub const MODE_GYRO_ANG: &'static str = "GYRO-ANG";
-
-    /// Rotational Speed
-    pub const MODE_GYRO_RATE: &'static str = "GYRO-RATE";
-
-    /// Raw sensor value ???
-    pub const MODE_GYRO_FAS: &'static str = "GYRO-FAS";
-
-    /// Angle and Rotational Speed
-    pub const MODE_GYRO_G_AND_A: &'static str = "GYRO-G&A";
-
-    /// Calibration ???
-    pub const MODE_GYRO_CAL: &'static str = "GYRO-CAL";
-
-    /// Rotational Speed (2nd axis)
-    pub const MODE_TILT_RATE: &'static str = "TILT-RATE";
-
-    /// Angle (2nd axis)
-    pub const MODE_TILT_ANG: &'static str = "TILT-ANG";
-
-    sensor!();
-
-    /// Angle
-    pub fn set_mode_gyro_ang(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_GYRO_ANG)
-    }
-
-    /// Rotational Speed
-    pub fn set_mode_gyro_rate(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_GYRO_RATE)
-    }
-
-    /// Raw sensor value ???
-    pub fn set_mode_gyro_fas(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_GYRO_FAS)
-    }
-
-    /// Angle and Rotational Speed
-    pub fn set_mode_gyro_g_and_a(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_GYRO_G_AND_A)
-    }
-
-    /// Calibration ???
-    pub fn set_mode_gyro_cal(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_GYRO_CAL)
-    }
-
-    /// Calibration ???
-    pub fn set_mode_tilt_rate(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_TILT_RATE)
-    }
-
-    /// Calibration ???
-    pub fn set_mode_tilt_ang(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_TILT_ANG)
-    }
-
+    
     /// Gets the angle, ranging from -32768 to 32767
     /// Fails if it has been set in the wrong mode
     pub fn get_angle(&self) -> Ev3Result<i32> {

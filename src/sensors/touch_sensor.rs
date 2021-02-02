@@ -1,10 +1,10 @@
 //! Touch Sensor
 
-use super::SensorPort;
+use super::{Sensor, SensorPort};
 use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// Touch Sensor
-#[derive(Debug, Clone, Device)]
+#[derive(Debug, Clone, Device, Sensor)]
 pub struct TouchSensor {
     driver: Driver,
 }
@@ -24,8 +24,6 @@ impl TouchSensor {
 
     /// Button state
     pub const MODE_TOUCH: &'static str = "TOUCH";
-
-    sensor!();
 
     /// A boolean indicating whether the current touch sensor is being pressed.
     pub fn get_pressed_state(&self) -> Ev3Result<bool> {

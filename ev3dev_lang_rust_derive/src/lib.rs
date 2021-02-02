@@ -21,3 +21,14 @@ pub fn device_macro_derive(input: TokenStream) -> TokenStream {
     };
     gen.into()
 }
+
+#[proc_macro_derive(Sensor)]
+pub fn sensor_macro_derive(input: TokenStream) -> TokenStream {
+    let ast: syn::DeriveInput = syn::parse(input).unwrap();
+
+    let name = &ast.ident;
+    let gen = quote! {
+        impl Sensor for #name {}
+    };
+    gen.into()
+}

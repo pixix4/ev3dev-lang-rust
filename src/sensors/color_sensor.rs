@@ -1,10 +1,10 @@
 //! LEGO EV3 color sensor.
 
-use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
+use super::{Sensor, SensorPort};
+use crate::{sensor_mode, Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// LEGO EV3 color sensor.
-#[derive(Debug, Clone, Device)]
+#[derive(Debug, Clone, Device, Sensor)]
 pub struct ColorSensor {
     driver: Driver,
 }
@@ -22,55 +22,48 @@ impl ColorSensor {
         "in"
     );
 
-    /// Reflected light - sets LED color to red
-    pub const MODE_COL_REFLECT: &'static str = "COL-REFLECT";
-
-    /// Ambient light - sets LED color to blue (dimly lit)
-    pub const MODE_COL_AMBIENT: &'static str = "COL-AMBIENT";
-
-    /// Color - sets LED color to white (all LEDs rapidly cycling)
-    pub const MODE_COL_COLOR: &'static str = "COL-COLOR";
-
-    /// Raw Reflected - sets LED color to red
-    pub const MODE_REF_RAW: &'static str = "REF-RAW";
-
-    /// Raw Color Components - sets LED color to white (all LEDs rapidly cycling)
-    pub const MODE_RGB_RAW: &'static str = "RGB-RAW";
-
-    /// Calibration ??? - sets LED color to red, flashing every 4 seconds, then goes continuous
-    pub const MODE_COL_CAL: &'static str = "COL-CAL";
-
-    sensor!();
-
-    /// Reflected light - sets LED color to red
-    pub fn set_mode_col_reflect(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_COL_REFLECT)
-    }
-
-    /// Ambient light - sets LED color to blue (dimly lit)
-    pub fn set_mode_col_ambient(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_COL_AMBIENT)
-    }
-
-    /// Color - sets LED color to white (all LEDs rapidly cycling)
-    pub fn set_mode_col_color(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_COL_COLOR)
-    }
-
-    /// Raw Reflected - sets LED color to red
-    pub fn set_mode_ref_raw(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_REF_RAW)
-    }
-
-    /// Raw Color Components - sets LED color to white (all LEDs rapidly cycling)
-    pub fn set_mode_rgb_raw(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_RGB_RAW)
-    }
-
-    /// Calibration ??? - sets LED color to red, flashing every 4 seconds, then goes continuous
-    pub fn set_mode_col_cal(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_COL_CAL)
-    }
+    sensor_mode!(
+        "COL-REFLECT",
+        MODE_COL_REFLECT,
+        "Reflected light - sets LED color to red",
+        set_mode_col_reflect,
+        is_mode_col_reflect
+    );
+    sensor_mode!(
+        "COL-AMBIENT",
+        MODE_COL_AMBIENT,
+        "Ambient light - sets LED color to blue (dimly lit)",
+        set_mode_col_ambient,
+        is_mode_col_ambient
+    );
+    sensor_mode!(
+        "COL-COLOR",
+        MODE_COL_COLOR,
+        "Color - sets LED color to white (all LEDs rapidly cycling)",
+        set_mode_col_color,
+        is_mode_col_color
+    );
+    sensor_mode!(
+        "REF-RAW",
+        MODE_REF_RAW,
+        "Raw Reflected - sets LED color to red",
+        set_mode_ref_raw,
+        is_mode_ref_raw
+    );
+    sensor_mode!(
+        "RGB-RAW",
+        MODE_RGB_RAW,
+        "Raw Color Components - sets LED color to white (all LEDs rapidly cycling)",
+        set_mode_rgb_raw,
+        is_mode_rgb_raw
+    );
+    sensor_mode!(
+        "COL-CAL",
+        MODE_COL_CAL,
+        "Calibration ??? - sets LED color to red, flashing every 4 seconds, then goes continuous",
+        set_mode_col_cal,
+        is_mode_col_cal
+    );
 
     /// Red component of the detected color, in the range 0-1020.
     pub fn get_red(&self) -> Ev3Result<i32> {

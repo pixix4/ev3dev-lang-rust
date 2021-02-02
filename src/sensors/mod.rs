@@ -1,7 +1,7 @@
 //! # Container module for sensor types
 
-#[macro_use]
-mod sensor_macro;
+mod sensor;
+pub use self::sensor::Sensor;
 
 mod color_sensor;
 pub use self::color_sensor::ColorSensor;
@@ -66,4 +66,24 @@ impl Port for SensorPort {
             SensorPort::In4 => "in4".to_owned(),
         }
     }
+}
+
+#[macro_export]
+/// Add a sensor mode constant with getter and setter
+macro_rules! sensor_mode {
+    ($value:expr, $const_name:ident, $docstring:expr, $setter:ident, $getter:ident) => {
+
+        #[doc = $docstring]
+        pub const $const_name: &'static str = $value;
+
+        #[doc = $docstring]
+        pub fn $setter(&self) -> Ev3Result<()> {
+            self.set_mode(Self::$const_name)
+        }
+
+        #[doc = $docstring]
+        pub fn $getter(&self) -> Ev3Result<bool> {
+            Ok(self.get_mode()? == Self::$const_name)
+        }
+    };
 }

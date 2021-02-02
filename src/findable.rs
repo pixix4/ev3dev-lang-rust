@@ -1,9 +1,11 @@
 /// Helper to create a new `Device` instance.
 ///
-/// Generates `get()`, `find()` and `list()` methods. Therefore are 3 parameters required:
+/// Generates `get()`, `find()` and `list()` methods. Therefore are 5 parameters required:
 /// * `class_name: &str`
 /// * `driver_name: &str`
 /// * `port: dyn ev3dev_lang_rust::Motor`
+/// * `debug_name: &str`
+/// * `port_prefix: &str`
 ///
 /// # Example:
 ///
@@ -14,7 +16,7 @@
 /// }
 ///
 /// impl LargeMotor {
-///     findable!("tacho-motor", "lego-ev3-l-motor", MotorPort);
+///     findable!("tacho-motor", "lego-ev3-l-motor", MotorPort), "LargeMotor", "out";
 ///     tacho_motor!();
 /// }
 /// ```

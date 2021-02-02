@@ -1,10 +1,10 @@
 //! HiTechnic EV3 / NXT Compass Sensor. (https://www.generationrobots.com/en/401186-hitechnic-compass-sensor-for-lego-mindstorms-nxt-and-ev3.html)
 
-use super::SensorPort;
+use super::{Sensor, SensorPort};
 use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// HiTechnic EV3 / NXT Compass Sensor.
-#[derive(Debug, Clone, Device)]
+#[derive(Debug, Clone, Device, Sensor)]
 pub struct CompassSensor {
     driver: Driver,
     origin: i32, // zero point
@@ -24,8 +24,6 @@ impl CompassSensor {
     pub const COMMAND_STOP_CALIBRATION: &'static str = "END-CAL";
 
     // Sensor only have one mode (COMPASS), so setting the mode is not necessary
-
-    sensor!();
 
     /// gets rotation (in degree) from the compass sensor
     pub fn get_rotation(&self) -> Ev3Result<i32> {

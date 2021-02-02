@@ -1,10 +1,10 @@
 //! HiTechnic EV3 / NXT Infrared Sensor. (https://www.generationrobots.com/de/401172-nxt-irseeker-v2-infrarot-sensor-f%C3%BCr-nxt-und-ev3-mindstorms-.html)
 
-use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
+use super::{Sensor, SensorPort};
+use crate::{sensor_mode, Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// HiTechnic EV3 / NXT Infrared Sensor.
-#[derive(Debug, Clone, Device)]
+#[derive(Debug, Clone, Device, Sensor)]
 pub struct IrSeekerSensor {
     driver: Driver,
 }
@@ -22,39 +22,34 @@ impl IrSeekerSensor {
         "in"
     );
 
-    /// Sensor mode alternating current -> filters the infrared signal of the hitechnic ball -> only shows direction
-    pub const AC: &'static str = "AC";
-
-    /// Sensor mode Direct current -> reacts on all infrared signals, sun infrared signal included -> only shows direction
-    pub const DC: &'static str = "DC";
-
-    /// Sensor mode alternating current -> shows direction (value0) and values of each of the five sensors
-    pub const AC_ALL: &'static str = "AC-ALL";
-
-    /// Sensor mode Direct current -> shows direction (value0) and values of each of the five sensors
-    pub const DC_ALL: &'static str = "DC-ALL";
-
-    sensor!();
-
-    /// sets mode to AC
-    pub fn set_mode_ac(&self) -> Ev3Result<()> {
-        self.set_mode(Self::AC)
-    }
-
-    /// sets mode to DC
-    pub fn set_mode_dc(&self) -> Ev3Result<()> {
-        self.set_mode(Self::DC)
-    }
-
-    /// sets mode to AC_ALL
-    pub fn set_mode_ac_all(&self) -> Ev3Result<()> {
-        self.set_mode(Self::AC_ALL)
-    }
-
-    /// sets mode to DC_ALL
-    pub fn set_mode_dc_all(&self) -> Ev3Result<()> {
-        self.set_mode(Self::DC_ALL)
-    }
+    sensor_mode!(
+        "AC",
+        MODE_AC,
+        "Sensor mode alternating current -> filters the infrared signal of the hitechnic ball -> only shows direction",
+        set_mode_ac,
+        is_mode_ac
+    );
+    sensor_mode!(
+        "DC",
+        MODE_DC,
+        "Sensor mode direct current -> reacts on all infrared signals, sun infrared signal included -> only shows direction",
+        set_mode_dc,
+        is_mode_dc
+    );
+    sensor_mode!(
+        "AC-ALL",
+        MODE_AC_ALL,
+        "Sensor mode alternating current -> shows direction (value0) and values of each of the five sensors",
+        set_mode_ac_all,
+        is_mode_ac_all
+    );
+    sensor_mode!(
+        "DC-ALL",
+        MODE_DC_ALL,
+        "Sensor mode direct current -> shows direction (value0) and values of each of the five sensors",
+        set_mode_dc_all,
+        is_mode_dc_all
+    );
 
     /// gets direction of incoming ir light (calculated by the sensor)
     pub fn get_ir_direction(&self) -> Ev3Result<i32> {

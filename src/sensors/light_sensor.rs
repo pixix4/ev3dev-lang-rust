@@ -1,11 +1,11 @@
 //! LEGO EV3 light sensor.
 
-use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
+use super::{Sensor, SensorPort};
+use crate::{sensor_mode, Attribute, Device, Driver, Ev3Error, Ev3Result};
 use std::cell::Cell;
 
 /// LEGO EV3 light sensor.
-#[derive(Debug, Clone, Device)]
+#[derive(Debug, Clone, Device, Sensor)]
 pub struct LightSensor {
     driver: Driver,
     reflect_scale: Cell<Option<f32>>,
@@ -29,23 +29,20 @@ impl LightSensor {
         "in"
     );
 
-    /// Reflected light. LED on
-    pub const MODE_REFLECT: &'static str = "REFLECT";
-
-    /// Ambient light. LED off
-    pub const MODE_AMBIENT: &'static str = "AMBIENT";
-
-    sensor!();
-
-    /// Reflected light. LED on
-    pub fn set_mode_reflect(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_REFLECT)
-    }
-
-    /// Ambient light. LED off
-    pub fn set_mode_ambient(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_AMBIENT)
-    }
+    sensor_mode!(
+        "REFLECT",
+        MODE_REFLECT,
+        "Reflected light. LED on",
+        set_mode_reflect,
+        is_mode_reflect
+    );
+    sensor_mode!(
+        "AMBIENT",
+        MODE_AMBIENT,
+        "Ambient light. LED off",
+        set_mode_ambient,
+        is_mode_ambient
+    );
 
     /// A measurement of the light intensity, unscaled.
     pub fn get_light_intensity(&self) -> Ev3Result<i32> {

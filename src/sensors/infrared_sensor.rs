@@ -1,14 +1,14 @@
 //! LEGO EV3 infrared sensor.
 
-use super::SensorPort;
-use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
+use super::{Sensor, SensorPort};
+use crate::{sensor_mode, Attribute, Device, Driver, Ev3Error, Ev3Result};
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::fmt;
 use std::rc::Rc;
 
 /// LEGO EV3 infrared sensor.
-#[derive(Debug, Clone, Device)]
+#[derive(Debug, Clone, Device, Sensor)]
 pub struct InfraredSensor {
     driver: Driver,
 }
@@ -26,55 +26,48 @@ impl InfraredSensor {
         "in"
     );
 
-    /// Proximity
-    pub const MODE_IR_PROX: &'static str = "IR-PROX";
-
-    /// IR Seeker
-    pub const MODE_IR_SEEK: &'static str = "IR-SEEK";
-
-    /// IR Remote Control
-    pub const MODE_IR_REMOTE: &'static str = "IR-REMOTE";
-
-    /// IR Remote Control
-    pub const MODE_IR_REM_A: &'static str = "IR-REM-A";
-
-    /// Alternate IR Seeker ???
-    pub const MODE_IR_S_ALT: &'static str = "IR-S-ALT";
-
-    /// Calibration ???
-    pub const MODE_IR_CAL: &'static str = "IR-CAL";
-
-    sensor!();
-
-    /// Proximity
-    pub fn set_mode_ir_prox(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_IR_PROX)
-    }
-
-    /// IR Seeker
-    pub fn set_mode_ir_seek(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_IR_SEEK)
-    }
-
-    /// IR Remote Control
-    pub fn set_mode_ir_remote(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_IR_REMOTE)
-    }
-
-    /// IR Remote Control
-    pub fn set_mode_ir_rem_a(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_IR_REM_A)
-    }
-
-    /// Alternate IR Seeker ???
-    pub fn set_mode_ir_s_alt(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_IR_S_ALT)
-    }
-
-    /// Calibration ???
-    pub fn set_mode_ir_cal(&self) -> Ev3Result<()> {
-        self.set_mode(Self::MODE_IR_CAL)
-    }
+    sensor_mode!(
+        "IR-PROX",
+        MODE_IR_PROX,
+        "Proximity",
+        set_mode_ir_prox,
+        is_mode_ir_prox
+    );
+    sensor_mode!(
+        "IR-SEEK",
+        MODE_IR_SEEK,
+        "IR Seeker",
+        set_mode_ir_seek,
+        is_mode_ir_seek
+    );
+    sensor_mode!(
+        "IR-REMOTE",
+        MODE_IR_REMOTE,
+        "IR Remote Control",
+        set_mode_ir_remote,
+        is_mode_ir_remote
+    );
+    sensor_mode!(
+        "IR-REM-A",
+        MODE_IR_REM_A,
+        "IR Remote Control",
+        set_mode_ir_rem_a,
+        is_mode_ir_rem_a
+    );
+    sensor_mode!(
+        "IR-S-ALT",
+        MODE_IR_S_ALT,
+        "Alternate IR Seeker ???",
+        set_mode_ir_s_alt,
+        is_mode_ir_s_alt
+    );
+    sensor_mode!(
+        "IR-CAL",
+        MODE_IR_CAL,
+        "Calibration ???",
+        set_mode_ir_cal,
+        is_mode_ir_cal
+    );
 }
 
 struct RemoteControlHelper {
