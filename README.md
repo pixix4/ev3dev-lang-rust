@@ -40,67 +40,58 @@ fn main() -> Ev3Result<()> {
 }
 ```
 
-## Cross compile for ev3 brick
+## Cross compilation for the ev3 robot
 
-1. Create target configuration `.cargo/config`
+1. Create target configuration in `.cargo/config`
     ```toml
     [target.armv5te-unknown-linux-gnueabi]
     linker = "/usr/bin/arm-linux-gnueabi-gcc"
     ```
 
-2. Create Dockerfile
-    ```dockerfile
-    FROM debian:stretch
+2. Get the docker image. You can either download the prebuild image or build it yourself with the provided Dockerfile (`docker/Dockerfile`).
+    ```bash
+    docker pull pixix4/ev3dev-rust
 
-    RUN dpkg --add-architecture armel
-    RUN apt update
+    # or
 
-    # Fix debian package alias
-    RUN sed -i "s#deb http://security.debian.org/debian-security stretch/updates main#deb http://deb.debian.org/debian-security stretch/updates main#g" /etc/apt/sources.list
-
-    # Install curl for rust installation
-    # Install g++ as buildscript compiler
-    # Install g++-arm-linux-gnueabi as cross compiler
-    RUN apt --yes install curl g++ g++-arm-linux-gnueabi crossbuild-essential-armel
-
-    # Instull rust for host platform
-    RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-
-    ENV PATH "$PATH:/root/.cargo/bin"
-
-    # Add stdlib for target platform
-    RUN rustup target add armv5te-unknown-linux-gnueabi
-
-    # docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust-cross
-    # cargo build --release --target armv5te-unknown-linux-gnueabi
+    docker build . -t pixix4/ev3dev-rust --no-cache
     ```
 
-3. Build docker image
+3. Build binary
     ```bash
-    docker build . -t pixix4/ev3dev-rust-cross --no-cache
-    ```
-
-4. Start docker image
-    ```bash
-    docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust-cross
-    ```
-
-5. Build binary for ev3dev
-    ```bash
+    # Run in interactive docker shell
+    docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
     cargo build --release --target armv5te-unknown-linux-gnueabi
-    ```
-    The `--release` flag is optional. However, it can speedup the execution time by a factor of 30.
 
-The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`
+    # Run directly (e.g. via Makefile)
+    docker run --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust \
+            cargo build --release --target armv5te-unknown-linux-gnueabi
+    ```
+    The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
+
+    The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`
+
+    If you use the direct method you will notice that each build gets stuck at `Updating crates.io index` for a long time. To speed up this step you can use the vendoring machanic of cargo.
+    ```bash
+    cargo vendor
+    ```
+    Execute the above command and add this addtional config to `.cargo/config`.
+    ```toml
+    [source.crates-io]
+    replace-with = "vendored-sources"
+
+    [source.vendored-sources]
+    directory = "vendor"
+    ```
 
 ## Editor support
 
-If you have problems with code completion or inline documentation with rust analyzer it may help to enable to following settings: (example from vs code `settings.json`)
+If you have problems with code completion or inline documentation with rust analyzer it may help to enable to following settings:
+
 ```json
 {
-    ...
     "rust-analyzer.cargo.loadOutDirsFromCheck": true,
     "rust-analyzer.procMacro.enable": true,
-    ...
 }
 ```
+(Example from VSCode `settings.json`)

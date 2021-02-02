@@ -21,6 +21,6 @@ ENV PATH "$PATH:/root/.cargo/bin"
 # Add stdlib for target platform
 RUN rustup target add armv5te-unknown-linux-gnueabi
 
-# docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust-cross
-# docker run -it --rm -v $PWD:/build/ -v $PWD/../ev3dev-lang-rust/:/ev3dev-lang-rust/ -w /build pixix4/ev3dev-rust-cross
+# docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
+# docker run -it --rm -v $PWD:/build/ -v $PWD/../ev3dev-lang-rust/:/ev3dev-lang-rust/ -w /build pixix4/ev3dev-rust
 # cargo build --release --target armv5te-unknown-linux-gnueabi
