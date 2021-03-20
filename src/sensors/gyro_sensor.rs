@@ -16,7 +16,7 @@ impl GyroSensor {
 
     findable!(
         "lego-sensor",
-        "lego-ev3-gyro",
+        ["lego-ev3-gyro"],
         SensorPort,
         "GyroSensor",
         "in"

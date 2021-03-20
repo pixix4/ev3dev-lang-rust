@@ -16,7 +16,7 @@ impl IrSeekerSensor {
 
     findable!(
         "lego-sensor",
-        "ht-nxt-ir-seek-v2",
+        ["ht-nxt-ir-seek-v2"],
         SensorPort,
         "IrSeeker",
         "in"

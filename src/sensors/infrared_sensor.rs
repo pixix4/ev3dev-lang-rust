@@ -20,7 +20,7 @@ impl InfraredSensor {
 
     findable!(
         "lego-sensor",
-        "lego-ev3-ir",
+        ["lego-ev3-ir"],
         SensorPort,
         "InfraredrSensor",
         "in"

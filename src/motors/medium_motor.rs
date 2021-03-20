@@ -17,7 +17,7 @@ impl MediumMotor {
 
     findable!(
         "tacho-motor",
-        "lego-ev3-m-motor",
+        ["lego-ev3-m-motor"],
         MotorPort,
         "MediumMotor",
         "out"

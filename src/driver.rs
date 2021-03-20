@@ -38,7 +38,7 @@ impl Driver {
     pub fn find_name_by_port_and_driver(
         class_name: &str,
         port: &dyn Port,
-        driver_name: &str,
+        driver_name_vec: &Vec<&str>,
     ) -> Ev3Result<String> {
         let port_address = port.address();
 
@@ -52,15 +52,15 @@ impl Driver {
 
             if address.get::<String>()?.contains(&port_address) {
                 let driver = Attribute::new(class_name, name, "driver_name")?;
-
-                if driver.get::<String>()? == driver_name {
+                let driver_name = driver.get::<String>()?;
+                if driver_name_vec.iter().any(|n| &driver_name == n) {
                     return Ok(name.to_owned());
                 }
             }
         }
 
         Err(Ev3Error::NotConnected {
-            device: driver_name.to_owned(),
+            device: format!("{:?}", driver_name_vec),
             port: Some(port.address()),
         })
     }
@@ -69,26 +69,26 @@ impl Driver {
     ///
     /// Returns `Ev3Error::NotFound` if no such device exists.
     /// Returns `Ev3Error::MultipleMatches` if more then one matching device exists.
-    pub fn find_name_by_driver(class_name: &str, driver_name: &str) -> Ev3Result<String> {
-        let mut names = Driver::find_names_by_driver(class_name, driver_name)?;
+    pub fn find_name_by_driver(class_name: &str, driver_name_vec: &Vec<&str>) -> Ev3Result<String> {
+        let mut names = Driver::find_names_by_driver(class_name, &driver_name_vec)?;
 
         match names.len() {
             0 => Err(Ev3Error::NotConnected {
-                device: driver_name.to_owned(),
+                device: format!("{:?}", driver_name_vec),
                 port: None,
             }),
             1 => Ok(names
                 .pop()
                 .expect("Name vector should contains exactly one element")),
             _ => Err(Ev3Error::MultipleMatches {
-                device: driver_name.to_owned(),
+                device: format!("{:?}", driver_name_vec),
                 ports: names,
             }),
         }
     }
 
     /// Returns the names of the devices with the given `class_name`.
-    pub fn find_names_by_driver(class_name: &str, driver_name: &str) -> Ev3Result<Vec<String>> {
+    pub fn find_names_by_driver(class_name: &str, driver_name_vec: &Vec<&str>) -> Ev3Result<Vec<String>> {
         let paths = fs::read_dir(format!("{}{}", ROOT_PATH, class_name))?;
 
         let mut found_names = Vec::new();
@@ -98,7 +98,8 @@ impl Driver {
 
             let driver = Attribute::new(class_name, name, "driver_name")?;
 
-            if driver.get::<String>()? == driver_name {
+            let driver_name = driver.get::<String>()?;
+            if driver_name_vec.iter().any(|n| &driver_name == n) {
                 found_names.push(name.to_owned());
             }
         }

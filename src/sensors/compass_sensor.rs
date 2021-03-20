@@ -15,7 +15,7 @@ impl CompassSensor {
         Self { driver, origin: 0 }
     }
 
-    findable!("lego-sensor", "ht-nxt-compass", SensorPort, "Compass", "in");
+    findable!("lego-sensor", ["ht-nxt-compass"], SensorPort, "Compass", "in");
 
     /// Command for starting the calibration
     pub const COMMAND_START_CALIBRATION: &'static str = "BEGIN-CAL";

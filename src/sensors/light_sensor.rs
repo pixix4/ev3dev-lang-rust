@@ -23,7 +23,7 @@ impl LightSensor {
 
     findable!(
         "lego-sensor",
-        "lego-nxt-light",
+        ["lego-nxt-light"],
         SensorPort,
         "LightSensor",
         "in"

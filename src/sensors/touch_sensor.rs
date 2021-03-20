@@ -16,7 +16,7 @@ impl TouchSensor {
 
     findable!(
         "lego-sensor",
-        "lego-ev3-touch",
+        ["lego-ev3-touch", "lego-nxt-touch"],
         SensorPort,
         "TouchSensor",
         "in"

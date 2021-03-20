@@ -17,7 +17,7 @@ impl LargeMotor {
 
     findable!(
         "tacho-motor",
-        "lego-ev3-l-motor",
+        ["lego-ev3-l-motor", "lego-nxt-motor"],
         MotorPort,
         "LargeMotor",
         "out"

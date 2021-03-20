@@ -16,7 +16,7 @@ impl ColorSensor {
 
     findable!(
         "lego-sensor",
-        "lego-ev3-color",
+        ["lego-ev3-color"],
         SensorPort,
         "ColorSensor",
         "in"

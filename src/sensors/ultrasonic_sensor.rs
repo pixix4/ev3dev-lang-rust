@@ -23,7 +23,7 @@ impl UltrasonicSensor {
 
     findable!(
         "lego-sensor",
-        "lego-ev3-us",
+        ["lego-ev3-us", "lego-nxt-us"],
         SensorPort,
         "UltrasonicSensor",
         "in"
