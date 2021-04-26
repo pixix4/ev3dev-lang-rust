@@ -1,6 +1,6 @@
 [package]
 name = "ev3dev-lang-rust"
-version = "0.10.1"
+version = "0.10.2"
 authors = ["Lars Westermann <lars-westermann@live.de>"]
 
 description = "Rust language bindings for ev3dev"
@@ -24,8 +24,9 @@ image = { version = "0.23.8", optional = true }
 [workspace]
 members = [
     "ev3dev_lang_rust_derive",
-    "examples/color-sensor",
+    "examples/attributes",
     "examples/buttons",
-    "examples/screen",
-    "examples/infrared-sensor"
+    "examples/color-sensor",
+    "examples/infrared-sensor",
+    "examples/screen"
 ]

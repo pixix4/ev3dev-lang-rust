@@ -1,4 +1,4 @@
-//! A wrapper to a attribute file in the `/sys/class/` directory.
+//! A wrapper to a attribute file commonly in the `/sys/class/` directory.
 use std::error::Error;
 use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
@@ -7,7 +7,7 @@ use std::os::unix::io::{AsRawFd, RawFd};
 use std::string::String;
 use std::sync::{Arc, Mutex};
 
-use crate::{Ev3Error, Ev3Result};
+use crate::{utils::OrErr, Ev3Error, Ev3Result};
 
 /// The root driver path `/sys/class/`.
 const ROOT_PATH: &str = "/sys/class/";
@@ -19,25 +19,95 @@ pub struct Attribute {
 }
 
 impl Attribute {
-    /// Create a new `Attribute` instance that wrappes
-    /// the file `/sys/class/{class_name}/{name}{attribute_name}`.
-    pub fn new(class_name: &str, name: &str, attribute_name: &str) -> Ev3Result<Attribute> {
-        let filename = format!("{}{}/{}/{}", ROOT_PATH, class_name, name, attribute_name);
-
-        let stat = fs::metadata(&filename)?;
+    /// Create a new `Attribute` instance for the given path.
+    pub fn from_path(path: &str) -> Ev3Result<Attribute> {
+        let stat = fs::metadata(&path)?;
 
         let mode = stat.permissions().mode();
 
-        let readable = mode & 256 == 256;
-        let writeable = mode & 128 == 128;
+        // Read permission for group (`ev3dev`)
+        let readable = mode & 0o040 == 0o040;
+        let writeable = mode & 0o020 == 0o020;
 
         let file = OpenOptions::new()
             .read(readable)
             .write(writeable)
-            .open(&filename)?;
+            .open(&path)?;
 
         Ok(Attribute {
             file: Arc::new(Mutex::new(file)),
+        })
+    }
+
+    /// Create a new `Attribute` instance that wrappes
+    /// the file `/sys/class/{class_name}/{name}{attribute_name}`.
+    pub fn from_sys_class(
+        class_name: &str,
+        name: &str,
+        attribute_name: &str,
+    ) -> Ev3Result<Attribute> {
+        let path = format!("{}{}/{}/{}", ROOT_PATH, class_name, name, attribute_name);
+        Attribute::from_path(&path)
+    }
+
+    /// Create a new `Attribute` instance by a discriminator attribute.
+    /// This can be used to manually access driver files or advances features like raw encoder values.
+    /// To find the correct file, this function iterates over all directories `$d` in `root_path` and
+    /// checks if the content of `root_path/$d/discriminator_path` equals `discriminator_value`. When a
+    /// match is found it returns an Attribute for file `root_path/$d/attribute_path`.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use ev3dev_lang_rust::Attribute;
+    ///
+    /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
+    /// // Get value0 of first connected color sensor.
+    /// let color_sensor_value = Attribute::from_path_with_discriminator(
+    ///     "/sys/class/lego-sensor",
+    ///     "value0",
+    ///     "driver_name",
+    ///     "lego-ev3-color"
+    /// )?;
+    /// println!("value0 of color sensor: {}", color_sensor_value.get::<i32>()?);
+    ///
+    /// // Get raw rotation count of motor in port `A`.
+    /// // See https://github.com/ev3dev/ev3dev/wiki/Internals:-ev3dev-stretch for more infomation.
+    /// let rotation_count = Attribute::from_path_with_discriminator(
+    ///     "/sys/bus/iio/devices",
+    ///     "in_count0_raw",
+    ///     "name",
+    ///     "ev3-tacho"
+    /// )?;
+    /// println!("Raw rotation count: {}", rotation_count.get::<i32>()?);
+    ///
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn from_path_with_discriminator(
+        root_path: &str,
+        attribute_path: &str,
+        discriminator_path: &str,
+        discriminator_value: &str,
+    ) -> Ev3Result<Attribute> {
+        let paths = fs::read_dir(root_path)?;
+
+        for path_result in paths {
+            let path_buf = path_result?.path();
+            let current_path = path_buf.to_str().or_err()?;
+
+            let discriminator_attribute =
+                Attribute::from_path(&format!("{}/{}", current_path, discriminator_path))?;
+
+            if discriminator_attribute.get::<String>()? == discriminator_value {
+                return Attribute::from_path(&format!("{}/{}", current_path, attribute_path));
+            }
+        }
+
+        Err(Ev3Error::InternalError {
+            msg: format!(
+                "Attribute `{}` at root path `{}` coult not be found!",
+                attribute_path, root_path
+            ),
         })
     }
 

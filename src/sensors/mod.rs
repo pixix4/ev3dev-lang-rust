@@ -72,7 +72,6 @@ impl Port for SensorPort {
 /// Add a sensor mode constant with getter and setter
 macro_rules! sensor_mode {
     ($value:expr, $const_name:ident, $docstring:expr, $setter:ident, $getter:ident) => {
-
         #[doc = $docstring]
         pub const $const_name: &'static str = $value;
 

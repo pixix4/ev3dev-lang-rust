@@ -65,10 +65,11 @@ impl Led {
             }
         }
 
-        let left_red = Attribute::new("leds", left_red_name.as_str(), "brightness")?;
-        let left_green = Attribute::new("leds", left_green_name.as_str(), "brightness")?;
-        let right_red = Attribute::new("leds", right_red_name.as_str(), "brightness")?;
-        let right_green = Attribute::new("leds", right_green_name.as_str(), "brightness")?;
+        let left_red = Attribute::from_sys_class("leds", left_red_name.as_str(), "brightness")?;
+        let left_green = Attribute::from_sys_class("leds", left_green_name.as_str(), "brightness")?;
+        let right_red = Attribute::from_sys_class("leds", right_red_name.as_str(), "brightness")?;
+        let right_green =
+            Attribute::from_sys_class("leds", right_green_name.as_str(), "brightness")?;
 
         Ok(Led {
             left_red,

@@ -41,6 +41,7 @@ macro_rules! findable {
         }
 
         /// Try to get a `Self` on the given port. Returns `None` if port is not used or another device is connected.
+        #[allow(clippy::vec_init_then_push)]
         pub fn get(port: $port) -> Ev3Result<Self> {
             let mut driver_name_vec = Vec::new();
             $(
@@ -54,12 +55,13 @@ macro_rules! findable {
         }
 
         /// Try to find a `Self`. Only returns a motor if their is exactly one connected, `Error::NotFound` otherwise.
+        #[allow(clippy::vec_init_then_push)]
         pub fn find() -> Ev3Result<Self> {
             let mut driver_name_vec = Vec::new();
             $(
                 driver_name_vec.push($driver_name);
             )*
-            
+
             let name =
                 Driver::find_name_by_driver($class_name, &driver_name_vec).map_err(Self::map_error)?;
 
@@ -67,12 +69,13 @@ macro_rules! findable {
         }
 
         /// Extract list of connected 'Self'
+        #[allow(clippy::vec_init_then_push)]
         pub fn list() -> Ev3Result<Vec<Self>> {
             let mut driver_name_vec = Vec::new();
             $(
                 driver_name_vec.push($driver_name);
             )*
-            
+
             Ok(Driver::find_names_by_driver($class_name, &driver_name_vec)?
                 .iter()
                 .map(|name| Self::new(Driver::new($class_name, &name)))
