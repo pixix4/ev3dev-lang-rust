@@ -42,13 +42,32 @@ fn main() -> Ev3Result<()> {
 
 ## Cross compilation for the ev3 robot
 
-1. Create target configuration in `.cargo/config`
+1. Install [`cross`](https://github.com/rust-embedded/cross) and the `armv5te` toolchain
+    ```bash
+    cargo install cross
+    rustup target add armv5te-unknown-linux-gnueabi
+    ```
+
+2. Build binary with docker
+    ```bash
+    cross build --release --target armv5te-unknown-linux-gnueabi   
+    ```
+    The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
+
+    The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`
+
+
+## Alternative cross compilation for the ev3 robot
+
+If the above compilation with `cross` failed you can try this manual approach. 
+
+1. Create target configuration in [`.cargo/config`](https://github.com/pixix4/ev3dev-lang-rust/blob/master/.cargo/config)
     ```toml
     [target.armv5te-unknown-linux-gnueabi]
     linker = "/usr/bin/arm-linux-gnueabi-gcc"
     ```
 
-2. Get the docker image. You can either download the prebuild image or build it yourself with the provided Dockerfile (`docker/Dockerfile`).
+2. Get the docker image. You can either download the prebuild image or build it yourself with the provided Dockerfile ([`docker/Dockerfile`](https://github.com/pixix4/ev3dev-lang-rust/blob/master/docker/Dockerfile)).
     ```bash
     docker pull pixix4/ev3dev-rust
 
@@ -67,9 +86,6 @@ fn main() -> Ev3Result<()> {
     docker run --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust \
             cargo build --release --target armv5te-unknown-linux-gnueabi
     ```
-    The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
-
-    The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`
 
     If you use the direct method you will notice that each build gets stuck at `Updating crates.io index` for a long time. To speed up this step you can use the vendoring machanic of cargo.
     ```bash
