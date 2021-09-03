@@ -40,6 +40,8 @@ fn main() -> Ev3Result<()> {
 }
 ```
 
+There is a [template repository](https://github.com/pixix4/ev3dev-lang-rust-template/) that contains all the required configurations for cross-compilation and perfomance/binary-size optimizations for this "Hello World" example.
+
 ## Cross compilation for the ev3 robot
 
 1. Install [`cross`](https://github.com/rust-embedded/cross) and the `armv5te` toolchain
@@ -50,7 +52,7 @@ fn main() -> Ev3Result<()> {
 
 2. Build binary with docker
     ```bash
-    cross build --release --target armv5te-unknown-linux-gnueabi   
+    cross build --release --target armv5te-unknown-linux-gnueabi
     ```
     The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
 
@@ -59,7 +61,7 @@ fn main() -> Ev3Result<()> {
 
 ## Alternative cross compilation for the ev3 robot
 
-If the above compilation with `cross` failed you can try this manual approach. 
+If the above compilation with `cross` failed you can try this manual approach.
 
 1. Create target configuration in [`.cargo/config`](https://github.com/pixix4/ev3dev-lang-rust/blob/master/.cargo/config)
     ```toml
@@ -99,6 +101,31 @@ If the above compilation with `cross` failed you can try this manual approach.
     [source.vendored-sources]
     directory = "vendor"
     ```
+
+## Optimize binary size
+
+To reduce the resulting binary size you can try the following steps:
+
+1. Enable "fat" link time optimizations
+By default rust only performs lto for each crate individually. To enable global lto (which result in a much more aggressive dead code elimination) add this addtional config to your `Cargo.toml`:
+```toml
+[profile.release]
+lto = true
+```
+
+2. Strip debug symbols from the resulting binary
+Since the usage of an debugger is not really feasible you can strip (debug) symbols from the binary. To do this you
+```bash
+# Run in interactive docker shell
+docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
+/usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
+
+# Run directly (e.g. via Makefile)
+docker run --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust \
+        /usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
+```
+
+With this you can reduce the binary size of the "Hello World" example by more than 90%.
 
 ## Editor support
 

@@ -1,7 +1,7 @@
 [package]
 name = "color-sensor"
 version = "0.1.0"
-authors = ["Lars Westermann <lars.westermann@tu-dresden.de>"]
+authors = ["Lars Westermann <rust@lars-westermann.de>"]
 
 [dependencies]
 ev3dev-lang-rust = { path = "../.."}

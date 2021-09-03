@@ -1,7 +1,7 @@
 [package]
 name = "ev3dev-lang-rust"
 version = "0.10.2"
-authors = ["Lars Westermann <lars-westermann@live.de>"]
+authors = ["Lars Westermann <rust@lars-westermann.de>"]
 
 description = "Rust language bindings for ev3dev"
 keywords = ["ev3", "ev3dev", "lego", "mindstorms"]
@@ -30,3 +30,6 @@ members = [
     "examples/infrared-sensor",
     "examples/screen"
 ]
+
+[profile.release]
+lto = true
