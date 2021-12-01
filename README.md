@@ -42,79 +42,111 @@ fn main() -> Ev3Result<()> {
 
 There is a [template repository](https://github.com/pixix4/ev3dev-lang-rust-template/) that contains all the required configurations for cross-compilation and perfomance/binary-size optimizations for this "Hello World" example.
 
+## Supported features
+
+- Motors:
+  - `LargeMotor` [`lego-ev3-l-motor`, `lego-nxt-motor`]
+  - `MediumMotor` [`lego-ev3-m-motor`]
+  - `TachoMotor`: Useful wrapper around `LargeMotor` and `MediumMotor` to make common functions easier to use
+- Sensors:
+  - `ColorSensor` [`lego-ev3-color`]
+  - `CompassSensor` [`ht-nxt-compass`]
+  - `GyroSensor` [`lego-ev3-gyro`]
+  - `InfraredSensor` [`lego-ev3-ir`]
+  - `IrSeekerSensor` [`ht-nxt-ir-seek-v2`]
+  - `LightSensor` [`lego-nxt-light`]
+  - `TouchSensor` [`lego-ev3-touch`, `lego-nxt-touch`]
+  - `UltrasonicSensor` [`lego-ev3-us`, `lego-nxt-us`]
+- Utility
+  - `Ev3Button`: Provides access to the integrated buttons on the ev3 brick
+  - `Led`: Provides access to the integrated leds on the ev3 brick
+  - `PowerSupply`: Provides access to the power supply information
+  - `Screen`: Provides access to the integrated display of the ev3 brick
+  - `sound`: Provides access to the integrated speakers of the ev3 brick
+
 ## Cross compilation for the ev3 robot
 
 1. Install [`cross`](https://github.com/rust-embedded/cross) and the `armv5te` toolchain
-    ```bash
-    cargo install cross
-    rustup target add armv5te-unknown-linux-gnueabi
-    ```
+
+   ```bash
+   cargo install cross
+   rustup target add armv5te-unknown-linux-gnueabi
+   ```
 
 2. Build binary with docker
-    ```bash
-    cross build --release --target armv5te-unknown-linux-gnueabi
-    ```
-    The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
 
-    The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`
+   ```bash
+   cross build --release --target armv5te-unknown-linux-gnueabi
+   ```
 
+   The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
+
+   The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`
 
 ## Alternative cross compilation for the ev3 robot
 
 If the above compilation with `cross` failed you can try this manual approach.
 
 1. Create target configuration in [`.cargo/config`](https://github.com/pixix4/ev3dev-lang-rust/blob/master/.cargo/config)
-    ```toml
-    [target.armv5te-unknown-linux-gnueabi]
-    linker = "/usr/bin/arm-linux-gnueabi-gcc"
-    ```
+
+   ```toml
+   [target.armv5te-unknown-linux-gnueabi]
+   linker = "/usr/bin/arm-linux-gnueabi-gcc"
+   ```
 
 2. Get the docker image. You can either download the prebuild image or build it yourself with the provided Dockerfile ([`docker/Dockerfile`](https://github.com/pixix4/ev3dev-lang-rust/blob/master/docker/Dockerfile)).
-    ```bash
-    docker pull pixix4/ev3dev-rust
 
-    # or
+   ```bash
+   docker pull pixix4/ev3dev-rust
 
-    docker build . -t pixix4/ev3dev-rust --no-cache
-    ```
+   # or
+
+   docker build . -t pixix4/ev3dev-rust --no-cache
+   ```
 
 3. Build binary
-    ```bash
-    # Run in interactive docker shell
-    docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
-    cargo build --release --target armv5te-unknown-linux-gnueabi
 
-    # Run directly (e.g. via Makefile)
-    docker run --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust \
-            cargo build --release --target armv5te-unknown-linux-gnueabi
-    ```
+   ```bash
+   # Run in interactive docker shell
+   docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
+   cargo build --release --target armv5te-unknown-linux-gnueabi
 
-    If you use the direct method you will notice that each build gets stuck at `Updating crates.io index` for a long time. To speed up this step you can use the vendoring machanic of cargo.
-    ```bash
-    cargo vendor
-    ```
-    Execute the above command and add this addtional config to `.cargo/config`.
-    ```toml
-    [source.crates-io]
-    replace-with = "vendored-sources"
+   # Run directly (e.g. via Makefile)
+   docker run --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust \
+           cargo build --release --target armv5te-unknown-linux-gnueabi
+   ```
 
-    [source.vendored-sources]
-    directory = "vendor"
-    ```
+   If you use the direct method you will notice that each build gets stuck at `Updating crates.io index` for a long time. To speed up this step you can use the vendoring machanic of cargo.
+
+   ```bash
+   cargo vendor
+   ```
+
+   Execute the above command and add this addtional config to `.cargo/config`.
+
+   ```toml
+   [source.crates-io]
+   replace-with = "vendored-sources"
+
+   [source.vendored-sources]
+   directory = "vendor"
+   ```
 
 ## Optimize binary size
 
 To reduce the resulting binary size you can try the following steps:
 
 1. Enable "fat" link time optimizations
-By default rust only performs lto for each crate individually. To enable global lto (which result in a much more aggressive dead code elimination) add this addtional config to your `Cargo.toml`:
+   By default rust only performs lto for each crate individually. To enable global lto (which result in a much more aggressive dead code elimination) add this addtional config to your `Cargo.toml`:
+
 ```toml
 [profile.release]
 lto = true
 ```
 
 2. Strip debug symbols from the resulting binary
-Since the usage of an debugger is not really feasible you can strip (debug) symbols from the binary. To do this you
+   Since the usage of an debugger is not really feasible you can strip (debug) symbols from the binary. To do this you
+
 ```bash
 # Run in interactive docker shell
 docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
@@ -133,8 +165,9 @@ If you have problems with code completion or inline documentation with rust anal
 
 ```json
 {
-    "rust-analyzer.cargo.loadOutDirsFromCheck": true,
-    "rust-analyzer.procMacro.enable": true,
+  "rust-analyzer.cargo.loadOutDirsFromCheck": true,
+  "rust-analyzer.procMacro.enable": true
 }
 ```
+
 (Example from VSCode `settings.json`)
