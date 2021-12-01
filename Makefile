@@ -10,6 +10,9 @@ build-example-color-sensor:
 build-example-infrared-sensor:
 	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/infrared-sensor pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/infrared-sensor"
 
+build-example-motors:
+	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/motors pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/motors"
+
 build-example-screen:
 	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/screen pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/screen"
 
