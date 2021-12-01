@@ -203,7 +203,7 @@ fn get_channels() -> Ev3Result<Vec<String>> {
 /// `amixer -q set <channel> <pct>%`.
 pub fn set_volume_channel(volume: i32, channel: &str) -> Ev3Result<()> {
     Command::new("/usr/bin/amixer")
-        .args(&["-q", "set", &channel, &format!("{}%", volume)])
+        .args(&["-q", "set", channel, &format!("{}%", volume)])
         .stdout(Stdio::null())
         .spawn()?
         .wait()?;

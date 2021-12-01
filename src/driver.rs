@@ -70,7 +70,7 @@ impl Driver {
     /// Returns `Ev3Error::NotFound` if no such device exists.
     /// Returns `Ev3Error::MultipleMatches` if more then one matching device exists.
     pub fn find_name_by_driver(class_name: &str, driver_name_vec: &[&str]) -> Ev3Result<String> {
-        let mut names = Driver::find_names_by_driver(class_name, &driver_name_vec)?;
+        let mut names = Driver::find_names_by_driver(class_name, driver_name_vec)?;
 
         match names.len() {
             0 => Err(Ev3Error::NotConnected {
