@@ -13,6 +13,9 @@ pub use self::large_motor::LargeMotor;
 mod medium_motor;
 pub use self::medium_motor::MediumMotor;
 
+mod tacho_motor;
+pub use self::tacho_motor::TachoMotor;
+
 use crate::Port;
 
 /// EV3 ports `outA` to `outD`
