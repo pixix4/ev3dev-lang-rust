@@ -54,7 +54,7 @@ impl From<std::num::ParseIntError> for Ev3Error {
 impl From<framebuffer::FramebufferError> for Ev3Error {
     fn from(err: framebuffer::FramebufferError) -> Self {
         Ev3Error::InternalError {
-            msg: format!("{}", err),
+            msg: format!("{}", err.details),
         }
     }
 }
