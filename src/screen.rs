@@ -65,7 +65,7 @@ impl Screen {
 
             buffer[byte] |= if sum >= 0x30 { bit } else { 0x00 };
 
-            bit = bit >> 1;
+            bit >>= 1;
             if bit == 0 {
                 byte += 1;
                 bit = 0x80;

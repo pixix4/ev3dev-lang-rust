@@ -1,6 +1,6 @@
 [package]
 name = "ev3dev-lang-rust"
-version = "0.11.0"
+version = "0.11.1"
 authors = ["Lars Westermann <rust@lars-westermann.de>"]
 
 description = "Rust language bindings for ev3dev"
@@ -18,8 +18,8 @@ screen = ["framebuffer", "image"]
 [dependencies]
 ev3dev-lang-rust-derive = { path = "ev3dev_lang_rust_derive", version="0.10" }
 libc = "0.2"
-framebuffer = { version = "0.2.0", optional = true }
-image = { version = "0.23.8", optional = true }
+framebuffer = { version = "0.3", optional = true }
+image = { version = "0.23", optional = true }
 
 [workspace]
 members = [
