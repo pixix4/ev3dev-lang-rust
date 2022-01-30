@@ -1,6 +1,7 @@
-//! Utility functions for cpu efficent `wait` commands.
+//! Utility functions for cpu efficient `wait` commands.
 //! Uses the `libc::epoll_wait` that only works on linux systems.
 
+#[cfg(target_os = "linux")]
 use libc;
 use std::os::unix::io::RawFd;
 use std::time::{Duration, Instant};
@@ -66,6 +67,7 @@ where
 }
 
 /// Wrapper for `libc::epoll_wait`
+#[cfg(target_os = "linux")]
 fn wait_file_changes(fd: RawFd, timeout: i32) -> bool {
     let mut buf: [libc::epoll_event; 10] = [libc::epoll_event { events: 0, u64: 0 }; 10];
 
@@ -79,4 +81,11 @@ fn wait_file_changes(fd: RawFd, timeout: i32) -> bool {
     };
 
     result > 0
+}
+
+/// Stub method for non linux os's
+#[cfg(not(target_os = "linux"))]
+fn wait_file_changes(_fd: RawFd, _timeout: i32) -> bool {
+    std::thread::sleep(Duration::from_millis(100));
+    false
 }

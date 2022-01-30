@@ -39,7 +39,7 @@ impl Attribute {
         })
     }
 
-    /// Create a new `Attribute` instance that wrappes
+    /// Create a new `Attribute` instance that wrap's
     /// the file `/sys/class/{class_name}/{name}{attribute_name}`.
     pub fn from_sys_class(
         class_name: &str,
@@ -71,7 +71,7 @@ impl Attribute {
     /// println!("value0 of color sensor: {}", color_sensor_value.get::<i32>()?);
     ///
     /// // Get raw rotation count of motor in port `A`.
-    /// // See https://github.com/ev3dev/ev3dev/wiki/Internals:-ev3dev-stretch for more infomation.
+    /// // See https://github.com/ev3dev/ev3dev/wiki/Internals:-ev3dev-stretch for more information.
     /// let rotation_count = Attribute::from_path_with_discriminator(
     ///     "/sys/bus/iio/devices",
     ///     "in_count0_raw",
@@ -105,7 +105,7 @@ impl Attribute {
 
         Err(Ev3Error::InternalError {
             msg: format!(
-                "Attribute `{}` at root path `{}` coult not be found!",
+                "Attribute `{}` at root path `{}` could not be found!",
                 attribute_path, root_path
             ),
         })
@@ -165,7 +165,7 @@ impl Attribute {
     }
 
     /// Returns a string vector representation of the wrapped file.
-    /// The file value is splitet at whitespaces.
+    /// The file value is splitted at whitespace's.
     pub fn get_vec(&self) -> Ev3Result<Vec<String>> {
         let value = self.get_str()?;
         let vec = value

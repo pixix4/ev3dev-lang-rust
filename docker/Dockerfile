@@ -1,25 +1,20 @@
-FROM debian:stretch
+FROM debian:stretch-slim
 
 RUN dpkg --add-architecture armel
-RUN apt update
 
-# Fix debian package alias
+RUN apt-get update
 RUN sed -i "s#deb http://security.debian.org/debian-security stretch/updates main#deb http://deb.debian.org/debian-security stretch/updates main#g" /etc/apt/sources.list
 
-# Install curl for rust installation
-# Install g++ as buildscript compiler
-# Install g++-arm-linux-gnueabi as cross compiler
-RUN apt --yes install curl g++ g++-arm-linux-gnueabi crossbuild-essential-armel
+RUN apt-get --yes install curl cmake pkg-config clang g++ g++-arm-linux-gnueabi crossbuild-essential-armel libssl-dev libssl-dev:armel libclang-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Instull rust for host platform
+
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 ENV PATH "$PATH:/root/.cargo/bin"
 
-# Add stdlib for target platform
-RUN rustup target add armv5te-unknown-linux-gnueabi
+RUN rustup target add armv5te-unknown-linux-musleabi armv5te-unknown-linux-gnueabi
 
-# docker build . -t pixix4/ev3dev-rust --no-cache
-
-# docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
-# cargo build --release --target armv5te-unknown-linux-gnueabi
+ENV PKG_CONFIG_SYSROOT_DIR /usr/arm-linux-gnueabi/
+ENV CC_armv5te_unknown_linux_gnueabi arm-linux-gnueabi-gcc
+ENV CXX_armv5te_unknown_linux_gnueabi arm-linux-gnueabi-g++

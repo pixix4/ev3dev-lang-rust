@@ -208,7 +208,7 @@ impl TachoMotor {
 
     /// Returns the number of tacho counts in the full travel of the motor.
     ///
-    /// When combined with the count_per_m atribute,
+    /// When combined with the count_per_m attribute,
     /// you can use this value to calculate the maximum travel distance of the motor.
     /// (linear motors only)
     pub fn get_full_travel_count(&self) -> Ev3Result<i32> {
@@ -910,7 +910,7 @@ impl TachoMotor {
 
     /// Wait until the motor is not moving or the timeout is reached.
     ///
-    /// This is euqal to `wait_while(STATE_RUNNING, timeout)`.
+    /// This is equal to `wait_while(STATE_RUNNING, timeout)`.
     /// If the `timeout` is `None` it will wait an infinite time.
     ///
     /// # Example

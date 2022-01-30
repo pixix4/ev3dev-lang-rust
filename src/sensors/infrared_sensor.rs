@@ -22,7 +22,7 @@ impl InfraredSensor {
         "lego-sensor",
         ["lego-ev3-ir"],
         SensorPort,
-        "InfraredrSensor",
+        "InfraredSensor",
         "in"
     );
 
@@ -101,7 +101,7 @@ pub struct RemoteControl {
     helper: Rc<RefCell<RemoteControlHelper>>,
 }
 
-// Manuelly implement Debug cause `buffer_cache` does not implement Debug.
+// Manually implement Debug cause `buffer_cache` does not implement Debug.
 impl fmt::Debug for RemoteControl {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("RemoteControl")
@@ -148,7 +148,7 @@ impl RemoteControl {
         self.helper.borrow().contains("beacon")
     }
 
-    /// Check for currenly pressed buttons. If the new state differs from the
+    /// Check for currently pressed buttons. If the new state differs from the
     /// old state, call the appropriate button event handlers.
     pub fn process(&self) -> Ev3Result<()> {
         let buttons = self.sensor.get_value(self.channel)?;

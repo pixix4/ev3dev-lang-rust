@@ -58,7 +58,7 @@ pub trait Sensor: Device {
 
     /// Returns the polling period of the sensor in milliseconds.
     /// Returns `-EOPNOTSUPP` if changing polling is not supported.
-    /// Note: Setting poll_ms too high can cause the input port autodetection to fail.
+    /// Note: Setting poll_ms too high can cause the input port auto detection to fail.
     /// If this happens, use the mode attribute of the port to force the port to `nxt-i2c mode`. Values must not be negative.
     fn get_poll_ms(&self) -> Ev3Result<i32> {
         self.get_attribute("poll_ms").get()
@@ -66,7 +66,7 @@ pub trait Sensor: Device {
 
     /// Sets the polling period of the sensor in milliseconds.
     /// Setting to 0 disables polling.
-    /// Note: Setting poll_ms too high can cause the input port autodetection to fail.
+    /// Note: Setting poll_ms too high can cause the input port auto detection to fail.
     /// If this happens, use the mode attribute of the port to force the port to `nxt-i2c mode`. Values must not be negative.
     fn set_poll_ms(&self, poll_ms: i32) -> Ev3Result<()> {
         self.get_attribute("poll_ms").set(poll_ms)

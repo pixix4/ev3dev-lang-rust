@@ -1,22 +1,23 @@
-build-example-attributes:
-	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/attributes pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/attributes"
+all: build strip
 
-build-example-buttons:
-	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/buttons pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/buttons"
+build:
+	docker run --rm -v $(PWD):/build -w /build pixix4/ev3dev-rust:latest \
+		cargo build --release --examples --target armv5te-unknown-linux-musleabi
 
-build-example-color-sensor:
-	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/color-sensor pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/color-sensor"
+strip: strip-buttons strip-color-sensor strip-custom-attributes strip-infrared-sensor strip-motors
 
-build-example-infrared-sensor:
-	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/infrared-sensor pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/infrared-sensor"
-
-build-example-motors:
-	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/motors pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/motors"
-
-build-example-screen:
-	docker run --rm -v $(PWD):/ev3dev-lang-rust/ -w /ev3dev-lang-rust/examples/screen pixix4/ev3dev-rust /bin/bash -c "cargo build --release --target armv5te-unknown-linux-gnueabi && /usr/bin/arm-linux-gnueabi-strip /ev3dev-lang-rust/target/armv5te-unknown-linux-gnueabi/release/screen"
-
-build-examples: build-example-attributes build-example-buttons build-example-color-sensor build-example-infrared-sensor build-example-screen
-
-clean:
-	cargo clean
+strip-buttons:
+	docker run --rm -v $(PWD):/build -w /build pixix4/ev3dev-rust:latest \
+		arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-musleabi/release/examples/buttons
+strip-color-sensor:
+	docker run --rm -v $(PWD):/build -w /build pixix4/ev3dev-rust:latest \
+		arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-musleabi/release/examples/color-sensor
+strip-custom-attributes:
+	docker run --rm -v $(PWD):/build -w /build pixix4/ev3dev-rust:latest \
+		arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-musleabi/release/examples/custom-attributes
+strip-infrared-sensor:
+	docker run --rm -v $(PWD):/build -w /build pixix4/ev3dev-rust:latest \
+		arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-musleabi/release/examples/infrared-sensor
+strip-motors:
+	docker run --rm -v $(PWD):/build -w /build pixix4/ev3dev-rust:latest \
+		arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-musleabi/release/examples/motors

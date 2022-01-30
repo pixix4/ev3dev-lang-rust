@@ -37,7 +37,7 @@ struct FileMapEntry {
     pub file: File,
     pub buffer_cache: [u8; KEY_BUF_LEN],
 }
-// Manuelly implement Debug cause `buffer_cache` does not implement Debug.
+// Manually implement Debug cause `buffer_cache` does not implement Debug.
 impl fmt::Debug for FileMapEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("FileMapEntry")
@@ -103,14 +103,14 @@ impl ButtonFileHandler {
         self.pressed_buttons.contains(name)
     }
 
-    /// Check for currenly pressed buttons. If the new state differs from the
+    /// Check for currently pressed buttons. If the new state differs from the
     /// old state, call the appropriate button event handlers.
     fn process(&mut self) {
         for entry in self.file_map.values_mut() {
             unsafe {
                 libc::ioctl(
                     entry.file.as_raw_fd(),
-                    EVIOCGKEY.into(),
+                    (EVIOCGKEY as i32).try_into().unwrap(),
                     &mut entry.buffer_cache,
                 );
             }
@@ -185,7 +185,7 @@ impl Ev3Button {
         })
     }
 
-    /// Check for currenly pressed buttons. If the new state differs from the
+    /// Check for currently pressed buttons. If the new state differs from the
     /// old state, call the appropriate button event handlers.
     pub fn process(&self) {
         self.button_handler.borrow_mut().process()

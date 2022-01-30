@@ -20,7 +20,7 @@
 //!     // Run motor.
 //!     large_motor.set_duty_cycle_sp(50)?;
 //!
-//!     // Find color sensor. Always returns the first recognised one.
+//!     // Find color sensor. Always returns the first recognized one.
 //!     let color_sensor = ColorSensor::find()?;
 //!
 //!     // Switch to rgb mode.
@@ -46,8 +46,8 @@ extern crate libc;
 #[macro_use]
 mod findable;
 
-mod attriute;
-pub use attriute::Attribute;
+mod attribute;
+pub use attribute::Attribute;
 mod driver;
 pub use driver::Driver;
 mod device;
@@ -56,7 +56,6 @@ pub use device::Device;
 mod utils;
 pub use utils::{Ev3Error, Ev3Result, Port};
 
-#[cfg(target_os = "linux")]
 pub mod wait;
 
 pub mod motors;

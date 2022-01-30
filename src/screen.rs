@@ -7,13 +7,13 @@ use image::{Rgb, RgbImage};
 use crate::Ev3Result;
 
 /// Represents the device screen.
-/// Advanced drawing operations can be perfomed with the `imageproc` crate.
+/// Advanced drawing operations can be performed with the `imageproc` crate.
 #[cfg(feature = "screen")]
 #[derive(Debug)]
 pub struct Screen {
     /// Direct reference to the framebuffer
     pub buffer: Framebuffer,
-    /// Convinience layer to access the framebuffer
+    /// Convenience layer to access the framebuffer
     /// For drawing operations the `imageproc` crate can be used.
     pub image: RgbImage,
 }

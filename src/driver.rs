@@ -61,7 +61,7 @@ impl Driver {
 
         Err(Ev3Error::NotConnected {
             device: format!("{:?}", driver_name_vec),
-            port: Some(port.address()),
+            port: Some(port_address),
         })
     }
 

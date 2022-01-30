@@ -1,7 +1,7 @@
 //! Sound-related functions. It can beep, play wav files, or convert text to
 //! speech.
 //!
-//! Note that all methods of the meodule spawn system processes and return
+//! Note that all methods of the module spawn system processes and return
 //! `std::process::Child` objects. The methods are asynchronous (they return
 //! immediately after child process was spawned, without waiting for its
 //! completion), but you can call wait() on the returned result.

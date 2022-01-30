@@ -85,7 +85,7 @@ impl ColorSensor {
         self.get_value2()
     }
 
-    /// Red, green and blue componets of the detected color, each in the range 0-1020
+    /// Red, green and blue components of the detected color, each in the range 0-1020
     pub fn get_rgb(&self) -> Ev3Result<(i32, i32, i32)> {
         let red = self.get_red()?;
         let green = self.get_green()?;

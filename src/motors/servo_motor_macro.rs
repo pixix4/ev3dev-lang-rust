@@ -49,7 +49,7 @@ macro_rules! servo_motor {
 
         /// Returns the current mid pulse setpoint.
         /// Used to set the pulse size in milliseconds for the signal
-        /// that tells the servo to drive to the miniumum (counter-clockwise) position_sp.
+        /// that tells the servo to drive to the minimum (counter-clockwise) position_sp.
         /// Default value is 600.
         /// Valid values are 300 to 700.
         ///  You must write to the position_sp attribute for changes to this attribute to take effect.
@@ -59,7 +59,7 @@ macro_rules! servo_motor {
 
         /// Sets the mid pulse setpoint.
         /// Used to set the pulse size in milliseconds for the signal
-        /// that tells the servo to drive to the miniumum (counter-clockwise) position_sp.
+        /// that tells the servo to drive to the minimum (counter-clockwise) position_sp.
         /// Default value is 600.
         /// Valid values are 300 to 700.
         ///  You must write to the position_sp attribute for changes to this attribute to take effect.
@@ -69,7 +69,7 @@ macro_rules! servo_motor {
 
         /// Returns the current min pulse setpoint.
         /// Used to set the pulse size in milliseconds for the signal
-        /// that tells the servo to drive to the miniumum (counter-clockwise) position_sp.
+        /// that tells the servo to drive to the minimum (counter-clockwise) position_sp.
         /// Default value is 600. Valid values are 300 to 700.
         /// You must write to the position_sp attribute for changes to this attribute to take effect.
         pub fn get_min_pulse_sp(&self) -> Ev3Result<i32> {
@@ -77,7 +77,7 @@ macro_rules! servo_motor {
         }
         /// Sets the min pulse setpoint.
         /// Used to set the pulse size in milliseconds for the signal
-        /// that tells the servo to drive to the miniumum (counter-clockwise) position_sp.
+        /// that tells the servo to drive to the minimum (counter-clockwise) position_sp.
         /// Default value is 600. Valid values are 300 to 700.
         /// You must write to the position_sp attribute for changes to this attribute to take effect.
         pub fn set_min_pulse_sp(&self, min_pulse_sp: i32) -> Ev3Result<()> {

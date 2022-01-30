@@ -1,4 +1,4 @@
-//! The leds on top of the EV3 brick.
+//! The led's on top of the EV3 brick.
 
 use std::fs;
 
@@ -7,7 +7,7 @@ use crate::{utils::OrErr, Attribute, Ev3Result};
 /// Color type.
 pub type Color = (u8, u8);
 
-/// The leds on top of the EV3 brick.
+/// The led's on top of the EV3 brick.
 #[derive(Debug, Clone)]
 pub struct Led {
     left_red: Attribute,
