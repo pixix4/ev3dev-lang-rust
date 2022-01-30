@@ -27,7 +27,7 @@ fn main() -> Ev3Result<()> {
     // Run motor.
     large_motor.set_duty_cycle_sp(50)?;
 
-    // Find color sensor. Always returns the first recognised one.
+    // Find color sensor. Always returns the first recognized one.
     let color_sensor = ColorSensor::find()?;
 
     // Switch to rgb mode.
@@ -40,7 +40,7 @@ fn main() -> Ev3Result<()> {
 }
 ```
 
-There is a [template repository](https://github.com/pixix4/ev3dev-lang-rust-template/) that contains all the required configurations for cross-compilation and perfomance/binary-size optimizations for this "Hello World" example.
+There is a [template repository](https://github.com/pixix4/ev3dev-lang-rust-template/) that contains all the required configurations for cross-compilation and performance/binary-size optimizations for this "Hello World" example.
 
 ## Supported features
 
@@ -59,70 +59,71 @@ There is a [template repository](https://github.com/pixix4/ev3dev-lang-rust-temp
   - `UltrasonicSensor` [`lego-ev3-us`, `lego-nxt-us`]
 - Utility
   - `Ev3Button`: Provides access to the integrated buttons on the ev3 brick
-  - `Led`: Provides access to the integrated leds on the ev3 brick
+  - `Led`: Provides access to the integrated led's on the ev3 brick
   - `PowerSupply`: Provides access to the power supply information
   - `Screen`: Provides access to the integrated display of the ev3 brick
   - `sound`: Provides access to the integrated speakers of the ev3 brick
 
-## Cross compilation for the ev3 robot
+## Cross compilation for the ev3 robot - using `musl` toolchain
 
-1. Install [`cross`](https://github.com/rust-embedded/cross) and the `armv5te` toolchain
-
-   ```bash
-   cargo install cross
-   rustup target add armv5te-unknown-linux-gnueabi
-   ```
-
-2. Build binary with docker
+1. Install the `armv5te-musl` toolchain
 
    ```bash
-   cross build --release --target armv5te-unknown-linux-gnueabi
+   rustup target add armv5te-unknown-linux-musleabi
    ```
 
-   The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
-
-   The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`
-
-## Alternative cross compilation for the ev3 robot
-
-If the above compilation with `cross` failed you can try this manual approach.
-
-1. Create target configuration in [`.cargo/config`](https://github.com/pixix4/ev3dev-lang-rust/blob/master/.cargo/config)
+2. Create `.cargo/config.toml` with the following content
 
    ```toml
-   [target.armv5te-unknown-linux-gnueabi]
-   linker = "/usr/bin/arm-linux-gnueabi-gcc"
-   ```
+   [build]
+   target = "armv5te-unknown-linux-musleabi"
 
-2. Get the docker image. You can either download the prebuild image or build it yourself with the provided Dockerfile ([`docker/Dockerfile`](https://github.com/pixix4/ev3dev-lang-rust/blob/master/docker/Dockerfile)).
-
-   ```bash
-   docker pull pixix4/ev3dev-rust
-
-   # or
-
-   docker build . -t pixix4/ev3dev-rust --no-cache
+   [target.armv5te-unknown-linux-musleabi]
+   linker = "rust-lld"
    ```
 
 3. Build binary
 
    ```bash
-   # Run in interactive docker shell
-   docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
-   cargo build --release --target armv5te-unknown-linux-gnueabi
-
-   # Run directly (e.g. via Makefile)
-   docker run --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust \
-           cargo build --release --target armv5te-unknown-linux-gnueabi
+   cargo build --release
    ```
 
-   If you use the direct method you will notice that each build gets stuck at `Updating crates.io index` for a long time. To speed up this step you can use the vendoring machanic of cargo.
+   The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
+   The target binary is now in `target/armv5te-unknown-linux-musleabi/release/{application_name}`.
+
+## Cross compilation for the ev3 robot - using docker
+
+If you need to cross compile other dependencies (eg. `openssl` or `paho-mqtt`) it is much easier to use a complete cross compile toolchain. For this you can use the provided docker image `pixix4/ev3dev-rust:latest`.
+
+1. Setup a docker environment
+
+2. Create `.cargo/config.toml` with the following content
+
+   ```toml
+   [build]
+   target = "armv5te-unknown-linux-gnueabi"
+
+   [target.armv5te-unknown-linux-gnueabi]
+   linker = "/usr/bin/arm-linux-gnueabi-gcc"
+   ```
+
+3. Build binary
+
+   ```bash
+   docker run --rm -it -v $(pwd):/build -w /build pixix4/ev3dev-rust:latest \
+      cargo build --release
+   ```
+
+   The `--release` flag is optional. However, it can speed up the execution time by a factor of 30.
+   The target binary is now in `target/armv5te-unknown-linux-gnueabi/release/{application_name}`.
+
+   If you do this you will notice that each build gets stuck at `Updating crates.io index` for a long time. To speed up this step you can use the vendoring mechanic of cargo.
 
    ```bash
    cargo vendor
    ```
 
-   Execute the above command and add this addtional config to `.cargo/config`.
+   Execute the above command and add this additional config to `.cargo/config`.
 
    ```toml
    [source.crates-io]
@@ -137,27 +138,27 @@ If the above compilation with `cross` failed you can try this manual approach.
 To reduce the resulting binary size you can try the following steps:
 
 1. Enable "fat" link time optimizations
-   By default rust only performs lto for each crate individually. To enable global lto (which result in a much more aggressive dead code elimination) add this addtional config to your `Cargo.toml`:
+   By default rust only performs lto for each crate individually. To enable global lto (which result in a much more aggressive dead code elimination) add this additional config to your `Cargo.toml`:
 
-```toml
-[profile.release]
-lto = true
-```
+   ```toml
+   [profile.release]
+   lto = true
+   ```
 
 2. Strip debug symbols from the resulting binary
    Since the usage of an debugger is not really feasible you can strip (debug) symbols from the binary. To do this you
 
-```bash
-# Run in interactive docker shell
-docker run -it --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust
-/usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
+   ```bash
+   # Run in interactive docker shell
+   docker run -it --rm -v $(PWD):/build/ -w /build pixix4/ev3dev-rust
+   /usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
 
-# Run directly (e.g. via Makefile)
-docker run --rm -v $PWD:/build/ -w /build pixix4/ev3dev-rust \
+   # Run directly (e.g. via Makefile)
+   docker run --rm -v $(PWD):/build/ -w /build pixix4/ev3dev-rust \
         /usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
-```
+   ```
 
-With this you can reduce the binary size of the "Hello World" example by more than 90%.
+   With this you can reduce the binary size of the "Hello World" example by more than 90%.
 
 ## Editor support
 
