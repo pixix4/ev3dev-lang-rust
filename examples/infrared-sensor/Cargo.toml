@@ -1,7 +1,0 @@
-[package]
-name = "infrared-sensor"
-version = "0.1.0"
-authors = ["Lars Westermann <rust@lars-westermann.de>"]
-
-[dependencies]
-ev3dev-lang-rust = { path = "../.."}

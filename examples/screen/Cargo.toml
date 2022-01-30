@@ -1,9 +1,0 @@
-[package]
-name = "screen"
-version = "0.1.0"
-authors = ["Lars Westermann <rust@lars-westermann.de>"]
-
-[dependencies]
-image = "0.23"
-imageproc = "0.22"
-ev3dev-lang-rust = { path = "../..", features = ["screen"] }
