@@ -135,30 +135,26 @@ If you need to cross compile other dependencies (eg. `openssl` or `paho-mqtt`) i
 
 ## Optimize binary size
 
-To reduce the resulting binary size you can try the following steps:
+- Enable "fat" link time optimizations and strip debug symbols:
+  By default rust only performs lto for each crate individually. To enable global lto (which result in a much more aggressive dead code elimination) add the following additional config to your `Cargo.toml`. This also removes additional debug symbols from the binary. With this you can reduce the binary size of the "Hello World" example by more than 90%.
 
-1. Enable "fat" link time optimizations
-   By default rust only performs lto for each crate individually. To enable global lto (which result in a much more aggressive dead code elimination) add this additional config to your `Cargo.toml`:
+  ```toml
+  [profile.release]
+  lto = true
+  strip = "debuginfo"
+  ```
 
-   ```toml
-   [profile.release]
-   lto = true
-   ```
+  The strip option requires rust `1.59.0`. If you are using an older version you can do this manually with docker:
 
-2. Strip debug symbols from the resulting binary
-   Since the usage of an debugger is not really feasible you can strip (debug) symbols from the binary. To do this you
+  ```bash
+  # Run in interactive docker shell
+  docker run -it --rm -v $(PWD):/build/ -w /build pixix4/ev3dev-rust
+  /usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
 
-   ```bash
-   # Run in interactive docker shell
-   docker run -it --rm -v $(PWD):/build/ -w /build pixix4/ev3dev-rust
-   /usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
-
-   # Run directly (e.g. via Makefile)
-   docker run --rm -v $(PWD):/build/ -w /build pixix4/ev3dev-rust \
-        /usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
-   ```
-
-   With this you can reduce the binary size of the "Hello World" example by more than 90%.
+  # Run directly (e.g. via Makefile)
+  docker run --rm -v $(PWD):/build/ -w /build pixix4/ev3dev-rust \
+       /usr/bin/arm-linux-gnueabi-strip /build/target/armv5te-unknown-linux-gnueabi/release/{application_name}
+  ```
 
 ## Editor support
 

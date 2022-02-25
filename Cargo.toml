@@ -20,7 +20,7 @@ screen = ["framebuffer", "image"]
 ev3dev-lang-rust-derive = { path = "ev3dev_lang_rust_derive", version="0.10" }
 libc = "0.2"
 framebuffer = { version = "0.3", optional = true }
-image = { version = "0.23", optional = true }
+image = { version = "0.24", optional = true }
 
 [workspace]
 members = [
@@ -29,6 +29,7 @@ members = [
 
 [profile.release]
 lto = true
+strip = "debuginfo"
 
 [[example]]
 name = "screen"
