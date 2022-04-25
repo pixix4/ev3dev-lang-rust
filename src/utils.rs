@@ -1,5 +1,7 @@
 //! Utility things.
 
+use std::{error::Error, fmt};
+
 /// Helper `Result` type for easy access.
 pub type Ev3Result<T> = Result<T, Ev3Error>;
 
@@ -26,6 +28,23 @@ pub enum Ev3Error {
         ports: Vec<String>,
     },
 }
+
+impl fmt::Display for Ev3Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Ev3Error::InternalError { msg } => write!(f, "InternalError: {}!", msg),
+            Ev3Error::NotConnected { device, port } => {
+                write!(f, "'{}' not connected at port {:?}!", device, port)
+            }
+            Ev3Error::MultipleMatches { device, ports } => {
+                write!(f, "Multiple '{}' connected at ports {:?}!", device, ports)
+            }
+        }
+    }
+}
+
+impl Error for Ev3Error {}
+
 impl From<std::io::Error> for Ev3Error {
     fn from(err: std::io::Error) -> Self {
         Ev3Error::InternalError {
