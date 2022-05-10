@@ -275,32 +275,32 @@ macro_rules! tacho_motor {
 
         /// Returns the proportional pub constant for the position PID.
         pub fn get_hold_pid_kp(&self) -> Ev3Result<f32> {
-            self.get_attribute("hold_pid_kp").get()
+            self.get_attribute("hold_pid/Kp").get()
         }
 
         /// Sets the proportional pub constant for the position PID.
         pub fn set_hold_pid_kp(&self, kp: f32) -> Ev3Result<()> {
-            self.get_attribute("hold_pid_kp").set(kp)
+            self.get_attribute("hold_pid/Kp").set(kp)
         }
 
         /// Returns the integral pub constant for the position PID.
         pub fn get_hold_pid_ki(&self) -> Ev3Result<f32> {
-            self.get_attribute("hold_pid_ki").get()
+            self.get_attribute("hold_pid/Ki").get()
         }
 
         /// Sets the integral pub constant for the position PID.
         pub fn set_hold_pid_ki(&self, ki: f32) -> Ev3Result<()> {
-            self.get_attribute("hold_pid_ki").set(ki)
+            self.get_attribute("hold_pid/Ki").set(ki)
         }
 
         /// Returns the derivative pub constant for the position PID.
         pub fn get_hold_pid_kd(&self) -> Ev3Result<f32> {
-            self.get_attribute("hold_pid_kd").get()
+            self.get_attribute("hold_pid/Kd").get()
         }
 
         /// Sets the derivative pub constant for the position PID.
         pub fn set_hold_pid_kd(&self, kd: f32) -> Ev3Result<()> {
-            self.get_attribute("hold_pid_kd").set(kd)
+            self.get_attribute("hold_pid/Kd").set(kd)
         }
 
         /// Returns the maximum value that is accepted by the `speed_sp` attribute.
@@ -430,32 +430,32 @@ macro_rules! tacho_motor {
 
         /// Returns the proportional pub constant for the speed regulation PID.
         pub fn get_speed_pid_kp(&self) -> Ev3Result<f32> {
-            self.get_attribute("speed_pid_kp").get()
+            self.get_attribute("speed_pid/Kp").get()
         }
 
         /// Sets the proportional pub constant for the speed regulation PID.
         pub fn set_speed_pid_kp(&self, kp: f32) -> Ev3Result<()> {
-            self.get_attribute("speed_pid_kp").set(kp)
+            self.get_attribute("speed_pid/Kp").set(kp)
         }
 
         /// Returns the integral pub constant for the speed regulation PID.
         pub fn get_speed_pid_ki(&self) -> Ev3Result<f32> {
-            self.get_attribute("speed_pid_ki").get()
+            self.get_attribute("speed_pid/Ki").get()
         }
 
         /// Sets the integral pub constant for the speed regulation PID.
         pub fn set_speed_pid_ki(&self, ki: f32) -> Ev3Result<()> {
-            self.get_attribute("speed_pid_ki").set(ki)
+            self.get_attribute("speed_pid/Ki").set(ki)
         }
 
         /// Returns the derivative pub constant for the speed regulation PID.
         pub fn get_speed_pid_kd(&self) -> Ev3Result<f32> {
-            self.get_attribute("speed_pid_kd").get()
+            self.get_attribute("speed_pid/Kd").get()
         }
 
         /// Sets the derivative pub constant for the speed regulation PID.
         pub fn set_speed_pid_kd(&self, kd: f32) -> Ev3Result<()> {
-            self.get_attribute("speed_pid_kd").set(kd)
+            self.get_attribute("speed_pid/Kd").set(kd)
         }
 
         /// Returns a list of state flags.
