@@ -5,7 +5,11 @@
 
 ## Notice
 
-Currently this project is not compatible with the BrickPi platform.
+To use this project with the BrickPi platform the corresponding feature has to be enabled. The features `ev3`, `brickpi` and `brickpi3` are mutual exclusive.
+```toml
+[dependencies]
+ev3dev_lang_rust = { version="0.13.0" default-features=false, features=["brickpi"] }
+```
 
 ## Usage
 
@@ -58,7 +62,7 @@ There is a [template repository](https://github.com/pixix4/ev3dev-lang-rust-temp
   - `TouchSensor` [`lego-ev3-touch`, `lego-nxt-touch`]
   - `UltrasonicSensor` [`lego-ev3-us`, `lego-nxt-us`]
 - Utility
-  - `Ev3Button`: Provides access to the integrated buttons on the ev3 brick
+  - `Button`: Provides access to the integrated buttons on the ev3 brick
   - `Led`: Provides access to the integrated led's on the ev3 brick
   - `PowerSupply`: Provides access to the power supply information
   - `Screen`: Provides access to the integrated display of the ev3 brick

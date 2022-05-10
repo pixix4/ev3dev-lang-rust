@@ -14,7 +14,11 @@ repository = "https://github.com/pixix4/ev3dev-lang-rust"
 readme = "README.md"
 
 [features]
+default = ["ev3"]
 screen = ["framebuffer", "image"]
+ev3 = []
+brickpi = []
+brickpi3 = []
 
 [dependencies]
 ev3dev-lang-rust-derive = { path = "ev3dev_lang_rust_derive", version="0.10" }
@@ -35,3 +39,7 @@ opt-level = "z"
 [[example]]
 name = "screen"
 required-features = ["screen"]
+
+[[example]]
+name = "buttons"
+required-features = ["ev3"]

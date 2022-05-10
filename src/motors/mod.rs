@@ -16,7 +16,7 @@ pub use self::medium_motor::MediumMotor;
 mod tacho_motor;
 pub use self::tacho_motor::TachoMotor;
 
-use crate::Port;
+use crate::{port_constants, Port};
 
 /// EV3 ports `outA` to `outD`
 #[derive(Debug, Copy, Clone)]
@@ -47,10 +47,10 @@ impl MotorPort {
 impl Port for MotorPort {
     fn address(&self) -> String {
         match self {
-            MotorPort::OutA => "outA".to_owned(),
-            MotorPort::OutB => "outB".to_owned(),
-            MotorPort::OutC => "outC".to_owned(),
-            MotorPort::OutD => "outD".to_owned(),
+            MotorPort::OutA => port_constants::OUTPUT_A.to_owned(),
+            MotorPort::OutB => port_constants::OUTPUT_B.to_owned(),
+            MotorPort::OutC => port_constants::OUTPUT_C.to_owned(),
+            MotorPort::OutD => port_constants::OUTPUT_D.to_owned(),
         }
     }
 }
