@@ -62,13 +62,60 @@ pub mod wait;
 pub mod motors;
 pub mod sensors;
 
-mod led;
-pub use led::Led;
+#[cfg(feature = "ev3")]
+mod ev3;
+#[cfg(feature = "ev3")]
+pub use ev3::Button;
+#[cfg(feature = "ev3")]
+pub use ev3::Led;
+#[cfg(feature = "ev3")]
+mod port_constants {
+    pub const OUTPUT_A: &str = "outA";
+    pub const OUTPUT_B: &str = "outB";
+    pub const OUTPUT_C: &str = "outC";
+    pub const OUTPUT_D: &str = "outD";
+
+    pub const INPUT_1: &str = "in1";
+    pub const INPUT_2: &str = "in2";
+    pub const INPUT_3: &str = "in3";
+    pub const INPUT_4: &str = "in4";
+}
+
+#[cfg(feature = "brickpi")]
+mod brickpi;
+#[cfg(feature = "brickpi")]
+pub use brickpi::Led;
+#[cfg(feature = "brickpi")]
+mod port_constants {
+    pub const OUTPUT_A: &str = "serial0-0:MA";
+    pub const OUTPUT_B: &str = "serial0-0:MB";
+    pub const OUTPUT_C: &str = "serial0-0:MC";
+    pub const OUTPUT_D: &str = "serial0-0:MD";
+
+    pub const INPUT_1: &str = "serial0-0:S1";
+    pub const INPUT_2: &str = "serial0-0:S2";
+    pub const INPUT_3: &str = "serial0-0:S3";
+    pub const INPUT_4: &str = "serial0-0:S4";
+}
+
+#[cfg(feature = "brickpi3")]
+mod brickpi3;
+#[cfg(feature = "brickpi3")]
+pub use brickpi3::Led;
+#[cfg(feature = "brickpi3")]
+mod port_constants {
+    pub const OUTPUT_A: &str = "spi0.1:MA";
+    pub const OUTPUT_B: &str = "spi0.1:MB";
+    pub const OUTPUT_C: &str = "spi0.1:MC";
+    pub const OUTPUT_D: &str = "spi0.1:MD";
+
+    pub const INPUT_1: &str = "spi0.1:S1";
+    pub const INPUT_2: &str = "spi0.1:S2";
+    pub const INPUT_3: &str = "spi0.1:S3";
+    pub const INPUT_4: &str = "spi0.1:S4";
+}
 
 pub mod sound;
-
-mod buttons;
-pub use buttons::Ev3Button;
 
 mod power_supply;
 pub use power_supply::PowerSupply;

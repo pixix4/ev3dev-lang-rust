@@ -32,7 +32,7 @@ pub use self::touch_sensor::TouchSensor;
 mod ultrasonic_sensor;
 pub use self::ultrasonic_sensor::UltrasonicSensor;
 
-use crate::Port;
+use crate::{port_constants, Port};
 
 /// EV3 ports `in1` to `in4`
 #[derive(Debug, Copy, Clone)]
@@ -63,10 +63,10 @@ impl SensorPort {
 impl Port for SensorPort {
     fn address(&self) -> String {
         match self {
-            SensorPort::In1 => "in1".to_owned(),
-            SensorPort::In2 => "in2".to_owned(),
-            SensorPort::In3 => "in3".to_owned(),
-            SensorPort::In4 => "in4".to_owned(),
+            SensorPort::In1 => port_constants::INPUT_1.to_owned(),
+            SensorPort::In2 => port_constants::INPUT_2.to_owned(),
+            SensorPort::In3 => port_constants::INPUT_3.to_owned(),
+            SensorPort::In4 => port_constants::INPUT_4.to_owned(),
         }
     }
 }

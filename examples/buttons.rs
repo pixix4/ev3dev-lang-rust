@@ -1,9 +1,9 @@
 extern crate ev3dev_lang_rust;
 
-use ev3dev_lang_rust::{Ev3Button, Ev3Result};
+use ev3dev_lang_rust::{Button, Ev3Result};
 
 fn main() -> Ev3Result<()> {
-    let button = Ev3Button::new()?;
+    let button = Button::new()?;
 
     loop {
         button.process();

@@ -14,8 +14,12 @@ repository = "https://github.com/pixix4/ev3dev-lang-rust"
 readme = "README.md"
 
 [features]
+default = ["ev3"]
 screen = ["framebuffer", "image"]
 override-driver-path = []
+ev3 = []
+brickpi = []
+brickpi3 = []
 
 [dependencies]
 ev3dev-lang-rust-derive = { path = "ev3dev_lang_rust_derive", version="0.10" }
@@ -40,3 +44,7 @@ required-features = ["screen"]
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
+
+[[example]]
+name = "buttons"
+required-features = ["ev3"]
