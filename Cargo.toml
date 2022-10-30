@@ -35,3 +35,7 @@ opt-level = "z"
 [[example]]
 name = "screen"
 required-features = ["screen"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

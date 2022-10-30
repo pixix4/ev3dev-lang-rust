@@ -168,3 +168,11 @@ If you have problems with code completion or inline documentation with rust anal
 ```
 
 (Example from VSCode `settings.json`)
+
+## Docs.rs documentation
+
+To build the complete documentation (including the `screen` feature) use:
+
+```bash
+RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features
+```
