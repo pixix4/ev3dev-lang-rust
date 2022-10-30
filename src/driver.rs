@@ -10,7 +10,22 @@ use std::string::String;
 use crate::{utils::OrErr, Attribute, Ev3Error, Ev3Result, Port};
 
 /// The root driver path `/sys/class/`.
+#[cfg(not(feature = "override-driver-path"))]
 const ROOT_PATH: &str = "/sys/class/";
+
+/// The root driver path `/sys/class/`.
+#[cfg(feature = "override-driver-path")]
+const ROOT_PATH: &str = get_driver_path();
+
+#[cfg(feature = "override-driver-path")]
+const fn get_driver_path() -> &'static str {
+    let path = std::option_env!("EV3DEV_DRIVER_PATH");
+    if let Some(path) = path {
+        path
+    } else {
+        "/sys/class/"
+    }
+}
 
 /// Helper struct that manages attributes.
 /// It creates an `Attribute` instance if it does not exists or uses a cached one.

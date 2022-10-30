@@ -1,6 +1,6 @@
 [package]
 name = "ev3dev-lang-rust"
-version = "0.12.1"
+version = "0.13.0"
 edition = "2021"
 authors = ["Lars Westermann <rust@lars-westermann.de>"]
 
@@ -15,6 +15,7 @@ readme = "README.md"
 
 [features]
 screen = ["framebuffer", "image"]
+override-driver-path = []
 
 [dependencies]
 ev3dev-lang-rust-derive = { path = "ev3dev_lang_rust_derive", version="0.10" }
