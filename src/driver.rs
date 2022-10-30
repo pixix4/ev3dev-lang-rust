@@ -5,17 +5,19 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt::{self, Debug};
 use std::fs;
+use std::path::Path;
 use std::string::String;
 
-use crate::{utils::OrErr, Attribute, Ev3Error, Ev3Result, Port};
+use crate::{Attribute, Ev3Error, Ev3Result, Port};
+use crate::utils::OrErr;
 
-/// The root driver path `/sys/class/`.
+/// The driver path `/sys/class/`.
 #[cfg(not(feature = "override-driver-path"))]
-const ROOT_PATH: &str = "/sys/class/";
+pub const DRIVER_PATH: &str = "/sys/class/";
 
-/// The root driver path `/sys/class/`.
+/// The driver path that was set with the env variable `EV3DEV_DRIVER_PATH` (default value: `/sys/class/`).
 #[cfg(feature = "override-driver-path")]
-const ROOT_PATH: &str = get_driver_path();
+pub const DRIVER_PATH: &str = get_driver_path();
 
 #[cfg(feature = "override-driver-path")]
 const fn get_driver_path() -> &'static str {
@@ -57,7 +59,7 @@ impl Driver {
     ) -> Ev3Result<String> {
         let port_address = port.address();
 
-        let paths = fs::read_dir(format!("{}{}", ROOT_PATH, class_name))?;
+        let paths = fs::read_dir(Path::new(DRIVER_PATH).join(class_name))?;
 
         for path in paths {
             let file_name = path?.file_name();
@@ -107,7 +109,7 @@ impl Driver {
         class_name: &str,
         driver_name_vec: &[&str],
     ) -> Ev3Result<Vec<String>> {
-        let paths = fs::read_dir(format!("{}{}", ROOT_PATH, class_name))?;
+        let paths = fs::read_dir(Path::new(DRIVER_PATH).join(class_name))?;
 
         let mut found_names = Vec::new();
         for path in paths {

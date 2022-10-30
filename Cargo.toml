@@ -48,3 +48,19 @@ rustdoc-args = ["--cfg", "docsrs"]
 [[example]]
 name = "buttons"
 required-features = ["ev3"]
+
+[[test]]
+name = "ev3"
+required-features = ["ev3"]
+
+[[test]]
+name = "brickpi"
+required-features = ["brickpi"]
+
+[[test]]
+name = "brickpi3"
+required-features = ["brickpi3"]
+
+[[test]]
+name = "override-driver-path"
+required-features = ["override-driver-path"]

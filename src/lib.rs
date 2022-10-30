@@ -51,6 +51,8 @@ mod attribute;
 pub use attribute::Attribute;
 mod driver;
 pub use driver::Driver;
+#[cfg(feature = "override-driver-path")]
+pub use driver::DRIVER_PATH;
 mod device;
 pub use device::Device;
 

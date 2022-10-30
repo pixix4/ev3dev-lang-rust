@@ -4,23 +4,24 @@ use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::os::unix::fs::PermissionsExt;
 use std::os::unix::io::{AsRawFd, RawFd};
+use std::path::{Path, PathBuf};
 use std::string::String;
 use std::sync::{Arc, Mutex};
 
-use crate::{utils::OrErr, Ev3Error, Ev3Result};
-
-/// The root driver path `/sys/class/`.
-const ROOT_PATH: &str = "/sys/class/";
+use crate::driver::DRIVER_PATH;
+use crate::{Ev3Error, Ev3Result};
+use crate::utils::OrErr;
 
 /// A wrapper to a attribute file in the `/sys/class/` directory.
 #[derive(Debug, Clone)]
 pub struct Attribute {
+    file_path: PathBuf,
     file: Arc<Mutex<File>>,
 }
 
 impl Attribute {
     /// Create a new `Attribute` instance for the given path.
-    pub fn from_path(path: &str) -> Ev3Result<Attribute> {
+    pub fn from_path(path: &Path) -> Ev3Result<Attribute> {
         let stat = fs::metadata(&path)?;
 
         let mode = stat.permissions().mode();
@@ -35,6 +36,7 @@ impl Attribute {
             .open(&path)?;
 
         Ok(Attribute {
+            file_path: PathBuf::from(path),
             file: Arc::new(Mutex::new(file)),
         })
     }
@@ -46,15 +48,18 @@ impl Attribute {
         name: &str,
         attribute_name: &str,
     ) -> Ev3Result<Attribute> {
-        let path = format!("{}{}/{}/{}", ROOT_PATH, class_name, name, attribute_name);
-        Attribute::from_path(&path)
+        let path = Path::new(DRIVER_PATH)
+            .join(class_name)
+            .join(name)
+            .join(attribute_name);
+        Attribute::from_path(path.as_ref())
     }
 
     /// Create a new `Attribute` instance by a discriminator attribute.
     /// This can be used to manually access driver files or advances features like raw encoder values.
-    /// To find the correct file, this function iterates over all directories `$d` in `root_path` and
-    /// checks if the content of `root_path/$d/discriminator_path` equals `discriminator_value`. When a
-    /// match is found it returns an Attribute for file `root_path/$d/attribute_path`.
+    /// To find the correct file, this function iterates over all directories `$d` in `driver_path` and
+    /// checks if the content of `driver_path/$d/discriminator_path` equals `discriminator_value`. When a
+    /// match is found it returns an Attribute for file `driver_path/$d/attribute_path`.
     ///
     /// # Example
     /// ```no_run
@@ -84,29 +89,29 @@ impl Attribute {
     /// # }
     /// ```
     pub fn from_path_with_discriminator(
-        root_path: &str,
+        driver_path: &str,
         attribute_path: &str,
         discriminator_path: &str,
         discriminator_value: &str,
     ) -> Ev3Result<Attribute> {
-        let paths = fs::read_dir(root_path)?;
+        let paths = fs::read_dir(driver_path)?;
 
         for path_result in paths {
             let path_buf = path_result?.path();
             let current_path = path_buf.to_str().or_err()?;
 
             let discriminator_attribute =
-                Attribute::from_path(&format!("{}/{}", current_path, discriminator_path))?;
+                Attribute::from_path(&PathBuf::from(format!("{}/{}", current_path, discriminator_path)))?;
 
             if discriminator_attribute.get::<String>()? == discriminator_value {
-                return Attribute::from_path(&format!("{}/{}", current_path, attribute_path));
+                return Attribute::from_path(&PathBuf::from(format!("{}/{}", current_path, attribute_path)));
             }
         }
 
         Err(Ev3Error::InternalError {
             msg: format!(
-                "Attribute `{}` at root path `{}` could not be found!",
-                attribute_path, root_path
+                "Attribute `{}` at driver path `{}` could not be found!",
+                attribute_path, driver_path
             ),
         })
     }
@@ -178,5 +183,10 @@ impl Attribute {
     /// Returns a C pointer to the wrapped file.
     pub fn get_raw_fd(&self) -> RawFd {
         self.file.lock().unwrap().as_raw_fd()
+    }
+
+    /// Returns the path to the wrapped file.
+    pub fn get_file_path(&self) -> PathBuf {
+        self.file_path.clone()
     }
 }

@@ -8,9 +8,12 @@ use std::collections::HashSet;
 use std::fmt;
 use std::fs::File;
 use std::os::unix::io::AsRawFd;
+use std::path::Path;
 use std::rc::Rc;
 
-use crate::{utils::OrErr, Attribute, Ev3Result};
+use crate::driver::DRIVER_PATH;
+use crate::utils::OrErr;
+use crate::{Attribute, Ev3Result};
 
 /// Color type.
 pub type Color = (u8, u8);
@@ -50,7 +53,7 @@ impl Led {
         let mut right_red_name = String::new();
         let mut right_green_name = String::new();
 
-        let paths = fs::read_dir("/sys/class/leds")?;
+        let paths = fs::read_dir(Path::new(DRIVER_PATH).join("leds"))?;
 
         for path in paths {
             let file_name = path?.file_name();

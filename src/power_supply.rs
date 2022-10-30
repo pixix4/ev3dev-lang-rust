@@ -1,9 +1,11 @@
 //! An interface to read data from the system’s power_supply class.
 //! Uses the built-in legoev3-battery if none is specified.
 
-use std::fs;
+use std::{fs, path::Path};
 
-use crate::{utils::OrErr, Attribute, Device, Driver, Ev3Error, Ev3Result};
+use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
+use crate::utils::OrErr;
+use crate::driver::DRIVER_PATH;
 
 /// An interface to read data from the system’s power_supply class.
 /// Uses the built-in legoev3-battery if none is specified.
@@ -15,7 +17,7 @@ pub struct PowerSupply {
 impl PowerSupply {
     /// Create a new instance of `PowerSupply`.
     pub fn new() -> Ev3Result<PowerSupply> {
-        let paths = fs::read_dir("/sys/class/power_supply")?;
+        let paths = fs::read_dir(Path::new(DRIVER_PATH).join("power_supply"))?;
 
         for path in paths {
             let file_name = path?.file_name();
