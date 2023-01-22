@@ -6,6 +6,9 @@ pub use self::sensor::Sensor;
 mod color_sensor;
 pub use self::color_sensor::ColorSensor;
 
+mod hi_technic_color_sensor;
+pub use self::hi_technic_color_sensor::HiTechnicColorSensor;
+
 mod ir_seeker_sensor;
 pub use self::ir_seeker_sensor::IrSeekerSensor;
 
