@@ -156,7 +156,7 @@ pub fn play(wav_file: &str) -> Ev3Result<Child> {
 /// Speak the given text aloud.
 pub fn speak(text: &str) -> Ev3Result<Child> {
     let espeak = Command::new("/usr/bin/espeak")
-        .args(&["--stdout", "-a", "200", "-s", "130", text])
+        .args(["--stdout", "-a", "200", "-s", "130", text])
         .stdout(Stdio::piped())
         .spawn()?;
 
@@ -203,7 +203,7 @@ fn get_channels() -> Ev3Result<Vec<String>> {
 /// `amixer -q set <channel> <pct>%`.
 pub fn set_volume_channel(volume: i32, channel: &str) -> Ev3Result<()> {
     Command::new("/usr/bin/amixer")
-        .args(&["-q", "set", channel, &format!("{}%", volume)])
+        .args(["-q", "set", channel, &format!("{}%", volume)])
         .stdout(Stdio::null())
         .spawn()?
         .wait()?;
@@ -228,7 +228,7 @@ pub fn set_volume(volume: i32) -> Ev3Result<()> {
 pub fn get_volume_channel(channel: &str) -> Ev3Result<i32> {
     let out = String::from_utf8(
         Command::new("/usr/bin/amixer")
-            .args(&["get", channel])
+            .args(["get", channel])
             .output()?
             .stdout,
     )?;

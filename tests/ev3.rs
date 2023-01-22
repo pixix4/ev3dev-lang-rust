@@ -1,4 +1,4 @@
-use ev3dev_lang_rust::{motors::MotorPort, Port, sensors::SensorPort};
+use ev3dev_lang_rust::{motors::MotorPort, sensors::SensorPort, Port};
 
 extern crate ev3dev_lang_rust;
 
