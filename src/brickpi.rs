@@ -1,6 +1,7 @@
 //! EV3 specific features
 
 use std::fs;
+use std::path::Path;
 
 use crate::driver::DRIVER_PATH;
 use crate::utils::OrErr;

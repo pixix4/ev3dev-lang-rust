@@ -86,10 +86,7 @@ where
 /// # Ok(())
 /// # }
 pub fn tone(frequency: f32, duration: i32) -> Ev3Result<Child> {
-    beep_args(vec![
-        format!("-f {}", frequency),
-        format!("-l {}", duration),
-    ])
+    beep_args(vec![format!("-f {frequency}"), format!("-l {duration}")])
 }
 
 /// Play tone sequence. The tone_sequence parameter is a list of tuples,
@@ -133,9 +130,9 @@ pub fn tone_sequence(sequence: &[(f32, i32, i32)]) -> Ev3Result<Child> {
         .iter()
         .map(|(frequency, duration, delay)| {
             vec![
-                format!("-f {}", frequency),
-                format!("-l {}", duration),
-                format!("-D {}", delay),
+                format!("-f {frequency}"),
+                format!("-l {duration}"),
+                format!("-D {delay}"),
             ]
         })
         .collect::<Vec<Vec<String>>>()
@@ -203,7 +200,7 @@ fn get_channels() -> Ev3Result<Vec<String>> {
 /// `amixer -q set <channel> <pct>%`.
 pub fn set_volume_channel(volume: i32, channel: &str) -> Ev3Result<()> {
     Command::new("/usr/bin/amixer")
-        .args(["-q", "set", channel, &format!("{}%", volume)])
+        .args(["-q", "set", channel, &format!("{volume}%")])
         .stdout(Stdio::null())
         .spawn()?
         .wait()?;

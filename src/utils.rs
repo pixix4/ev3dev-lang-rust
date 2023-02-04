@@ -32,12 +32,12 @@ pub enum Ev3Error {
 impl fmt::Display for Ev3Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Ev3Error::InternalError { msg } => write!(f, "InternalError: {}!", msg),
+            Ev3Error::InternalError { msg } => write!(f, "InternalError: {msg}!"),
             Ev3Error::NotConnected { device, port } => {
-                write!(f, "'{}' not connected at port {:?}!", device, port)
+                write!(f, "'{device}' not connected at port {port:?}!")
             }
             Ev3Error::MultipleMatches { device, ports } => {
-                write!(f, "Multiple '{}' connected at ports {:?}!", device, ports)
+                write!(f, "Multiple '{device}' connected at ports {ports:?}!")
             }
         }
     }
@@ -48,7 +48,7 @@ impl Error for Ev3Error {}
 impl From<std::io::Error> for Ev3Error {
     fn from(err: std::io::Error) -> Self {
         Ev3Error::InternalError {
-            msg: format!("{}", err),
+            msg: format!("{err}"),
         }
     }
 }
@@ -56,7 +56,7 @@ impl From<std::io::Error> for Ev3Error {
 impl From<std::string::FromUtf8Error> for Ev3Error {
     fn from(err: std::string::FromUtf8Error) -> Self {
         Ev3Error::InternalError {
-            msg: format!("{}", err),
+            msg: format!("{err}"),
         }
     }
 }
@@ -64,7 +64,7 @@ impl From<std::string::FromUtf8Error> for Ev3Error {
 impl From<std::num::ParseIntError> for Ev3Error {
     fn from(err: std::num::ParseIntError) -> Self {
         Ev3Error::InternalError {
-            msg: format!("{}", err),
+            msg: format!("{err}"),
         }
     }
 }

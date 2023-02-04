@@ -1,6 +1,6 @@
 //! HiTechnic NXT Color Sensor V2.
 
-use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result, sensor_mode};
+use crate::{sensor_mode, Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 use super::{Sensor, SensorPort};
 

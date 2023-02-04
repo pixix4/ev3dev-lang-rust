@@ -78,7 +78,7 @@ impl GyroSensor {
             GyroSensor::MODE_GYRO_G_AND_A => self.get_value0(),
             GyroSensor::MODE_GYRO_ANG => self.get_value0(),
             mode => Ev3Result::Err(Ev3Error::InternalError {
-                msg: format!("Cannot get angle while in {} mode", mode),
+                msg: format!("Cannot get angle while in {mode} mode"),
                 // Returns error
             }),
         }
@@ -92,7 +92,7 @@ impl GyroSensor {
             GyroSensor::MODE_GYRO_RATE => self.get_value0(),
             GyroSensor::MODE_GYRO_G_AND_A => self.get_value1(),
             mode => Ev3Result::Err(Ev3Error::InternalError {
-                msg: format!("Cannot get rotational speed while in {} mode", mode),
+                msg: format!("Cannot get rotational speed while in {mode} mode"),
                 // Returns error
             }),
         }

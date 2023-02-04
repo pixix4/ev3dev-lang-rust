@@ -9,8 +9,8 @@ use std::string::String;
 use std::sync::{Arc, Mutex};
 
 use crate::driver::DRIVER_PATH;
-use crate::{Ev3Error, Ev3Result};
 use crate::utils::OrErr;
+use crate::{Ev3Error, Ev3Result};
 
 /// A wrapper to a attribute file in the `/sys/class/` directory.
 #[derive(Debug, Clone)]
@@ -22,7 +22,7 @@ pub struct Attribute {
 impl Attribute {
     /// Create a new `Attribute` instance for the given path.
     pub fn from_path(path: &Path) -> Ev3Result<Attribute> {
-        let stat = fs::metadata(&path)?;
+        let stat = fs::metadata(path)?;
 
         let mode = stat.permissions().mode();
 
@@ -33,7 +33,7 @@ impl Attribute {
         let file = OpenOptions::new()
             .read(readable)
             .write(writeable)
-            .open(&path)?;
+            .open(path)?;
 
         Ok(Attribute {
             file_path: PathBuf::from(path),
@@ -100,18 +100,20 @@ impl Attribute {
             let path_buf = path_result?.path();
             let current_path = path_buf.to_str().or_err()?;
 
-            let discriminator_attribute =
-                Attribute::from_path(&PathBuf::from(format!("{}/{}", current_path, discriminator_path)))?;
+            let discriminator_attribute = Attribute::from_path(&PathBuf::from(format!(
+                "{current_path}/{discriminator_path}"
+            )))?;
 
             if discriminator_attribute.get::<String>()? == discriminator_value {
-                return Attribute::from_path(&PathBuf::from(format!("{}/{}", current_path, attribute_path)));
+                return Attribute::from_path(&PathBuf::from(format!(
+                    "{current_path}/{attribute_path}"
+                )));
             }
         }
 
         Err(Ev3Error::InternalError {
             msg: format!(
-                "Attribute `{}` at driver path `{}` could not be found!",
-                attribute_path, driver_path
+                "Attribute `{attribute_path}` at driver path `{driver_path}` could not be found!"
             ),
         })
     }
@@ -145,8 +147,8 @@ impl Attribute {
         let value = self.get_str()?;
         match value.parse::<T>() {
             Ok(value) => Ok(value),
-            Err(e) => Err(Ev3Error::InternalError {
-                msg: format!("{}", e),
+            Err(err) => Err(Ev3Error::InternalError {
+                msg: format!("{err}"),
             }),
         }
     }

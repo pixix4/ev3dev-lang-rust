@@ -8,8 +8,8 @@ use std::fs;
 use std::path::Path;
 use std::string::String;
 
-use crate::{Attribute, Ev3Error, Ev3Result, Port};
 use crate::utils::OrErr;
+use crate::{Attribute, Ev3Error, Ev3Result, Port};
 
 /// The driver path `/sys/class/`.
 #[cfg(not(feature = "override-driver-path"))]
@@ -77,7 +77,7 @@ impl Driver {
         }
 
         Err(Ev3Error::NotConnected {
-            device: format!("{:?}", driver_name_vec),
+            device: format!("{driver_name_vec:?}"),
             port: Some(port_address),
         })
     }
@@ -91,14 +91,14 @@ impl Driver {
 
         match names.len() {
             0 => Err(Ev3Error::NotConnected {
-                device: format!("{:?}", driver_name_vec),
+                device: format!("{driver_name_vec:?}"),
                 port: None,
             }),
             1 => Ok(names
                 .pop()
                 .expect("Name vector should contains exactly one element")),
             _ => Err(Ev3Error::MultipleMatches {
-                device: format!("{:?}", driver_name_vec),
+                device: format!("{driver_name_vec:?}"),
                 ports: names,
             }),
         }

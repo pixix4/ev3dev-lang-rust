@@ -90,7 +90,7 @@ pub trait Sensor: Device {
             6 => self.get_value6(),
             7 => self.get_value7(),
             _ => Ev3Result::Err(Ev3Error::InternalError {
-                msg: format!("Sensor value index {} is out of bounds [0, 7]", index),
+                msg: format!("Sensor value index {index} is out of bounds [0, 7]"),
             }),
         }
     }

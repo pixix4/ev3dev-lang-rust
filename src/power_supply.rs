@@ -3,9 +3,9 @@
 
 use std::{fs, path::Path};
 
-use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
-use crate::utils::OrErr;
 use crate::driver::DRIVER_PATH;
+use crate::utils::OrErr;
+use crate::{Attribute, Device, Driver, Ev3Error, Ev3Result};
 
 /// An interface to read data from the system’s power_supply class.
 /// Uses the built-in legoev3-battery if none is specified.
