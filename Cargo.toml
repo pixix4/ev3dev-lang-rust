@@ -42,7 +42,7 @@ name = "screen"
 required-features = ["screen"]
 
 [package.metadata.docs.rs]
-all-features = true
+features = ["ev3", "screen"]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [[example]]

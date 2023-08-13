@@ -178,5 +178,5 @@ If you have problems with code completion or inline documentation with rust anal
 To build the complete documentation (including the `screen` feature) use:
 
 ```bash
-RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features
+RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --features ev3,screen
 ```
