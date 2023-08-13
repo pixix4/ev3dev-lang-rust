@@ -1,9 +1,9 @@
-FROM debian:stretch-slim
+FROM debian:trixie-slim
 
 RUN dpkg --add-architecture armel
 
 RUN apt-get update
-RUN sed -i "s#deb http://security.debian.org/debian-security stretch/updates main#deb http://deb.debian.org/debian-security stretch/updates main#g" /etc/apt/sources.list
+# RUN sed -i "s#deb http://security.debian.org/debian-security stretch/updates main#deb http://deb.debian.org/debian-security stretch/updates main#g" /etc/apt/sources.list
 
 RUN apt-get --yes install curl cmake pkg-config clang g++ g++-arm-linux-gnueabi crossbuild-essential-armel libssl-dev libssl-dev:armel libclang-dev \
     && rm -rf /var/lib/apt/lists/*

@@ -7,6 +7,10 @@ fn main() -> Ev3Result<()> {
     let large_motor = LargeMotor::get(MotorPort::OutA)?;
     let medium_motor = MediumMotor::get(MotorPort::OutB)?;
 
+    // Set the initial speed so that the motors will move
+    large_motor.set_speed_sp(300)?;
+    medium_motor.set_speed_sp(300)?;
+
     large_motor.run_to_rel_pos(Some(360))?;
     medium_motor.run_to_rel_pos(Some(180))?;
 
