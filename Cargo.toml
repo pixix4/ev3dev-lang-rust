@@ -1,6 +1,6 @@
 [package]
 name = "ev3dev-lang-rust"
-version = "0.13.0"
+version = "0.14.0"
 edition = "2021"
 authors = ["Lars Westermann <rust@lars-westermann.de>"]
 
@@ -26,6 +26,7 @@ ev3dev-lang-rust-derive = { path = "ev3dev_lang_rust_derive", version="0.10" }
 libc = "0.2"
 framebuffer = { version = "0.3", optional = true }
 image = { version = "0.24", optional = true }
+paste = "1.0"
 
 [workspace]
 members = [

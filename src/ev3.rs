@@ -11,6 +11,8 @@ use std::os::unix::io::AsRawFd;
 use std::path::Path;
 use std::rc::Rc;
 
+use paste::paste;
+
 use crate::driver::DRIVER_PATH;
 use crate::utils::OrErr;
 use crate::{Attribute, Ev3Result};
@@ -201,14 +203,27 @@ struct ButtonMapEntry {
     pub key_code: u32,
 }
 
+type ButtonHandler = Box<dyn Fn(bool)>;
+
 /// This implementation depends on the availability of the EVIOCGKEY ioctl
 /// to be able to read the button state buffer. See Linux kernel source
 /// in /include/uapi/linux/input.h for details.
-#[derive(Debug)]
 struct ButtonFileHandler {
     file_map: HashMap<String, FileMapEntry>,
     button_map: HashMap<String, ButtonMapEntry>,
+    button_handlers: HashMap<String, ButtonHandler>,
     pressed_buttons: HashSet<String>,
+}
+
+impl std::fmt::Debug for ButtonFileHandler {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ButtonFileHandler")
+            .field("file_map", &self.file_map)
+            .field("button_map", &self.button_map)
+            .field("button_handlers", &self.button_map.keys())
+            .field("pressed_buttons", &self.pressed_buttons)
+            .finish()
+    }
 }
 
 impl ButtonFileHandler {
@@ -217,11 +232,12 @@ impl ButtonFileHandler {
         ButtonFileHandler {
             file_map: HashMap::new(),
             button_map: HashMap::new(),
+            button_handlers: HashMap::new(),
             pressed_buttons: HashSet::new(),
         }
     }
 
-    /// Add a button the the file handler.
+    /// Add a button to the file handler.
     fn add_button(&mut self, name: &str, file_name: &str, key_code: u32) -> Ev3Result<()> {
         if !self.file_map.contains_key(file_name) {
             let file = File::open(file_name)?;
@@ -242,6 +258,16 @@ impl ButtonFileHandler {
         Ok(())
     }
 
+    /// Sets an event listener for the given button.
+    fn set_button_listener(&mut self, name: &str, listener: Option<ButtonHandler>) {
+        if let Some(listener) = listener {
+            self.button_handlers.insert(name.to_owned(), listener);
+        } else {
+            self.button_handlers.remove(name);
+        }
+    }
+
+    /// Gets a copy of the currently pressed buttons.
     fn get_pressed_buttons(&self) -> HashSet<String> {
         self.pressed_buttons.clone()
     }
@@ -264,6 +290,7 @@ impl ButtonFileHandler {
             }
         }
 
+        let old_pressed_buttons = self.pressed_buttons.clone();
         self.pressed_buttons.clear();
 
         for (
@@ -278,6 +305,13 @@ impl ButtonFileHandler {
 
             if (buffer[(key_code / 8) as usize] & 1 << (key_code % 8)) != 0 {
                 self.pressed_buttons.insert(btn_name.to_owned());
+            }
+        }
+
+        let difference = old_pressed_buttons.symmetric_difference(&self.pressed_buttons);
+        for button in difference {
+            if self.button_handlers.contains_key(button) {
+                self.button_handlers[button](self.get_button_state(button));
             }
         }
     }
@@ -296,6 +330,10 @@ impl ButtonFileHandler {
 ///
 /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
 /// let button = Button::new()?;
+///
+/// button.set_down_handler(|is_pressed| {
+///     println("Is 'down' pressed: {is_pressed}");
+/// });
 ///
 /// loop {
 ///     button.process();
@@ -335,42 +373,57 @@ impl Button {
 
     /// Check for currently pressed buttons. If the new state differs from the
     /// old state, call the appropriate button event handlers.
+    /// ```no_run
+    /// use ev3dev_lang_rust::Button;
+    /// use std::thread;
+    /// use std::time::Duration;
+    ///
+    /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
+    /// let button = Button::new()?;
+    ///
+    /// button.set_down_handler(|is_pressed| {
+    ///     println("Is 'down' pressed: {is_pressed}");
+    /// });
+    ///
+    /// loop {
+    ///     button.process();
+    ///
+    ///     println!("Is 'up' pressed: {}", button.is_up());
+    ///     println!("Pressed buttons: {:?}", button.get_pressed_buttons());
+    ///
+    ///     thread::sleep(Duration::from_millis(100));
+    /// }
+    /// # }
+    /// ```
     pub fn process(&self) {
         self.button_handler.borrow_mut().process()
     }
 
     /// Get all pressed buttons by name.
+    ///
+    /// ```no_run
+    /// use ev3dev_lang_rust::Button;
+    /// use std::thread;
+    /// use std::time::Duration;
+    ///
+    /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
+    /// let button = Button::new()?;
+    ///
+    /// loop {
+    ///     button.process();
+    ///     println!("Pressed buttons: {:?}", button.get_pressed_buttons());
+    ///     thread::sleep(Duration::from_millis(100));
+    /// }
+    /// # }
+    /// ```
     pub fn get_pressed_buttons(&self) -> HashSet<String> {
         self.button_handler.borrow().get_pressed_buttons()
     }
 
-    /// Check if 'up' button is pressed.
-    pub fn is_up(&self) -> bool {
-        self.button_handler.borrow().get_button_state("up")
-    }
-
-    /// Check if 'down' button is pressed.
-    pub fn is_down(&self) -> bool {
-        self.button_handler.borrow().get_button_state("down")
-    }
-
-    /// Check if 'left' button is pressed.
-    pub fn is_left(&self) -> bool {
-        self.button_handler.borrow().get_button_state("left")
-    }
-
-    /// Check if 'right' button is pressed.
-    pub fn is_right(&self) -> bool {
-        self.button_handler.borrow().get_button_state("right")
-    }
-
-    /// Check if 'enter' button is pressed.
-    pub fn is_enter(&self) -> bool {
-        self.button_handler.borrow().get_button_state("enter")
-    }
-
-    /// Check if 'backspace' button is pressed.
-    pub fn is_backspace(&self) -> bool {
-        self.button_handler.borrow().get_button_state("backspace")
-    }
+    ev3_button_functions!(up);
+    ev3_button_functions!(down);
+    ev3_button_functions!(left);
+    ev3_button_functions!(right);
+    ev3_button_functions!(enter);
+    ev3_button_functions!(backspace);
 }

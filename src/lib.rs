@@ -43,9 +43,13 @@ extern crate image;
 #[macro_use]
 extern crate ev3dev_lang_rust_derive;
 extern crate libc;
+extern crate paste;
 
 #[macro_use]
 mod findable;
+
+#[macro_use]
+mod ev3_button_functions;
 
 mod attribute;
 pub use attribute::Attribute;
