@@ -203,6 +203,7 @@ struct ButtonMapEntry {
     pub key_code: u32,
 }
 
+type ButtonChangeHandler = Box<dyn Fn(HashSet<String>)>;
 type ButtonHandler = Box<dyn Fn(bool)>;
 
 /// This implementation depends on the availability of the EVIOCGKEY ioctl
@@ -211,6 +212,7 @@ type ButtonHandler = Box<dyn Fn(bool)>;
 struct ButtonFileHandler {
     file_map: HashMap<String, FileMapEntry>,
     button_map: HashMap<String, ButtonMapEntry>,
+    button_change_handler: Option<ButtonChangeHandler>,
     button_handlers: HashMap<String, ButtonHandler>,
     pressed_buttons: HashSet<String>,
 }
@@ -220,6 +222,10 @@ impl std::fmt::Debug for ButtonFileHandler {
         f.debug_struct("ButtonFileHandler")
             .field("file_map", &self.file_map)
             .field("button_map", &self.button_map)
+            .field(
+                "button_change_handler",
+                &self.button_change_handler.is_some(),
+            )
             .field("button_handlers", &self.button_map.keys())
             .field("pressed_buttons", &self.pressed_buttons)
             .finish()
@@ -232,6 +238,7 @@ impl ButtonFileHandler {
         ButtonFileHandler {
             file_map: HashMap::new(),
             button_map: HashMap::new(),
+            button_change_handler: None,
             button_handlers: HashMap::new(),
             pressed_buttons: HashSet::new(),
         }
@@ -258,13 +265,18 @@ impl ButtonFileHandler {
         Ok(())
     }
 
-    /// Sets an event listener for the given button.
-    fn set_button_listener(&mut self, name: &str, listener: Option<ButtonHandler>) {
-        if let Some(listener) = listener {
+    /// Sets an event handler for the given button.
+    fn set_button_handler(&mut self, name: &str, handler: Option<ButtonHandler>) {
+        if let Some(listener) = handler {
             self.button_handlers.insert(name.to_owned(), listener);
         } else {
             self.button_handlers.remove(name);
         }
+    }
+
+    /// Sets an event handler for any button state change.
+    fn set_button_change_handler(&mut self, handler: Option<ButtonChangeHandler>) {
+        self.button_change_handler = handler;
     }
 
     /// Gets a copy of the currently pressed buttons.
@@ -309,9 +321,18 @@ impl ButtonFileHandler {
         }
 
         let difference = old_pressed_buttons.symmetric_difference(&self.pressed_buttons);
+
+        let mut difference_count = 0;
         for button in difference {
+            difference_count += 1;
             if self.button_handlers.contains_key(button) {
                 self.button_handlers[button](self.get_button_state(button));
+            }
+        }
+
+        if difference_count > 0 {
+            if let Some(ref handler) = self.button_change_handler {
+                handler(self.get_pressed_buttons());
             }
         }
     }
@@ -329,10 +350,10 @@ impl ButtonFileHandler {
 /// use std::time::Duration;
 ///
 /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
-/// let button = Button::new()?;
+/// let mut button = Button::new()?;
 ///
 /// button.set_down_handler(|is_pressed| {
-///     println("Is 'down' pressed: {is_pressed}");
+///     println!("Is 'down' pressed: {is_pressed}");
 /// });
 ///
 /// loop {
@@ -379,10 +400,10 @@ impl Button {
     /// use std::time::Duration;
     ///
     /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
-    /// let button = Button::new()?;
+    /// let mut button = Button::new()?;
     ///
     /// button.set_down_handler(|is_pressed| {
-    ///     println("Is 'down' pressed: {is_pressed}");
+    ///     println!("Is 'down' pressed: {is_pressed}");
     /// });
     ///
     /// loop {
@@ -418,6 +439,40 @@ impl Button {
     /// ```
     pub fn get_pressed_buttons(&self) -> HashSet<String> {
         self.button_handler.borrow().get_pressed_buttons()
+    }
+
+    /// Set an event handler, that is called by `process()` if any button state changes.
+    /// Has a set of all pressed buttons as parameter.
+    ///
+    /// ```no_run
+    /// use ev3dev_lang_rust::Button;
+    /// use std::thread;
+    /// use std::time::Duration;
+    ///
+    /// # fn main() -> ev3dev_lang_rust::Ev3Result<()> {
+    /// let mut button = Button::new()?;
+    ///
+    /// button.set_change_handler(|pressed_buttons| {
+    ///     println!("pressed buttons: {:?}", pressed_buttons);
+    /// });
+    ///
+    /// loop {
+    ///     button.process();
+    ///     thread::sleep(Duration::from_millis(100));
+    /// }
+    /// # }
+    /// ```
+    pub fn set_change_handler(&mut self, handler: impl Fn(HashSet<String>) + 'static) {
+        self.button_handler
+            .borrow_mut()
+            .set_button_change_handler(Some(Box::new(handler)))
+    }
+
+    /// Removes the change event handler.
+    pub fn remove_change_handler(&mut self) {
+        self.button_handler
+            .borrow_mut()
+            .set_button_change_handler(None)
     }
 
     ev3_button_functions!(up);

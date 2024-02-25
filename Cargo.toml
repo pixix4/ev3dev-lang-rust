@@ -38,10 +38,6 @@ lto = true
 strip = "debuginfo"
 opt-level = "z"
 
-[[example]]
-name = "screen"
-required-features = ["screen"]
-
 [package.metadata.docs.rs]
 features = ["ev3", "screen"]
 rustdoc-args = ["--cfg", "docsrs"]
@@ -49,6 +45,10 @@ rustdoc-args = ["--cfg", "docsrs"]
 [[example]]
 name = "buttons"
 required-features = ["ev3"]
+
+[[example]]
+name = "screen"
+required-features = ["screen"]
 
 [[test]]
 name = "ev3"

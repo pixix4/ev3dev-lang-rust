@@ -14,26 +14,26 @@ macro_rules! ev3_button_functions {
             #[doc = ""]
             #[doc = "loop {"]
             #[doc = "    button.process();"]
-            #[doc = "    println(\"Is '" $button_name "' pressed: {}\", button.is_" $button_name "());"]
+            #[doc = "    println!(\"Is '" $button_name "' pressed: {}\", button.is_" $button_name "());"]
             #[doc = "    thread::sleep(Duration::from_millis(100));"]
             #[doc = "}"]
             #[doc = "# }"]
             #[doc = "```"]
             pub fn [<is_ $button_name>] (&self) -> bool {
-                self.button_handler.borrow().get_button_state("$button_name")
+                self.button_handler.borrow().get_button_state(stringify!($button_name))
             }
 
-            #[doc = "Set an event handler for changes in the pressed state of the `" $button_name "` button."]
+            #[doc = "Set an event handler, that is called by `process()` if the pressed state of the `" $button_name "` button changes."]
             #[doc = "```no_run"]
             #[doc = "use ev3dev_lang_rust::Button;"]
             #[doc = "use std::thread;"]
             #[doc = "use std::time::Duration;"]
             #[doc = ""]
             #[doc = "# fn main() -> ev3dev_lang_rust::Ev3Result<()> {"]
-            #[doc = "let button = Button::new()?;"]
+            #[doc = "let mut button = Button::new()?;"]
             #[doc = ""]
             #[doc = "button.set_" $button_name "_handler(|is_pressed| {"]
-            #[doc = "    println(\"Is '" $button_name "' pressed: {is_pressed}\");"]
+            #[doc = "    println!(\"Is '" $button_name "' pressed: {}\", is_pressed);"]
             #[doc = "});"]
             #[doc = ""]
             #[doc = "loop {"]
@@ -45,14 +45,14 @@ macro_rules! ev3_button_functions {
             pub fn [<set_ $button_name _handler>](&mut self, handler: impl Fn(bool) + 'static) {
                 self.button_handler
                     .borrow_mut()
-                    .set_button_listener("$button_name", Some(Box::new(handler)));
+                    .set_button_handler(stringify!($button_name), Some(Box::new(handler)));
             }
 
             #[doc = "Removes the event handler of the `" $button_name "` button."]
             pub fn [<remove_ $button_name _handler>](&mut self) {
                 self.button_handler
                     .borrow_mut()
-                    .set_button_listener("$button_name", None);
+                    .set_button_handler(stringify!($button_name), None);
             }
         }
     };
