@@ -100,7 +100,7 @@ impl UltrasonicSensor {
         Ok((self.get_value0()? as f32) * scale)
     }
 
-    /// Measurement of the distance detected by the sensor, in centimeters.
+    /// Measurement of the distance detected by the sensor, in inches.
     pub fn get_distance_inches(&self) -> Ev3Result<f32> {
         let scale_field = self.in_scale.get();
         let scale = match scale_field {
