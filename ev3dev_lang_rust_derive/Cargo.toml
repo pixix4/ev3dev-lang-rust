@@ -1,6 +1,7 @@
 [package]
 name = "ev3dev-lang-rust-derive"
 version = "0.10.0"
+edition = "2021"
 authors = ["Lars Westermann <lars-westermann@live.de>"]
 
 description = "Derive macros for ev3dev_lang_rust"

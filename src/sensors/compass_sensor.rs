@@ -57,7 +57,7 @@ impl CompassSensor {
     /// turn the robot 360 degrees
     /// end the calibration by stop_calibration()
     /// attention: if calibration has not finished, the get_rotation method always returns -258
-
+    ///
     /// starts the calibration
     pub fn start_calibration(&self) -> Ev3Result<()> {
         self.set_command(Self::COMMAND_START_CALIBRATION)
