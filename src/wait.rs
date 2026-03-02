@@ -69,16 +69,38 @@ where
 /// Wrapper for `libc::epoll_wait`
 #[cfg(target_os = "linux")]
 fn wait_file_changes(fd: RawFd, timeout: i32) -> bool {
-    let mut buf: [libc::epoll_event; 10] = [libc::epoll_event { events: 0, u64: 0 }; 10];
+    let epfd = unsafe { libc::epoll_create(1) as i32 };
+    let mut ep_event = libc::epoll_event {
+        events: 0,
+        u64: fd as u64,
+    };
 
     let result = unsafe {
-        libc::epoll_wait(
+        libc::epoll_ctl(
+            epfd,
+            libc::EPOLL_CTL_ADD,
             fd,
-            buf.as_mut_ptr() as *mut libc::epoll_event,
-            buf.len() as i32,
-            timeout,
+            &mut ep_event as *mut libc::epoll_event,
         ) as i32
     };
+
+    if result == -1 {
+        // cannot register fd as epoll fd
+        // just wait for 100ms
+        std::thread::sleep(Duration::from_millis(100));
+        return false;
+    }
+
+    let mut buf: [libc::epoll_event; 1] = [ep_event];
+
+    // number of file descriptors ready for the requested I/O operation
+    let result =
+        unsafe { libc::epoll_wait(epfd, buf.as_mut_ptr(), buf.len() as i32, timeout) as i32 };
+
+    let err = unsafe { libc::close(epfd) as i32 };
+    if err == -1 {
+        // epfd cannot be closed, at least we tried
+    }
 
     result > 0
 }
