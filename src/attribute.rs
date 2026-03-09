@@ -118,6 +118,15 @@ impl Attribute {
         })
     }
 
+    /// Returns the current content of the wrapped file.
+    pub fn get_bytes(&self) -> Ev3Result<Vec<u8>> {
+        let mut value: Vec<u8> = Vec::new();
+        let mut file = self.file.lock().unwrap();
+        file.seek(SeekFrom::Start(0))?;
+        file.read_to_end(&mut value)?;
+        Ok(value)
+    }
+
     /// Returns the current value of the wrapped file.
     fn get_str(&self) -> Ev3Result<String> {
         let mut value = String::new();
