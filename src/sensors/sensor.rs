@@ -6,8 +6,8 @@ use crate::{Device, Ev3Result};
 pub trait Sensor: Device {
     /// Reading the file will give the unscaled raw values in the `value<N>` attributes.
     /// Use `bin_data_format`, `num_values` and the individual sensor documentation to determine how to interpret the data.
-    fn get_bin_data(&self) -> Ev3Result<String> {
-        self.get_attribute("bin_data").get()
+    fn get_bin_data(&self) -> Ev3Result<Vec<u8>> {
+        self.get_attribute("bin_data").get_bytes()
     }
 
     /// Returns the format of the values in `bin_data` for the current mode. Possible values are:
