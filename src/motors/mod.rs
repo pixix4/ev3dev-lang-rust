@@ -16,7 +16,7 @@ pub use self::medium_motor::MediumMotor;
 mod tacho_motor;
 pub use self::tacho_motor::TachoMotor;
 
-use crate::{port_constants, Port};
+use crate::{port_constants, Ev3Result, LegoPort, Port};
 
 /// EV3 ports `outA` to `outD`
 #[derive(Debug, Copy, Clone)]
@@ -52,5 +52,9 @@ impl Port for MotorPort {
             MotorPort::OutC => port_constants::OUTPUT_C.to_owned(),
             MotorPort::OutD => port_constants::OUTPUT_D.to_owned(),
         }
+    }
+
+    fn get_lego_port(&self) -> Ev3Result<LegoPort> {
+        LegoPort::get(*self)
     }
 }

@@ -32,6 +32,8 @@ pub use self::touch_sensor::TouchSensor;
 mod ultrasonic_sensor;
 pub use self::ultrasonic_sensor::UltrasonicSensor;
 
+use crate::Ev3Result;
+use crate::LegoPort;
 use crate::{port_constants, Port};
 
 /// EV3 ports `in1` to `in4`
@@ -68,6 +70,10 @@ impl Port for SensorPort {
             SensorPort::In3 => port_constants::INPUT_3.to_owned(),
             SensorPort::In4 => port_constants::INPUT_4.to_owned(),
         }
+    }
+
+    fn get_lego_port(&self) -> Ev3Result<LegoPort> {
+        LegoPort::get(*self)
     }
 }
 

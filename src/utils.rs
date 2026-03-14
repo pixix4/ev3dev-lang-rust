@@ -78,12 +78,6 @@ impl From<framebuffer::FramebufferError> for Ev3Error {
     }
 }
 
-/// EV3 ports
-pub trait Port {
-    /// Returns the name of the port.
-    fn address(&self) -> String;
-}
-
 /// Helper trait to convert an option to an error.
 /// Polyfill for the `Try` trait until it is stable.
 pub trait OrErr<T> {

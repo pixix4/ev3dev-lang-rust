@@ -5,7 +5,7 @@ pub trait Device {
     /// Returns the attribute wrapper for an attribute name.
     fn get_attribute(&self, name: &str) -> Attribute;
 
-    /// Returns the name of the port that the motor is connected to.
+    /// Returns the name of the port that the device is connected to.
     fn get_address(&self) -> Ev3Result<String> {
         self.get_attribute("address").get()
     }

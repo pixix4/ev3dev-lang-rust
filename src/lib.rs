@@ -61,9 +61,12 @@ mod device;
 pub use device::Device;
 
 mod utils;
-pub use utils::{Ev3Error, Ev3Result, Port};
+pub use utils::{Ev3Error, Ev3Result};
 
 pub mod wait;
+
+pub mod port;
+pub use port::{LegoPort, Port};
 
 pub mod motors;
 pub mod sensors;

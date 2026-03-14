@@ -54,7 +54,7 @@ macro_rules! findable {
             Ok(Self::new(Driver::new($class_name, &name)))
         }
 
-        /// Try to find a `Self`. Only returns a motor if their is exactly one connected, `Error::NotFound` otherwise.
+        /// Try to find a `Self`. Only returns a device if their is exactly one connected, `Error::NotFound` otherwise.
         #[allow(clippy::vec_init_then_push)]
         pub fn find() -> Ev3Result<Self> {
             let mut driver_name_vec = Vec::new();
