@@ -38,7 +38,7 @@ use std::process::{Child, Command, Stdio};
 /// # }
 /// ```
 pub fn beep() -> Ev3Result<Child> {
-    Ok(Command::new("/usr/bin/beep")
+    Ok(Command::new("beep")
         .stdout(Stdio::null())
         .spawn()?)
 }
@@ -64,7 +64,7 @@ where
     I: IntoIterator<Item = S>,
     S: AsRef<OsStr>,
 {
-    Ok(Command::new("/usr/bin/beep")
+    Ok(Command::new("beep")
         .args(args)
         .stdout(Stdio::null())
         .spawn()?)
@@ -143,7 +143,7 @@ pub fn tone_sequence(sequence: &[(f32, i32, i32)]) -> Ev3Result<Child> {
 
 /// Play wav file
 pub fn play(wav_file: &str) -> Ev3Result<Child> {
-    Ok(Command::new("/usr/bin/aplay")
+    Ok(Command::new("aplay")
         .arg("-q")
         .arg("-Dplug:dmix")
         .arg(wav_file)
@@ -153,12 +153,12 @@ pub fn play(wav_file: &str) -> Ev3Result<Child> {
 
 /// Speak the given text aloud.
 pub fn speak(text: &str) -> Ev3Result<Child> {
-    let espeak = Command::new("/usr/bin/espeak")
+    let espeak = Command::new("espeak")
         .args(["--stdout", "-a", "200", "-s", "130", text])
         .stdout(Stdio::piped())
         .spawn()?;
 
-    Ok(Command::new("/usr/bin/aplay")
+    Ok(Command::new("aplay")
         .arg("-q")
         .arg("-Dplug:dmix")
         .stdin(espeak.stdout.ok_or(Ev3Error::InternalError {
@@ -171,7 +171,7 @@ pub fn speak(text: &str) -> Ev3Result<Child> {
 /// Get the main channel name or 'Playback' if not available.
 fn get_channels() -> Ev3Result<Vec<String>> {
     let out = String::from_utf8(
-        Command::new("/usr/bin/amixer")
+        Command::new("amixer")
             .arg("scontrols")
             .output()?
             .stdout,
@@ -201,7 +201,7 @@ fn get_channels() -> Ev3Result<Vec<String>> {
 /// Sets the sound volume to the given percentage [0-100] by calling
 /// `amixer -q set <channel> <pct>%`.
 pub fn set_volume_channel(volume: i32, channel: &str) -> Ev3Result<()> {
-    Command::new("/usr/bin/amixer")
+    Command::new("amixer")
         .args(["-q", "set", channel, &format!("{volume}%")])
         .stdout(Stdio::null())
         .spawn()?
@@ -226,7 +226,7 @@ pub fn set_volume(volume: i32) -> Ev3Result<()> {
 /// `amixer get <channel>`.
 pub fn get_volume_channel(channel: &str) -> Ev3Result<i32> {
     let out = String::from_utf8(
-        Command::new("/usr/bin/amixer")
+        Command::new("amixer")
             .args(["get", channel])
             .output()?
             .stdout,
